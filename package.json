@@ -5,5 +5,8 @@
   "main": "index.js",
   "repository": "https://github.com/holistics/js",
   "author": "Holistics",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "lerna": "^3.19.0"
+  }
 }
