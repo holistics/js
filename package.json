@@ -1,0 +1,9 @@
+{
+  "name": "holistics-js",
+  "version": "1.0.0",
+  "description": "Holistics open-source javascript libraries",
+  "main": "index.js",
+  "repository": "https://github.com/holistics/js",
+  "author": "Holistics",
+  "license": "MIT"
+}
