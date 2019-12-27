@@ -6,7 +6,11 @@
   "repository": "https://github.com/holistics/js",
   "author": "Holistics",
   "license": "MIT",
+  "scripts": {
+    "test": "jest"
+  },
   "devDependencies": {
+    "jest": "^24.9.0",
     "lerna": "^3.19.0"
   }
 }

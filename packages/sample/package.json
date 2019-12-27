@@ -1,0 +1,26 @@
+{
+  "name": "@holistics/sample",
+  "version": "1.0.0",
+  "description": "Sample package",
+  "author": "Hoang Do <hoang.do@holistics.io>",
+  "homepage": "https://github.com/holistics/js#readme",
+  "license": "MIT",
+  "main": "lib/sample.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/holistics/js.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/holistics/js/issues"
+  }
+}
