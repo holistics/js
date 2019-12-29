@@ -1,7 +1,1 @@
-'use strict';
-
-module.exports = sample;
-
-function sample() {
-  return 'Hello world'
-}
+export default () => 'Hello world';

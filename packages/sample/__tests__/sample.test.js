@@ -1,9 +1,7 @@
-'use strict';
-
-const sample = require('../lib/sample');
+import sample from '../lib/sample';
 
 describe('sample', () => {
   it('works', () => {
-    expect(sample()).toEqual('Hello world')
-  })
-})
+    expect(sample()).toEqual('Hello world');
+  });
+});
