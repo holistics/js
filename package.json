@@ -11,7 +11,7 @@
   "license": "MIT",
   "scripts": {
     "lerna:bootstrap": "lerna bootstrap",
-    "lerna:publish": "lerna publish",
+    "lerna:publish": "yarn test && lerna publish",
     "test": "jest"
   },
   "devDependencies": {
