@@ -34,7 +34,7 @@ cp -R packages/sample packages/your-new-package
 
 ```bash
 vim packages/your-new-package/package.json
-# remember to change package's name, and set its version back to '0.0.0'
+# remember to change package's 'name', 'main' (entry point) and set its 'version' back to '0.0.0'
 ```
 
 ### Publishing
