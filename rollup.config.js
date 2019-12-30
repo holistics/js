@@ -7,7 +7,7 @@ import minify from 'rollup-plugin-babel-minify';
 export default (pkgName) => ({
   input: './src/index.js',
   output: {
-    file: `./build/${pkgName}.js`,
+    file: `./dist/${pkgName}.js`,
     format: 'umd',
     name: pkgName,
   },
