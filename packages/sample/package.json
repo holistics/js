@@ -1,6 +1,6 @@
 {
   "name": "@holistics/sample",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Sample package",
   "author": "Hoang Do <hoang.do@holistics.io>",
   "homepage": "https://github.com/holistics/js#readme",
@@ -24,6 +24,5 @@
   },
   "bugs": {
     "url": "https://github.com/holistics/js/issues"
-  },
-  "devDependencies": {}
+  }
 }
