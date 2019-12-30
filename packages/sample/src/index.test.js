@@ -1,4 +1,4 @@
-import sample from '../lib/sample';
+import sample from './index';
 
 describe('sample', () => {
   it('works', () => {
