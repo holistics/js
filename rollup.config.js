@@ -1,8 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import babel from 'rollup-plugin-babel';
-import resolve from 'rollup-plugin-node-resolve';
-import commonjs from 'rollup-plugin-commonjs';
-import minify from 'rollup-plugin-babel-minify';
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import { terser } from 'rollup-plugin-terser';
+
 
 export default (pkgName) => ({
   input: './src/index.js',
@@ -17,8 +18,6 @@ export default (pkgName) => ({
     }),
     resolve(),
     commonjs(),
-    minify({
-      comments: false,
-    }),
+    terser(),
   ],
 });
