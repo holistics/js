@@ -19,14 +19,11 @@
   },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1",
+    "preversion": "yarn build",
     "build": "rollup -c"
   },
   "bugs": {
     "url": "https://github.com/holistics/js/issues"
   },
-  "devDependencies": {
-    "@babel/core": "^7.7.7",
-    "@babel/preset-env": "^7.7.7",
-    "rollup-plugin-babel": "^4.3.3"
-  }
+  "devDependencies": {}
 }
