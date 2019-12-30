@@ -5,7 +5,7 @@
   "author": "Hoang Do <hoang.do@holistics.io>",
   "homepage": "https://github.com/holistics/js#readme",
   "license": "MIT",
-  "main": "dist/sample.min.js",
+  "main": "dist/sample.js",
   "files": [
     "src",
     "dist"

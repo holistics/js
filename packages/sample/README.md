@@ -1,11 +1,11 @@
-# `sample`
+# `@holistics/sample`
 
-> TODO: description
+> Sample package
 
 ## Usage
 
 ```
-const sample = require('sample');
+import sample from '@holistics/sample'
 
-// TODO: DEMONSTRATE API
+console.log(sample()) // 'Hello world'
 ```
