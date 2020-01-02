@@ -7,5 +7,5 @@
 ```javascript
 import sample from '@holistics/sample'
 
-console.log(sample('John')) // 'Hello world, John'
+console.log(sample('John')) // 'Hello, John'
 ```
