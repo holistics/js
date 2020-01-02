@@ -1,0 +1,36 @@
+{
+  "name": "@holistics/date_parser",
+  "version": "0.0.0",
+  "description": "Date parser",
+  "author": "Dat Bui <scott.bui@holistics.io>",
+  "homepage": "https://github.com/holistics/js#readme",
+  "license": "MIT",
+  "main": "dist/date_parser.js",
+  "files": [
+    "src",
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/holistics/js.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1",
+    "preversion": "yarn build",
+    "build": "rollup -c"
+  },
+  "bugs": {
+    "url": "https://github.com/holistics/js/issues"
+  },
+  "dependencies": {
+    "chrono-node": "^1.3.11",
+    "lodash": "^4.17.15",
+    "moment": "^2.24.0"
+  },
+  "devDependencies": {
+    "mockdate": "^2.0.5"
+  }
+}
