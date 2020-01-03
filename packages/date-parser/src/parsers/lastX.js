@@ -26,7 +26,7 @@ parser.extract = (text, ref, match) => {
   let startMoment = Moment.utc(refDateStruct);
   let endMoment = startMoment.clone();
 
-  // console.log('now', startMoment.toISOString());
+  // Set range according to past/future relativity
   if (modifier === 'last') {
     startMoment.subtract(value, dateUnit);
     endMoment.subtract(1, dateUnit);
@@ -34,25 +34,18 @@ parser.extract = (text, ref, match) => {
     endMoment.add(value, dateUnit);
     startMoment.add(1, dateUnit);
   }
-  // console.log('modified');
-  // console.log('start', startMoment.toISOString());
-  // console.log('end', endMoment.toISOString());
 
+  // Push start, end to start, end of time period
   startMoment.startOf(dateUnit === 'week' ? 'isoWeek' : dateUnit);
   endMoment.endOf(dateUnit === 'week' ? 'isoWeek' : dateUnit);
   endMoment.add(1, 'second').millisecond(0);
-  // console.log('ranged');
-  // console.log('start', startMoment.toISOString());
-  // console.log('end', endMoment.toISOString());
 
+  // Set to point of time if specified
   if (pointOfTime === 'begin') {
     endMoment = startMoment.clone().add(1, isTimeUnit(dateUnit) ? 'second' : 'day');
   } else if (pointOfTime === 'end') {
     startMoment = endMoment.clone().subtract(1, isTimeUnit(dateUnit) ? 'second' : 'day');
   }
-  // console.log('pointed');
-  // console.log('start', startMoment.toISOString());
-  // console.log('end', endMoment.toISOString());
 
   return new Chrono.ParsedResult({
     ref,
