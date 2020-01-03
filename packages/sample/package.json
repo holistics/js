@@ -7,7 +7,6 @@
   "license": "MIT",
   "main": "dist/sample.js",
   "files": [
-    "src",
     "dist"
   ],
   "repository": {
