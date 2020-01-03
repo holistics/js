@@ -558,16 +558,16 @@ describe('dateParser', () => {
         impliedValues: { millisecond: 0 },
       },
       end: {
-        knownValues: {},
-        impliedValues: {
-          year: 2019, month: 12, day: 31, hour: 2, minute: 14, second: 6, millisecond: 0,
+        knownValues: {
+          year: 2019, month: 12, day: 31, hour: 2, minute: 14, second: 5,
         },
+        impliedValues: { millisecond: 0 },
       },
     });
     expect(res.start.date().toISOString()).toEqual('1970-01-01T00:00:00.000Z');
-    expect(res.end.date().toISOString()).toEqual('2019-12-31T02:14:06.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-12-31T02:14:05.000Z');
 
-    res = parse('beginning - last 3 days begin', new Date('2019-12-31T02:14:05Z'));
+    res = parse('beginning - 3 days ago', new Date('2019-12-31T02:14:05Z'));
     expect(res).toMatchObject({
       start: {
         knownValues: {
@@ -577,12 +577,30 @@ describe('dateParser', () => {
       },
       end: {
         knownValues: {
-          year: 2019, month: 12, day: 29, hour: 0, minute: 0, second: 0,
+          year: 2019, month: 12, day: 28, hour: 0, minute: 0, second: 0,
         },
         impliedValues: { millisecond: 0 },
       },
     });
     expect(res.start.date().toISOString()).toEqual('1970-01-01T00:00:00.000Z');
-    expect(res.end.date().toISOString()).toEqual('2019-12-29T00:0:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-12-28T00:00:00.000Z');
+
+    res = parse('3 days ago - 15:36', new Date('2019-12-31T02:14:05Z'));
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2019, month: 12, day: 28, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          hour: 15, minute: 36,
+        },
+        impliedValues: { year: 2019, month: 12, day: 31, second: 0, millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2019-12-28T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-12-31T15:36:00.000Z');
   });
 });
