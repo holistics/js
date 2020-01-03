@@ -5,7 +5,9 @@
   "author": "Hoang Do <hoang.do@holistics.io>",
   "homepage": "https://github.com/holistics/js#readme",
   "license": "MIT",
-  "main": "dist/sample.js",
+  "main": "dist/sample.cjs.js",
+  "module": "dist/sample.esm.js",
+  "browser": "dist/sample.umd.js",
   "files": [
     "dist"
   ],

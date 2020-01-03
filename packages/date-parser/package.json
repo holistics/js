@@ -5,7 +5,9 @@
   "author": "Dat Bui <scott.bui@holistics.io>",
   "homepage": "https://github.com/holistics/js#readme",
   "license": "MIT",
-  "main": "dist/date-parser.js",
+  "main": "dist/date-parser.cjs.js",
+  "module": "dist/date-parser.esm.js",
+  "browser": "dist/date-parser.umd.js",
   "files": [
     "dist"
   ],
