@@ -11,10 +11,8 @@ chrono.parsers = [
   ...defaultParsers,
 ];
 
-export const parse = (str, ref) => {
+const parse = (str, ref) => {
   return chrono.parse(str, ref);
 };
 
-export default {
-  parse,
-};
+export default parse;
