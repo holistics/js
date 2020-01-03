@@ -5,7 +5,7 @@
 ## Usage
 
 ```javascript
-import parseDate from '@holistics/date-parser'
+import { parse } from '@holistics/date-parser'
 
-console.log(parseDate('last monday'))
+console.log(parse('last week'))
 ```
