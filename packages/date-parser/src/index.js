@@ -1,5 +1,6 @@
 import ChronoNode from 'chrono-node';
 
+import todayParser from './parsers/today';
 import xAgoParser from './parsers/xAgo';
 import lastXParser from './parsers/lastX';
 
@@ -9,6 +10,7 @@ const chrono = new ChronoNode.Chrono(ChronoNode.options.strictOption());
 
 const defaultParsers = chrono.parsers;
 chrono.parsers = [
+  todayParser,
   xAgoParser,
   lastXParser,
   ...defaultParsers,

@@ -259,6 +259,24 @@ describe('dateParser', () => {
     });
     expect(res[0].start.date().toISOString()).toEqual('2020-01-16T02:14:05.000Z');
     expect(res[0].end.date().toISOString()).toEqual('2020-01-16T02:14:06.000Z');
+
+    res = parse('1 year ago', new Date('2020-02-29T02:14:05Z'));
+    expect(res[0]).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2019, month: 2, day: 28, hour: 2, minute: 14, second: 5,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2019, month: 2, day: 28, hour: 2, minute: 14, second: 6,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res[0].start.date().toISOString()).toEqual('2019-02-28T02:14:05.000Z');
+    expect(res[0].end.date().toISOString()).toEqual('2019-02-28T02:14:06.000Z');
   });
 
   it('works with absolute, both full and partial, dates', () => {
@@ -360,6 +378,9 @@ describe('dateParser', () => {
     expect(res[0].start.date().toISOString()).toEqual('2019-12-26T15:32:00.000Z');
     expect(res[0].end.date().toISOString()).toEqual('2019-12-26T15:33:00.000Z');
 
+    res = parse('30:32', new Date('2019-12-26T02:14:05Z'));
+    expect(res).toEqual([]);
+
     res = parse('June 2019', new Date('2019-12-26T02:14:05Z'));
     expect(res[0]).toMatchObject({
       start: {
@@ -375,5 +396,63 @@ describe('dateParser', () => {
     });
     expect(res[0].start.date().toISOString()).toEqual('2019-06-01T00:00:00.000Z');
     expect(res[0].end.date().toISOString()).toEqual('2019-07-01T00:00:00.000Z');
+  });
+
+  it('works with today format', () => {
+    let res;
+
+    res = parse('today', new Date('2019-12-31T02:14:05Z'));
+    expect(res[0]).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2019, month: 12, day: 31, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2020, month: 1, day: 1, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res[0].start.date().toISOString()).toEqual('2019-12-31T00:00:00.000Z');
+    expect(res[0].end.date().toISOString()).toEqual('2020-01-01T00:00:00.000Z');
+
+    res = parse('tomorrow', new Date('2019-12-31T02:14:05Z'));
+    expect(res[0]).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2020, month: 1, day: 1, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2020, month: 1, day: 2, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res[0].start.date().toISOString()).toEqual('2020-01-01T00:00:00.000Z');
+    expect(res[0].end.date().toISOString()).toEqual('2020-01-02T00:00:00.000Z');
+
+    res = parse('yesterday', new Date('2019-12-31T02:14:05Z'));
+    expect(res[0]).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2019, month: 12, day: 30, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2019, month: 12, day: 31, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res[0].start.date().toISOString()).toEqual('2019-12-30T00:00:00.000Z');
+    expect(res[0].end.date().toISOString()).toEqual('2019-12-31T00:00:00.000Z');
   });
 });
