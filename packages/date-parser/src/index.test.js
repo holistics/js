@@ -228,6 +228,24 @@ describe('dateParser', () => {
     expect(res).toMatchObject({
       start: {
         knownValues: {
+          year: 2019, month: 12, day: 24, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2019, month: 12, day: 25, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2019-12-24T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-12-25T00:00:00.000Z');
+
+    res = parse('exact 2 days ago', new Date('2019-12-26T02:14:05Z'));
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
           year: 2019, month: 12, day: 24, hour: 2, minute: 14, second: 5,
         },
         impliedValues: { millisecond: 0 },
@@ -246,6 +264,24 @@ describe('dateParser', () => {
     expect(res).toMatchObject({
       start: {
         knownValues: {
+          year: 2020, month: 1, day: 16, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2020, month: 1, day: 23, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2020-01-16T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2020-01-23T00:00:00.000Z');
+
+    res = parse('exactly 3 weeks from now', new Date('2019-12-26T02:14:05Z'));
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
           year: 2020, month: 1, day: 16, hour: 2, minute: 14, second: 5,
         },
         impliedValues: { millisecond: 0 },
@@ -261,6 +297,24 @@ describe('dateParser', () => {
     expect(res.end.date().toISOString()).toEqual('2020-01-16T02:14:06.000Z');
 
     res = parse('1 year ago', new Date('2020-02-29T02:14:05Z'));
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2019, month: 1, day: 1, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2020, month: 1, day: 1, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2019-01-01T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2020-01-01T00:00:00.000Z');
+
+    res = parse('exactly 1 year ago', new Date('2020-02-29T02:14:05Z'));
     expect(res).toMatchObject({
       start: {
         knownValues: {

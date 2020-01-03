@@ -13,7 +13,7 @@ const DATE_PARTS_FOR_DATE_UNIT = {
 export default (dateStruct, dateUnit) => {
   return {
     year: 1,
-    month: 1,
+    month: 0,
     day: 1,
     hour: 0,
     minute: 0,
