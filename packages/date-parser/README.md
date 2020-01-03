@@ -1,11 +1,11 @@
-# `@holistics/sample`
+# `@holistics/date-parser`
 
-> Sample package
+> Holistics (relative) date parser
 
 ## Usage
 
 ```javascript
-import sample from '@holistics/sample'
+import { parse } from '@holistics/date-parser'
 
-console.log(sample('John')) // 'Hello world, John'
+console.log(parse('last monday'))
 ```
