@@ -455,4 +455,40 @@ describe('dateParser', () => {
     expect(res[0].start.date().toISOString()).toEqual('2019-12-30T00:00:00.000Z');
     expect(res[0].end.date().toISOString()).toEqual('2019-12-31T00:00:00.000Z');
   });
+
+  it('can parse constants', () => {
+    let res;
+
+    res = parse('beginning', new Date('2019-12-31T02:14:05Z'));
+    expect(res[0]).toMatchObject({
+      start: {
+        knownValues: {
+          year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {},
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res[0].start.date().toISOString()).toEqual('1970-01-01T00:00:00.000Z');
+    expect(res[0].end.date().toISOString()).toEqual('1970-01-01T00:00:01.000Z');
+
+    res = parse('now', new Date('2019-12-31T02:14:05Z'));
+    expect(res[0]).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2019, month: 12, day: 31, hour: 2, minute: 14, second: 5,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {},
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res[0].start.date().toISOString()).toEqual('2019-12-31T02:14:05.000Z');
+    expect(res[0].end.date().toISOString()).toEqual('2019-12-31T02:14:06.000Z');
+  });
 });
