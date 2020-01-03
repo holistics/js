@@ -1,4 +1,4 @@
-import parse from './index';
+import { parse } from './index';
 
 describe('dateParser', () => {
   it('works with lastX format', () => {
