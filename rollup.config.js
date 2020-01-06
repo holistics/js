@@ -4,6 +4,7 @@ import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import { terser } from 'rollup-plugin-terser';
 
+const titleCase = (str) => str.replace(/\b\S/g, t => t.toUpperCase()).replace('-', '');
 
 export default (pkgName) => ([
   {
@@ -11,7 +12,7 @@ export default (pkgName) => ([
     output: {
       file: `./dist/${pkgName}.umd.js`,
       format: 'umd',
-      name: pkgName,
+      name: titleCase(pkgName),
       exports: 'named',
     },
     plugins: [
