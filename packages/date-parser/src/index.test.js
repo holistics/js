@@ -331,6 +331,42 @@ describe('dateParser', () => {
     });
     expect(res.start.date().toISOString()).toEqual('2019-02-28T02:14:05.000Z');
     expect(res.end.date().toISOString()).toEqual('2019-02-28T02:14:06.000Z');
+
+    res = parse('1 year ago for 5 days', new Date('2020-02-29T02:14:05Z'));
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2019, month: 1, day: 1, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2019, month: 1, day: 6, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2019-01-01T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-01-06T00:00:00.000Z');
+
+    res = parse('exactly 1 year ago for 5 days', new Date('2020-02-29T02:14:05Z'));
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2019, month: 2, day: 28, hour: 2, minute: 14, second: 5,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2019, month: 3, day: 5, hour: 2, minute: 14, second: 5,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2019-02-28T02:14:05.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-03-05T02:14:05.000Z');
   });
 
   it('works with absolute, both full and partial, dates', () => {

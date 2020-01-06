@@ -7,7 +7,8 @@ import chronoDateStructFromMoment from '../helpers/chronoDateStructFromMoment';
 const parser = new Chrono.Parser();
 
 parser.pattern = () => {
-  return new RegExp('(exact(?:ly)? )?(\\d+) (year|month|week|day|hour|minute|second)s? (ago|from now)', 'i');
+  /* eslint-disable-next-line max-len */
+  return new RegExp('(exact(?:ly)? )?(\\d+) (year|month|week|day|hour|minute|second)s? (ago|from now)(?: for )?((?<= for )\\d+ (?:year|month|week|day|hour|minute|second)s?)?', 'i');
 };
 
 /**
@@ -20,6 +21,7 @@ parser.extract = (text, ref, match) => {
   const dateUnit = match[3].toLowerCase();
   const isPast = match[4] !== 'from now';
   const value = parseInt(match[2]) * (isPast ? -1 : 1);
+  const duration = match[5];
 
   let refDateStruct = dateStructFromDate(ref);
   if (!exact) {
@@ -29,7 +31,10 @@ parser.extract = (text, ref, match) => {
   startMoment.add(value, dateUnit);
 
   const endMoment = startMoment.clone();
-  if (exact) {
+  if (duration) {
+    const [durationValue, durationDateUnit] = duration.split(' ');
+    endMoment.add(parseInt(durationValue), durationDateUnit);
+  } else if (exact) {
     endMoment.add(1, 'second');
   } else {
     endMoment.add(1, dateUnit);
