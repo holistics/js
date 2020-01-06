@@ -1,4 +1,5 @@
 import ChronoNode from 'chrono-node';
+import Moment from 'moment';
 import _flatten from 'lodash/flatten';
 
 import constantsParser from './parsers/constants';
@@ -8,6 +9,7 @@ import xAgoParser from './parsers/xAgo';
 import lastXParser from './parsers/lastX';
 
 import implier from './refiners/implier';
+import timezoneRefiner from './refiners/timezone';
 
 const chrono = new ChronoNode.Chrono(ChronoNode.options.strictOption());
 
@@ -21,14 +23,24 @@ chrono.parsers = [
   ...defaultParsers,
 ];
 
-chrono.refiners.push(implier);
+chrono.refiners = [
+  ...chrono.refiners,
+  implier,
+  timezoneRefiner,
+];
 
-export const parse = (str, ref, { raw = false } = {}) => {
+export const parse = (str, ref, { raw = false, timezoneOffset = 0 } = {}) => {
+  // Adjust ref to timezoneOffset
+  const refMoment = Moment.utc(ref);
+  refMoment.add(timezoneOffset, 'minute');
+  /* eslint-disable-next-line no-param-reassign */
+  ref = refMoment.toDate();
+
   let parts = str.split(' - ');
   const isRange = parts.length === 2;
   if (!isRange) parts = [str];
 
-  const parsedResults = _flatten(parts.map(part => chrono.parse(part, ref)));
+  const parsedResults = _flatten(parts.map(part => chrono.parse(part, ref, { timezoneOffset })));
 
   if (raw) return parsedResults;
 

@@ -754,4 +754,48 @@ describe('dateParser', () => {
     expect(res.start.date().toISOString()).toEqual('2020-01-03T00:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2020-01-04T00:00:00.000Z');
   });
+
+  it('works with timezones', () => {
+    let res;
+
+    res = parse('last week begin', new Date('2018-06-25T05:00:00+08:00'), { timezoneOffset: 60 });
+    expect(res.start.date().toISOString()).toEqual('2018-06-10T23:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2018-06-11T23:00:00.000Z');
+    res = parse('last week begin', new Date('2018-06-25T05:00:00+08:00'), { timezoneOffset: 180 });
+    expect(res.start.date().toISOString()).toEqual('2018-06-17T21:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2018-06-18T21:00:00.000Z');
+
+    res = parse('this week end', new Date('2018-01-01T05:00:00+08:00'), { timezoneOffset: 60 });
+    expect(res.start.date().toISOString()).toEqual('2017-12-30T23:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2017-12-31T23:00:00.000Z');
+    res = parse('this week end', new Date('2018-01-01T05:00:00+08:00'), { timezoneOffset: 180 });
+    expect(res.start.date().toISOString()).toEqual('2018-01-06T21:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2018-01-07T21:00:00.000Z');
+
+    res = parse('this month begin', new Date('2018-01-01T05:00:00+08:00'), { timezoneOffset: 60 });
+    expect(res.start.date().toISOString()).toEqual('2017-11-30T23:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2017-12-01T23:00:00.000Z');
+    res = parse('this month begin', new Date('2018-01-01T05:00:00+08:00'), { timezoneOffset: 180 });
+    expect(res.start.date().toISOString()).toEqual('2017-12-31T21:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2018-01-01T21:00:00.000Z');
+
+    res = parse('last month end', new Date('2018-01-01T05:00:00+08:00'), { timezoneOffset: 60 });
+    expect(res.start.date().toISOString()).toEqual('2017-11-29T23:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2017-11-30T23:00:00.000Z');
+    res = parse('last month end', new Date('2018-01-01T05:00:00+08:00'), { timezoneOffset: 180 });
+    expect(res.start.date().toISOString()).toEqual('2017-12-30T21:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2017-12-31T21:00:00.000Z');
+
+    res = parse('next month end', new Date('2018-01-01T05:00:00+08:00'), { timezoneOffset: 60 });
+    expect(res.start.date().toISOString()).toEqual('2018-01-30T23:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2018-01-31T23:00:00.000Z');
+    res = parse('next month end', new Date('2018-01-01T05:00:00+08:00'), { timezoneOffset: 180 });
+    expect(res.start.date().toISOString()).toEqual('2018-02-27T21:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2018-02-28T21:00:00.000Z');
+
+
+    res = parse('yesterday', new Date('2019-04-11T23:00:00+00:00'), { timezoneOffset: 420 });
+    expect(res.start.date().toISOString()).toEqual('2019-04-10T17:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-04-11T17:00:00.000Z');
+  });
 });
