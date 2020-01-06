@@ -3,6 +3,7 @@ import _flatten from 'lodash/flatten';
 
 import constantsParser from './parsers/constants';
 import todayParser from './parsers/today';
+import weekdayParser from './parsers/weekday';
 import xAgoParser from './parsers/xAgo';
 import lastXParser from './parsers/lastX';
 
@@ -14,6 +15,7 @@ const defaultParsers = chrono.parsers;
 chrono.parsers = [
   constantsParser,
   todayParser,
+  weekdayParser,
   xAgoParser,
   lastXParser,
   ...defaultParsers,

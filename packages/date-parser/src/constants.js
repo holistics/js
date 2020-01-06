@@ -7,3 +7,20 @@ export const DATE_UNIT_LEVELS = {
   minute: 5,
   second: 6,
 };
+
+export const weekdays = {
+  mon: 1,
+  monday: 1,
+  tue: 2,
+  tuesday: 2,
+  wed: 3,
+  wednesday: 3,
+  thu: 4,
+  thursday: 4,
+  fri: 5,
+  friday: 5,
+  sat: 6,
+  saturday: 6,
+  sun: 7,
+  sunday: 7,
+};
