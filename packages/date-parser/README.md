@@ -5,9 +5,9 @@
 ## Usage
 
 ```javascript
-import { parse } from '@holistics/date-parser'
+import { parse } from '@holistics/date-parser';
 
-console.log(parse('last week'))
+console.log(parse('last week'));
 ```
 
 ## Try it out
