@@ -15,14 +15,13 @@ const implyDefaults = (parsedComponent) => {
  * @param {Chrono.ParsedComponents} start
  * @param {Boolean} singleTimePoint
  */
-const implyEnd = (start, singleTimePoint) => {
+const implyEnd = (start) => {
   const end = start.clone();
   end.impliedValues = {
     ...end.impliedValues,
     ...end.knownValues,
   };
   end.knownValues = {};
-  if (singleTimePoint) return end;
 
   // increment the highest-level known date unit
   const incrementedUnit = getHighestLevelDateUnit(start.knownValues);
@@ -34,23 +33,23 @@ const implyEnd = (start, singleTimePoint) => {
  *
  * @param {Chrono.ParsedResult} res
  */
-const implyResult = (res, { singleTimePoint }) => {
+const implyResult = (res) => {
   implyDefaults(res.start);
   if (res.end) {
     implyDefaults(res.end);
   } else {
-    res.end = implyEnd(res.start, singleTimePoint);
+    res.end = implyEnd(res.start);
   }
   return res;
 };
 
 const implier = new Chrono.Refiner();
-implier.refine = (text, results, opts) => {
+implier.refine = (text, results) => {
   /**
    *
    * @param {Chrono.ParsedResult} res
    */
-  return results.map(res => implyResult(res, opts));
+  return results.map(res => implyResult(res));
 };
 
 export default implier;

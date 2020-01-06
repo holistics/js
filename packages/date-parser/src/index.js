@@ -26,7 +26,7 @@ export const parse = (str, ref) => {
   const isRange = parts.length === 2;
   if (!isRange) parts = [str];
 
-  const parsedResults = _flatten(parts.map(part => chrono.parse(part, ref, { singleTimePoint: isRange })));
+  const parsedResults = _flatten(parts.map(part => chrono.parse(part, ref)));
 
   const first = parsedResults[0];
   if (!first) return null;
