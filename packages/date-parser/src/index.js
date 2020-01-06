@@ -21,12 +21,14 @@ chrono.parsers = [
 
 chrono.refiners.push(implier);
 
-export const parse = (str, ref) => {
+export const parse = (str, ref, { raw = false } = {}) => {
   let parts = str.split(' - ');
   const isRange = parts.length === 2;
   if (!isRange) parts = [str];
 
   const parsedResults = _flatten(parts.map(part => chrono.parse(part, ref)));
+
+  if (raw) return parsedResults;
 
   const first = parsedResults[0];
   if (!first) return null;
