@@ -30,6 +30,7 @@ parser.extract = (text, ref, match) => {
     ref,
     text: match[0],
     index: match.index,
+    tags: { constantParser: true },
     start,
     end,
   });

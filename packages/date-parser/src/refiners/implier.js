@@ -7,7 +7,8 @@ import getHighestLevelDateUnit from '../helpers/getHighestLevelDateUnit';
  */
 const implyDefaults = (parsedComponent) => {
   parsedComponent.imply('hour', 0);
-  parsedComponent.imply('timezoneOffset', 0);
+  parsedComponent.imply('minute', 0);
+  parsedComponent.imply('second', 0);
 };
 
 /**

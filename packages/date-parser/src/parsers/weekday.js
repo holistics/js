@@ -41,6 +41,7 @@ parser.extract = (text, ref, match) => {
     ref,
     text: match[0],
     index: match.index,
+    tags: { weekdayParser: true },
     start: chronoDateStructFromMoment(startMoment),
     end: chronoDateStructFromMoment(endMoment),
   });

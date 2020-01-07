@@ -43,6 +43,7 @@ parser.extract = (text, ref, match) => {
   return new Chrono.ParsedResult({
     ref,
     text: match[0],
+    tags: { xAgoParser: true },
     index: match.index,
     start: chronoDateStructFromMoment(startMoment),
     end: chronoDateStructFromMoment(endMoment),
