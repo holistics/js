@@ -4,33 +4,7 @@ import _flatten from 'lodash/flatten';
 
 import options from './options';
 
-import constantsParser from './parsers/constants';
-import todayParser from './parsers/today';
-import weekdayParser from './parsers/weekday';
-import xAgoParser from './parsers/xAgo';
-import lastXParser from './parsers/lastX';
-
-import implier from './refiners/implier';
-import timezoneRefiner from './refiners/timezone';
-import ambiguityRefiner from './refiners/ambiguity';
-
 const chrono = new ChronoNode.Chrono(options);
-
-chrono.parsers = [
-  constantsParser,
-  todayParser,
-  weekdayParser,
-  xAgoParser,
-  lastXParser,
-  ...chrono.parsers,
-];
-
-chrono.refiners = [
-  ...chrono.refiners,
-  implier,
-  timezoneRefiner,
-  ambiguityRefiner,
-];
 
 export const parse = (str, ref, { raw = false, timezoneOffset = 0 } = {}) => {
   // Adjust ref to timezoneOffset
@@ -55,6 +29,7 @@ export const parse = (str, ref, { raw = false, timezoneOffset = 0 } = {}) => {
   const result = new ChronoNode.ParsedResult({
     ref,
     index: first.index,
+    tags: { ...first.tags, ...last.tags },
     text: isRange ? `${first.text} - ${last.text}` : first.text,
   });
   result.start = first.start.clone();

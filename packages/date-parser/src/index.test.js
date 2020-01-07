@@ -486,6 +486,24 @@ describe('dateParser', () => {
     });
     expect(res.start.date().toISOString()).toEqual('2019-06-01T00:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2019-07-01T00:00:00.000Z');
+
+    res = parse('2019', new Date('2019-12-26T02:14:05Z'));
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2019, month: 1, day: 1,
+        },
+        impliedValues: { hour: 0, minute: 0, second: 0, millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2020, month: 1, day: 1,
+        },
+        impliedValues: { hour: 0, minute: 0, second: 0, millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2019-01-01T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2020-01-01T00:00:00.000Z');
   });
 
   it('works with today format', () => {
