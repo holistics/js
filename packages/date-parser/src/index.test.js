@@ -804,10 +804,10 @@ describe('dateParser', () => {
     expect(res.start.date().toISOString()).toEqual('2017-12-30T21:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2017-12-31T21:00:00.000Z');
 
-    res = parse('next month end', new Date('2018-01-01T05:00:00+08:00'), { timezoneOffset: 60 });
+    res = parse('next month end', '2018-01-01T05:00:00+08:00', { timezoneOffset: 60 });
     expect(res.start.date().toISOString()).toEqual('2018-01-30T23:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2018-01-31T23:00:00.000Z');
-    res = parse('next month end', new Date('2018-01-01T05:00:00+08:00'), { timezoneOffset: 180 });
+    res = parse('next month end', '2018-01-01T05:00:00+08:00', { timezoneOffset: 180 });
     expect(res.start.date().toISOString()).toEqual('2018-02-27T21:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2018-02-28T21:00:00.000Z');
 
@@ -815,6 +815,7 @@ describe('dateParser', () => {
     res = parse('yesterday', new Date('2019-04-11T23:00:00+00:00'), { timezoneOffset: 420 });
     expect(res.start.date().toISOString()).toEqual('2019-04-10T17:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2019-04-11T17:00:00.000Z');
+    expect(res.ref.toISOString()).toEqual('2019-04-11T23:00:00.000Z');
 
     res = parse('June 2019', new Date('2019-12-25T23:00:00+00:00'), { timezoneOffset: 420 });
     expect(res.start.date().toISOString()).toEqual('2019-05-31T17:00:00.000Z');
@@ -836,5 +837,9 @@ describe('dateParser', () => {
     // ambiguous
     res = parse('within 3 days', new Date('2019-12-26T04:35:19+08:00'), { timezoneOffset: 480 });
     expect(res).toEqual(null);
+  });
+
+  it('rejects invalid reference date', () => {
+    expect(() => parse('today', 'ahehe')).toThrowError(/invalid ref/i);
   });
 });

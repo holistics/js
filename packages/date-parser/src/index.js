@@ -3,21 +3,24 @@ import Moment from 'moment';
 import _flatten from 'lodash/flatten';
 
 import options from './options';
+import isValidDate from './helpers/isValidDate';
 
 const chrono = new ChronoNode.Chrono(options);
 
 export const parse = (str, ref, { raw = false, timezoneOffset = 0 } = {}) => {
-  // Adjust ref to timezoneOffset
-  const refMoment = Moment.utc(ref);
+  const refDate = new Date(ref);
+  if (!isValidDate(refDate)) throw new Error('Invalid reference date');
+
+  // Adjust refDate by timezoneOffset
+  const refMoment = Moment.utc(refDate);
   refMoment.add(timezoneOffset, 'minute');
-  /* eslint-disable-next-line no-param-reassign */
-  ref = refMoment.toDate();
+  const refDateAdjustedByTz = refMoment.toDate();
 
   let parts = str.split(' - ');
   const isRange = parts.length === 2;
   if (!isRange) parts = [str];
 
-  const parsedResults = _flatten(parts.map(part => chrono.parse(part, ref, { timezoneOffset })));
+  const parsedResults = _flatten(parts.map(part => chrono.parse(part, refDateAdjustedByTz, { timezoneOffset })));
 
   if (raw) return parsedResults;
 
@@ -27,7 +30,7 @@ export const parse = (str, ref, { raw = false, timezoneOffset = 0 } = {}) => {
   const last = parsedResults[parsedResults.length - 1];
 
   const result = new ChronoNode.ParsedResult({
-    ref,
+    ref: refDate,
     index: first.index,
     tags: { ...first.tags, ...last.tags },
     text: isRange ? `${first.text} - ${last.text}` : first.text,
