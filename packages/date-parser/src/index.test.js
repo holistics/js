@@ -859,5 +859,8 @@ describe('dateParser', () => {
     res = parse('yesterday', new Date('2019-04-11T22:00:00+00:00'), { timezoneOffset: 60, output: 'date' });
     expect(res.start).toEqual('2019-04-10');
     expect(res.end).toEqual('2019-04-11');
+    res = parse('yesterday', new Date('2019-04-11T22:00:00+00:00'), { output: 'date' });
+    expect(res.start).toEqual('2019-04-10');
+    expect(res.end).toEqual('2019-04-11');
   });
 });

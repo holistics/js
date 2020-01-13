@@ -9,12 +9,13 @@ import { OUTPUT_TYPES } from './constants';
 const chrono = new ChronoNode.Chrono(options);
 
 /**
- *
- * @param {String} str
- * @param {String|Date} ref
+ * Parse the given date string into Chrono.ParsedResult
+ * @param {String} str The date string to parse
+ * @param {String|Date} ref Reference date
  * @param {Object} options
- * @param {Number} options.timezoneOffset
- * @param {OUTPUT_TYPES} options.output
+ * @param {Number} options.timezoneOffset Timezone offset in minutes
+ * @param {OUTPUT_TYPES} options.output Type of the output dates
+ * @return {ChronoNode.ParsedResult|Array}
  */
 export const parse = (str, ref, { timezoneOffset = 0, output = OUTPUT_TYPES.parsed_component } = {}) => {
   const refDate = new Date(ref);
@@ -48,8 +49,8 @@ export const parse = (str, ref, { timezoneOffset = 0, output = OUTPUT_TYPES.pars
   result.end = isRange ? last.start.clone() : first.end.clone();
 
   if (output === OUTPUT_TYPES.date) {
-    result.start = result.start.moment().utcOffset(timezoneOffset).format('YYYY-MM-DD');
-    result.end = result.end.moment().utcOffset(timezoneOffset).format('YYYY-MM-DD');
+    result.start = result.start.moment().format('YYYY-MM-DD');
+    result.end = result.end.moment().format('YYYY-MM-DD');
   } else if (output === OUTPUT_TYPES.timestamp) {
     result.start = result.start.date().toISOString();
     result.end = result.end.date().toISOString();
