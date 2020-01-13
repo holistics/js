@@ -639,7 +639,7 @@ describe('dateParser', () => {
     expect(res.start.date().toISOString()).toEqual('1970-01-01T00:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2019-12-28T00:00:00.000Z');
 
-    res = parse('beginning - 3 days ago', new Date('2019-12-31T02:14:05Z'), { raw: true });
+    res = parse('beginning - 3 days ago', new Date('2019-12-31T02:14:05Z'), { output: 'raw' });
     expect(res[0]).toMatchObject({
       text: 'beginning',
       start: {
@@ -841,5 +841,23 @@ describe('dateParser', () => {
 
   it('rejects invalid reference date', () => {
     expect(() => parse('today', 'ahehe')).toThrowError(/invalid ref/i);
+  });
+
+  it('cant output in timestamp format', () => {
+    let res;
+
+    res = parse('yesterday', new Date('2019-04-11T22:00:00+00:00'), { timezoneOffset: 420, output: 'timestamp' });
+    expect(res.start).toEqual('2019-04-10T17:00:00.000Z');
+    expect(res.end).toEqual('2019-04-11T17:00:00.000Z');
+    res = parse('yesterday', new Date('2019-04-11T22:00:00+00:00'), { timezoneOffset: 60, output: 'timestamp' });
+    expect(res.start).toEqual('2019-04-09T23:00:00.000Z');
+    expect(res.end).toEqual('2019-04-10T23:00:00.000Z');
+
+    res = parse('yesterday', new Date('2019-04-11T22:00:00+00:00'), { timezoneOffset: 420, output: 'date' });
+    expect(res.start).toEqual('2019-04-11');
+    expect(res.end).toEqual('2019-04-12');
+    res = parse('yesterday', new Date('2019-04-11T22:00:00+00:00'), { timezoneOffset: 60, output: 'date' });
+    expect(res.start).toEqual('2019-04-10');
+    expect(res.end).toEqual('2019-04-11');
   });
 });

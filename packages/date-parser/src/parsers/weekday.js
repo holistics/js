@@ -3,13 +3,13 @@ import Moment from 'moment';
 import dateStructFromDate from '../helpers/dateStructFromDate';
 import truncateDateStruct from '../helpers/truncateDateStruct';
 import chronoDateStructFromMoment from '../helpers/chronoDateStructFromMoment';
-import { weekdays } from '../constants';
+import { WEEKDAYS } from '../constants';
 
 const parser = new Chrono.Parser();
 
 parser.pattern = () => {
   /* eslint-disable-next-line max-len */
-  return new RegExp(`(${Object.keys(weekdays).join('|')}) (last|this|next) ?((?<= )\\d+)? week`, 'i');
+  return new RegExp(`(${Object.keys(WEEKDAYS).join('|')}) (last|this|next) ?((?<= )\\d+)? week`, 'i');
 };
 
 /**
@@ -32,7 +32,7 @@ parser.extract = (text, ref, match) => {
   const refDateStruct = truncateDateStruct(dateStructFromDate(ref), 'day');
   const startMoment = Moment.utc(refDateStruct);
   startMoment.add(value, 'week');
-  startMoment.isoWeekday(weekdays[weekday]);
+  startMoment.isoWeekday(WEEKDAYS[weekday]);
 
   const endMoment = startMoment.clone();
   endMoment.add(1, 'day');

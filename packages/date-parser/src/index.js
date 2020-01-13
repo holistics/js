@@ -4,10 +4,19 @@ import _flatten from 'lodash/flatten';
 
 import options from './options';
 import isValidDate from './helpers/isValidDate';
+import { OUTPUT_TYPES } from './constants';
 
 const chrono = new ChronoNode.Chrono(options);
 
-export const parse = (str, ref, { raw = false, timezoneOffset = 0 } = {}) => {
+/**
+ *
+ * @param {String} str
+ * @param {String|Date} ref
+ * @param {Object} options
+ * @param {Number} options.timezoneOffset
+ * @param {OUTPUT_TYPES} options.output
+ */
+export const parse = (str, ref, { timezoneOffset = 0, output = OUTPUT_TYPES.parsed_component } = {}) => {
   const refDate = new Date(ref);
   if (!isValidDate(refDate)) throw new Error('Invalid reference date');
 
@@ -22,7 +31,7 @@ export const parse = (str, ref, { raw = false, timezoneOffset = 0 } = {}) => {
 
   const parsedResults = _flatten(parts.map(part => chrono.parse(part, refDateAdjustedByTz, { timezoneOffset })));
 
-  if (raw) return parsedResults;
+  if (output === OUTPUT_TYPES.raw) return parsedResults;
 
   const first = parsedResults[0];
   if (!first) return null;
@@ -37,6 +46,15 @@ export const parse = (str, ref, { raw = false, timezoneOffset = 0 } = {}) => {
   });
   result.start = first.start.clone();
   result.end = isRange ? last.start.clone() : first.end.clone();
+
+  if (output === OUTPUT_TYPES.date) {
+    result.start = result.start.moment().utcOffset(timezoneOffset).format('YYYY-MM-DD');
+    result.end = result.end.moment().utcOffset(timezoneOffset).format('YYYY-MM-DD');
+  } else if (output === OUTPUT_TYPES.timestamp) {
+    result.start = result.start.date().toISOString();
+    result.end = result.end.date().toISOString();
+  }
+
   return result;
 };
 

@@ -8,7 +8,7 @@ export const DATE_UNIT_LEVELS = {
   second: 6,
 };
 
-export const weekdays = {
+export const WEEKDAYS = {
   mon: 1,
   monday: 1,
   tue: 2,
@@ -23,4 +23,14 @@ export const weekdays = {
   saturday: 6,
   sun: 7,
   sunday: 7,
+};
+
+/**
+ * @enum {String}
+ */
+export const OUTPUT_TYPES = {
+  parsed_component: 'parsed_component',
+  date: 'date',
+  timestamp: 'timestamp',
+  raw: 'raw',
 };
