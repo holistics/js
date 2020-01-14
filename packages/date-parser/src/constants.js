@@ -34,3 +34,8 @@ export const OUTPUT_TYPES = {
   timestamp: 'timestamp',
   raw: 'raw',
 };
+
+export const DATE_RANGE_PATTERNS = {
+  rangeEndInclusive: /(.+) (-) (.+)/i,
+  rangeEndExclusive: /(.+) (to|till|until) (.+)/i,
+};

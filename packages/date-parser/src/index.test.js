@@ -593,14 +593,16 @@ describe('dateParser', () => {
       },
       end: {
         knownValues: {},
-        impliedValues: { millisecond: 0 },
+        impliedValues: {
+          year: 2019, month: 12, day: 31, hour: 2, minute: 14, second: 6, millisecond: 0,
+        },
       },
     });
     expect(res.start.date().toISOString()).toEqual('2019-12-31T02:14:05.000Z');
     expect(res.end.date().toISOString()).toEqual('2019-12-31T02:14:06.000Z');
   });
 
-  it('works with range', () => {
+  it('works with end-inclusive range', () => {
     let res;
 
     res = parse('beginning - now', new Date('2019-12-31T02:14:05Z'));
@@ -613,13 +615,14 @@ describe('dateParser', () => {
       },
       end: {
         knownValues: {
-          year: 2019, month: 12, day: 31, hour: 2, minute: 14, second: 5,
         },
-        impliedValues: { millisecond: 0 },
+        impliedValues: {
+          year: 2019, month: 12, day: 31, hour: 2, minute: 14, second: 6, millisecond: 0,
+        },
       },
     });
     expect(res.start.date().toISOString()).toEqual('1970-01-01T00:00:00.000Z');
-    expect(res.end.date().toISOString()).toEqual('2019-12-31T02:14:05.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-12-31T02:14:06.000Z');
 
     res = parse('beginning - 3 days ago', new Date('2019-12-31T02:14:05Z'));
     expect(res).toMatchObject({
@@ -631,13 +634,13 @@ describe('dateParser', () => {
       },
       end: {
         knownValues: {
-          year: 2019, month: 12, day: 28, hour: 0, minute: 0, second: 0,
+          year: 2019, month: 12, day: 29, hour: 0, minute: 0, second: 0,
         },
         impliedValues: { millisecond: 0 },
       },
     });
     expect(res.start.date().toISOString()).toEqual('1970-01-01T00:00:00.000Z');
-    expect(res.end.date().toISOString()).toEqual('2019-12-28T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-12-29T00:00:00.000Z');
 
     res = parse('beginning - 3 days ago', new Date('2019-12-31T02:14:05Z'), { output: 'raw' });
     expect(res[0]).toMatchObject({
@@ -675,7 +678,101 @@ describe('dateParser', () => {
     expect(res[1].start.date().toISOString()).toEqual('2019-12-28T00:00:00.000Z');
     expect(res[1].end.date().toISOString()).toEqual('2019-12-29T00:00:00.000Z');
 
-    res = parse('3 days ago - 15:36', new Date('2019-12-31T02:14:05Z'));
+    res = parse('3 days ago till 15:36', new Date('2019-12-31T02:14:05Z'));
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2019, month: 12, day: 28, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          hour: 15, minute: 36,
+        },
+        impliedValues: { year: 2019, month: 12, day: 31, second: 0, millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2019-12-28T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-12-31T15:36:00.000Z');
+  });
+
+  it('works with end-exclusive range', () => {
+    let res;
+
+    res = parse('beginning to now', new Date('2019-12-31T02:14:05Z'));
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2019, month: 12, day: 31, hour: 2, minute: 14, second: 5,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('1970-01-01T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-12-31T02:14:05.000Z');
+
+    res = parse('beginning till 3 days ago', new Date('2019-12-31T02:14:05Z'));
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2019, month: 12, day: 28, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('1970-01-01T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-12-28T00:00:00.000Z');
+
+    res = parse('beginning until 3 days ago', new Date('2019-12-31T02:14:05Z'), { output: 'raw' });
+    expect(res[0]).toMatchObject({
+      text: 'beginning',
+      start: {
+        knownValues: {
+          year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {},
+        impliedValues: {
+          year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 1, millisecond: 0,
+        },
+      },
+    });
+    expect(res[0].start.date().toISOString()).toEqual('1970-01-01T00:00:00.000Z');
+    expect(res[0].end.date().toISOString()).toEqual('1970-01-01T00:00:01.000Z');
+    expect(res[1]).toMatchObject({
+      text: '3 days ago',
+      start: {
+        knownValues: {
+          year: 2019, month: 12, day: 28, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2019, month: 12, day: 29, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res[1].start.date().toISOString()).toEqual('2019-12-28T00:00:00.000Z');
+    expect(res[1].end.date().toISOString()).toEqual('2019-12-29T00:00:00.000Z');
+
+    res = parse('3 days ago till 15:36', new Date('2019-12-31T02:14:05Z'));
     expect(res).toMatchObject({
       start: {
         knownValues: {
@@ -832,7 +929,7 @@ describe('dateParser', () => {
     res = parse('3 o\'clock - 3 minutes ago', new Date('2019-12-26T04:35:19+08:00'), { timezoneOffset: 480 });
     expect(res.text).toEqual("3 o'clock - 3 minutes ago");
     expect(res.start.date().toISOString()).toEqual('2019-12-25T19:00:00.000Z');
-    expect(res.end.date().toISOString()).toEqual('2019-12-25T20:32:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-12-25T20:33:00.000Z');
 
     // ambiguous
     res = parse('within 3 days', new Date('2019-12-26T04:35:19+08:00'), { timezoneOffset: 480 });
