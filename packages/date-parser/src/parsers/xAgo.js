@@ -1,7 +1,7 @@
 import Chrono from 'chrono-node';
-import Moment from 'moment';
 import dateStructFromDate from '../helpers/dateStructFromDate';
 import truncateDateStruct from '../helpers/truncateDateStruct';
+import momentFromStruct from '../helpers/momentFromStruct';
 import chronoDateStructFromMoment from '../helpers/chronoDateStructFromMoment';
 
 const parser = new Chrono.Parser();
@@ -27,17 +27,17 @@ parser.extract = (text, ref, match) => {
   if (!exact) {
     refDateStruct = truncateDateStruct(refDateStruct, dateUnit);
   }
-  const startMoment = Moment.utc(refDateStruct);
-  startMoment.add(value, dateUnit);
+  let startMoment = momentFromStruct(refDateStruct);
+  startMoment = startMoment.add(value, dateUnit);
 
-  const endMoment = startMoment.clone();
+  let endMoment = startMoment.clone();
   if (duration) {
     const [durationValue, durationDateUnit] = duration.split(' ');
-    endMoment.add(parseInt(durationValue), durationDateUnit);
+    endMoment = endMoment.add(parseInt(durationValue), durationDateUnit);
   } else if (exact) {
-    endMoment.add(1, 'second');
+    endMoment = endMoment.add(1, 'second');
   } else {
-    endMoment.add(1, dateUnit);
+    endMoment = endMoment.add(1, dateUnit);
   }
 
   return new Chrono.ParsedResult({

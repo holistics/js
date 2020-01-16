@@ -1,10 +1,23 @@
 import ChronoNode from 'chrono-node';
-import Moment from 'moment';
 import _flatten from 'lodash/flatten';
+
+import dayjs from 'dayjs';
+import en from 'dayjs/locale/en';
+import utcPlugin from 'dayjs/plugin/utc';
+import weekdayPlugin from 'dayjs/plugin/weekday';
 
 import options from './options';
 import isValidDate from './helpers/isValidDate';
 import { OUTPUT_TYPES, DATE_RANGE_PATTERNS } from './constants';
+
+// https://github.com/iamkun/dayjs/issues/215#issuecomment-471280396
+// note that this makes weekday(0) -> monday
+dayjs.locale({
+  ...en,
+  weekStart: 1,
+});
+dayjs.extend(weekdayPlugin);
+dayjs.extend(utcPlugin);
 
 const chrono = new ChronoNode.Chrono(options);
 
@@ -49,10 +62,9 @@ export const parse = (str, ref, { timezoneOffset = 0, output = OUTPUT_TYPES.pars
   if (!isValidDate(refDate)) throw new Error('Invalid reference date');
 
   // Adjust refDate by timezoneOffset
-  const refMoment = Moment.utc(refDate);
-  refMoment.add(timezoneOffset, 'minute');
+  let refMoment = dayjs.utc(refDate);
+  refMoment = refMoment.add(timezoneOffset, 'minute');
   const refDateAdjustedByTz = refMoment.toDate();
-
 
   const { isRange, parts, rangeSeparator, isRangeEndInclusive } = splitInputStr(str);
 

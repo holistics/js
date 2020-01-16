@@ -1,6 +1,6 @@
 import Chrono from 'chrono-node';
-import Moment from 'moment';
 import dateStructFromDate from '../helpers/dateStructFromDate';
+import momentFromStruct from '../helpers/momentFromStruct';
 import chronoDateStructFromMoment from '../helpers/chronoDateStructFromMoment';
 import truncateDateStruct from '../helpers/truncateDateStruct';
 
@@ -25,11 +25,10 @@ parser.extract = (text, ref, match) => {
   }
 
   const refDateStruct = truncateDateStruct(dateStructFromDate(ref), 'day');
-  const startMoment = Moment.utc(refDateStruct);
-  startMoment.add(value, 'day');
+  let startMoment = momentFromStruct(refDateStruct);
+  startMoment = startMoment.add(value, 'day');
 
-  const endMoment = startMoment.clone();
-  endMoment.add(1, 'day');
+  const endMoment = startMoment.add(1, 'day');
 
   return new Chrono.ParsedResult({
     ref,

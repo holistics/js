@@ -1,7 +1,7 @@
 import Chrono from 'chrono-node';
-import Moment from 'moment';
 import dateStructFromDate from '../helpers/dateStructFromDate';
 import truncateDateStruct from '../helpers/truncateDateStruct';
+import momentFromStruct from '../helpers/momentFromStruct';
 import chronoDateStructFromMoment from '../helpers/chronoDateStructFromMoment';
 import { WEEKDAYS } from '../constants';
 
@@ -30,12 +30,11 @@ parser.extract = (text, ref, match) => {
   }
 
   const refDateStruct = truncateDateStruct(dateStructFromDate(ref), 'day');
-  const startMoment = Moment.utc(refDateStruct);
-  startMoment.add(value, 'week');
-  startMoment.isoWeekday(WEEKDAYS[weekday]);
+  let startMoment = momentFromStruct(refDateStruct);
+  startMoment = startMoment.add(value, 'week');
+  startMoment = startMoment.weekday(WEEKDAYS[weekday]);
 
-  const endMoment = startMoment.clone();
-  endMoment.add(1, 'day');
+  const endMoment = startMoment.add(1, 'day');
 
   return new Chrono.ParsedResult({
     ref,

@@ -1,7 +1,7 @@
 import Chrono from 'chrono-node';
-import Moment from 'moment';
 import truncateDateStruct from '../helpers/truncateDateStruct';
 import dateStructFromDate from '../helpers/dateStructFromDate';
+import momentFromStruct from '../helpers/momentFromStruct';
 import chronoDateStructFromMoment from '../helpers/chronoDateStructFromMoment';
 import isTimeUnit from '../helpers/isTimeUnit';
 
@@ -23,28 +23,27 @@ parser.extract = (text, ref, match) => {
   const pointOfTime = match[4];
 
   const refDateStruct = truncateDateStruct(dateStructFromDate(ref), dateUnit);
-  let startMoment = Moment.utc(refDateStruct);
+  let startMoment = momentFromStruct(refDateStruct);
   let endMoment = startMoment.clone();
 
   // Set range according to past/future relativity
   if (modifier === 'last') {
-    startMoment.subtract(value, dateUnit);
-    endMoment.subtract(1, dateUnit);
+    startMoment = startMoment.subtract(value, dateUnit);
+    endMoment = endMoment.subtract(1, dateUnit);
   } else if (modifier === 'next') {
-    endMoment.add(value, dateUnit);
-    startMoment.add(1, dateUnit);
+    endMoment = endMoment.add(value, dateUnit);
+    startMoment = startMoment.add(1, dateUnit);
   }
 
   // Push start, end to start, end of time period
-  startMoment.startOf(dateUnit === 'week' ? 'isoWeek' : dateUnit);
-  endMoment.endOf(dateUnit === 'week' ? 'isoWeek' : dateUnit);
-  endMoment.add(1, 'second').millisecond(0);
+  startMoment = startMoment.startOf(dateUnit);
+  endMoment = endMoment.endOf(dateUnit).add(1, 'second').millisecond(0);
 
   // Set to point of time if specified
   if (pointOfTime === 'begin') {
-    endMoment = startMoment.clone().add(1, isTimeUnit(dateUnit) ? 'second' : 'day');
+    endMoment = startMoment.add(1, isTimeUnit(dateUnit) ? 'second' : 'day');
   } else if (pointOfTime === 'end') {
-    startMoment = endMoment.clone().subtract(1, isTimeUnit(dateUnit) ? 'second' : 'day');
+    startMoment = endMoment.subtract(1, isTimeUnit(dateUnit) ? 'second' : 'day');
   }
 
   return new Chrono.ParsedResult({
