@@ -87,8 +87,8 @@ export const parse = (str, ref, { timezoneOffset = 0, output = OUTPUT_TYPES.pars
   result.end = isRangeEndInclusive ? last.end.clone() : last.start.clone();
 
   if (output === OUTPUT_TYPES.date) {
-    result.start = result.start.moment().format('YYYY-MM-DD');
-    result.end = result.end.moment().format('YYYY-MM-DD');
+    result.start = result.start.moment().utcOffset(timezoneOffset).format('YYYY-MM-DD');
+    result.end = result.end.moment().utcOffset(timezoneOffset).format('YYYY-MM-DD');
   } else if (output === OUTPUT_TYPES.timestamp) {
     result.start = result.start.date().toISOString();
     result.end = result.end.date().toISOString();

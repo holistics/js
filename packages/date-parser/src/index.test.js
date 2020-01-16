@@ -909,16 +909,16 @@ describe('dateParser', () => {
     expect(res.end.date().toISOString()).toEqual('2018-02-28T21:00:00.000Z');
 
 
-    res = parse('yesterday', new Date('2019-04-11T23:00:00+00:00'), { timezoneOffset: 420 });
-    expect(res.start.date().toISOString()).toEqual('2019-04-10T17:00:00.000Z');
-    expect(res.end.date().toISOString()).toEqual('2019-04-11T17:00:00.000Z');
+    res = parse('yesterday', new Date('2019-04-11T23:00:00+00:00'), { timezoneOffset: 540 });
+    expect(res.start.date().toISOString()).toEqual('2019-04-10T15:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-04-11T15:00:00.000Z');
     expect(res.ref.toISOString()).toEqual('2019-04-11T23:00:00.000Z');
 
-    res = parse('June 2019', new Date('2019-12-25T23:00:00+00:00'), { timezoneOffset: 420 });
-    expect(res.start.date().toISOString()).toEqual('2019-05-31T17:00:00.000Z');
-    expect(res.end.date().toISOString()).toEqual('2019-06-30T17:00:00.000Z');
+    res = parse('June 2019', new Date('2019-12-25T23:00:00+00:00'), { timezoneOffset: 540 });
+    expect(res.start.date().toISOString()).toEqual('2019-05-31T15:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-06-30T15:00:00.000Z');
 
-    res = parse('exactly 3 days ago', new Date('2019-12-26T04:35:19+08:00'), { timezoneOffset: 480 });
+    res = parse('exactly 3 days ago', new Date('2019-12-26T04:35:19+08:00'), { timezoneOffset: 540 });
     expect(res.start.date().toISOString()).toEqual('2019-12-22T20:35:19.000Z');
     expect(res.end.date().toISOString()).toEqual('2019-12-22T20:35:20.000Z');
   });
@@ -926,13 +926,13 @@ describe('dateParser', () => {
   it('has good behavior with default parsers', () => {
     let res;
 
-    res = parse('3 o\'clock - 3 minutes ago', new Date('2019-12-26T04:35:19+08:00'), { timezoneOffset: 480 });
+    res = parse('3 o\'clock - 3 minutes ago', new Date('2019-12-26T04:35:19+08:00'), { timezoneOffset: 540 });
     expect(res.text).toEqual("3 o'clock - 3 minutes ago");
-    expect(res.start.date().toISOString()).toEqual('2019-12-25T19:00:00.000Z');
+    expect(res.start.date().toISOString()).toEqual('2019-12-25T18:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2019-12-25T20:33:00.000Z');
 
     // ambiguous
-    res = parse('within 3 days', new Date('2019-12-26T04:35:19+08:00'), { timezoneOffset: 480 });
+    res = parse('within 3 days', new Date('2019-12-26T04:35:19+08:00'), { timezoneOffset: 540 });
     expect(res).toEqual(null);
   });
 
@@ -946,11 +946,17 @@ describe('dateParser', () => {
     res = parse('yesterday', new Date('2019-04-11T22:00:00+00:00'), { timezoneOffset: 420, output: 'timestamp' });
     expect(res.start).toEqual('2019-04-10T17:00:00.000Z');
     expect(res.end).toEqual('2019-04-11T17:00:00.000Z');
+    res = parse('yesterday', new Date('2019-04-11T22:00:00+00:00'), { timezoneOffset: 540, output: 'timestamp' });
+    expect(res.start).toEqual('2019-04-10T15:00:00.000Z');
+    expect(res.end).toEqual('2019-04-11T15:00:00.000Z');
     res = parse('yesterday', new Date('2019-04-11T22:00:00+00:00'), { timezoneOffset: 60, output: 'timestamp' });
     expect(res.start).toEqual('2019-04-09T23:00:00.000Z');
     expect(res.end).toEqual('2019-04-10T23:00:00.000Z');
 
     res = parse('yesterday', new Date('2019-04-11T22:00:00+00:00'), { timezoneOffset: 420, output: 'date' });
+    expect(res.start).toEqual('2019-04-11');
+    expect(res.end).toEqual('2019-04-12');
+    res = parse('yesterday', new Date('2019-04-11T22:00:00+00:00'), { timezoneOffset: 540, output: 'date' });
     expect(res.start).toEqual('2019-04-11');
     expect(res.end).toEqual('2019-04-12');
     res = parse('yesterday', new Date('2019-04-11T22:00:00+00:00'), { timezoneOffset: 60, output: 'date' });
