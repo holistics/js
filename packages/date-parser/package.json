@@ -21,7 +21,8 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1",
     "preversion": "yarn build",
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "build-cmd": "yarn build && yarn pkg --targets node12-linux-x64 --output ./dist/date_parser ./cmd/index.js"
   },
   "bugs": {
     "url": "https://github.com/holistics/js/issues"
@@ -32,6 +33,7 @@
     "lodash": "^4.17.15"
   },
   "devDependencies": {
-    "mockdate": "^2.0.5"
+    "pkg": "^4.4.2",
+    "yargs": "^15.1.0"
   }
 }
