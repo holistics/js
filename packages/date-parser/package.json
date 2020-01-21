@@ -22,7 +22,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1",
     "preversion": "yarn build",
     "build": "rollup -c",
-    "build-cmd": "yarn build && yarn pkg --targets node12-linux-x64 --output ./dist/date_parser ./cmd/index.js"
+    "build-cli": "yarn build && node ./cli/build.js"
   },
   "bugs": {
     "url": "https://github.com/holistics/js/issues"
