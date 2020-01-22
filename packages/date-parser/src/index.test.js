@@ -940,6 +940,10 @@ describe('dateParser', () => {
     expect(() => parse('today', 'ahehe')).toThrowError(/invalid ref/i);
   });
 
+  it('rejects invalid timezoneOffset', () => {
+    expect(() => parse('today', new Date(), { timezoneOffset: 'asd' })).toThrowError(/invalid timezoneOffset/i);
+  });
+
   it('cant output in timestamp format', () => {
     let res;
 

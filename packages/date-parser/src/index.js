@@ -60,6 +60,9 @@ const splitInputStr = (str) => {
 export const parse = (str, ref, { timezoneOffset = 0, output = OUTPUT_TYPES.parsed_component } = {}) => {
   const refDate = new Date(ref);
   if (!isValidDate(refDate)) throw new Error(`Invalid reference date ${ref}`);
+
+  /* eslint-disable-next-line no-param-reassign */
+  timezoneOffset = parseInt(timezoneOffset);
   if (Number.isNaN(timezoneOffset)) throw new Error(`Invalid timezoneOffset ${timezoneOffset}`);
 
   // Adjust refDate by timezoneOffset
