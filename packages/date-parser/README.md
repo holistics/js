@@ -5,8 +5,7 @@
 ## Usage
 
 ```javascript
-import { parse } from '@holistics/date-parser';
-import { OUTPUT_TYPES } from '@holistics/date-parser/constants';
+import { parse, OUTPUT_TYPES } from '@holistics/date-parser';
 
 const referenceDate = new Date();
 
