@@ -100,4 +100,5 @@ export const parse = (str, ref, { timezoneOffset = 0, output = OUTPUT_TYPES.pars
 
 export default {
   parse,
+  OUTPUT_TYPES,
 };
