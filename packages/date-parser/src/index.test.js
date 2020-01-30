@@ -794,9 +794,6 @@ describe('dateParser', () => {
   it('can parse weekdays', () => {
     let res;
 
-    res = parse('thursday', new Date('2019-12-26T02:14:05Z'));
-    expect(res).toEqual(null);
-
     res = parse('thursday this week', new Date('2019-12-26T02:14:05Z'));
     expect(res).toMatchObject({
       start: {
@@ -976,5 +973,13 @@ describe('dateParser', () => {
 
     expect(!!Errors).toBe(true);
     expect(!!Errors.InputError).toBe(true);
+  });
+
+  it('detect ambiguous input and raise informative error', () => {
+    expect(() => parse('this mon', new Date())).toThrowError(/ambiguous.*mon this week/i);
+    expect(() => parse('last monday', new Date())).toThrowError(/ambiguous.*monday last week/i);
+    expect(() => parse('next Friday', new Date())).toThrowError(/ambiguous.*Friday next week/);
+    expect(() => parse('thursday', new Date())).toThrowError(/ambiguous.*thursday last\/this\/next week/);
+
   });
 });

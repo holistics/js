@@ -1,5 +1,7 @@
 import ChronoNode from 'chrono-node';
 
+import ambiguousWeekdayGuard from './parsers/guards/ambiguousWeekday';
+
 import constantsParser from './parsers/constants';
 import todayParser from './parsers/today';
 import yearParser from './parsers/year';
@@ -16,6 +18,8 @@ const parserConfig = { strict: true };
 
 export default {
   parsers: [
+    ambiguousWeekdayGuard,
+
     constantsParser,
     todayParser,
     yearParser,
