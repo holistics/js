@@ -1,4 +1,4 @@
-import { parse } from './index';
+import { parse, OUTPUT_TYPES, Errors } from './index';
 
 describe('dateParser', () => {
   it('works with lastX format', () => {
@@ -969,5 +969,12 @@ describe('dateParser', () => {
     res = parse('yesterday', new Date('2019-04-11T22:00:00+00:00'), { output: 'date' });
     expect(res.start).toEqual('2019-04-10');
     expect(res.end).toEqual('2019-04-11');
+  });
+
+  it('exports necessary constants', () => {
+    expect(!!OUTPUT_TYPES).toBe(true);
+
+    expect(!!Errors).toBe(true);
+    expect(!!Errors.InputError).toBe(true);
   });
 });

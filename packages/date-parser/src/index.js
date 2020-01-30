@@ -9,6 +9,7 @@ import weekdayPlugin from 'dayjs/plugin/weekday';
 import options from './options';
 import isValidDate from './helpers/isValidDate';
 import { OUTPUT_TYPES, DATE_RANGE_PATTERNS } from './constants';
+import Errors, { InputError } from './errors';
 
 // https://github.com/iamkun/dayjs/issues/215#issuecomment-471280396
 // note that this makes weekday(0) -> monday
@@ -59,11 +60,11 @@ const splitInputStr = (str) => {
  */
 export const parse = (str, ref, { timezoneOffset = 0, output = OUTPUT_TYPES.parsed_component } = {}) => {
   const refDate = new Date(ref);
-  if (!isValidDate(refDate)) throw new Error(`Invalid reference date ${ref}`);
+  if (!isValidDate(refDate)) throw new InputError(`Invalid reference date ${ref}`);
 
   /* eslint-disable-next-line no-param-reassign */
   timezoneOffset = parseInt(timezoneOffset);
-  if (Number.isNaN(timezoneOffset)) throw new Error(`Invalid timezoneOffset ${timezoneOffset}`);
+  if (Number.isNaN(timezoneOffset)) throw new InputError(`Invalid timezoneOffset ${timezoneOffset}`);
 
   // Adjust refDate by timezoneOffset
   let refMoment = dayjs.utc(refDate);
@@ -102,8 +103,10 @@ export const parse = (str, ref, { timezoneOffset = 0, output = OUTPUT_TYPES.pars
 };
 
 export { OUTPUT_TYPES } from './constants';
+export { default as Errors } from './errors';
 
 export default {
   parse,
   OUTPUT_TYPES,
+  Errors,
 };
