@@ -30,4 +30,8 @@ module.exports = {
       },
     ],
   },
+  externals: {
+    'chrono-node': 'chrono-node',
+    dayjs: 'dayjs',
+  },
 };
