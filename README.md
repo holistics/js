@@ -34,8 +34,10 @@ cp -R packages/sample packages/your-new-package
 
 ```bash
 vim packages/your-new-package/package.json
-# remember to change package's 'name', 'main', 'module', 'browser' (entry points) and set its 'version' back to '0.0.0'
+# remember to change package's 'name', 'main' and set its 'version' back to '0.0.0'
 ```
+
+* Update new package's `webpack.config.js` if needed
 
 ### Publishing
 
