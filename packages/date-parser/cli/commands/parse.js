@@ -1,4 +1,4 @@
-const dateParser = require('../../dist/date-parser.cjs.js');
+const dateParser = require('../../dist/date-parser.js');
 
 const serializeParsedResult = (parsedResult) => {
   if (!parsedResult) return null;
