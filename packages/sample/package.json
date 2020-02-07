@@ -5,9 +5,7 @@
   "author": "Hoang Do <hoang.do@holistics.io>",
   "homepage": "https://github.com/holistics/js#readme",
   "license": "MIT",
-  "main": "dist/sample.cjs.js",
-  "module": "dist/sample.esm.js",
-  "browser": "dist/sample.umd.js",
+  "main": "dist/sample.js",
   "files": [
     "dist"
   ],
@@ -21,7 +19,7 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1",
     "preversion": "yarn build",
-    "build": "rollup -c"
+    "build": "webpack --config webpack.config.js"
   },
   "bugs": {
     "url": "https://github.com/holistics/js/issues"
