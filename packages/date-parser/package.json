@@ -5,9 +5,7 @@
   "author": "Dat Bui <scott.bui@holistics.io>",
   "homepage": "https://github.com/holistics/js#readme",
   "license": "MIT",
-  "main": "dist/date-parser.cjs.js",
-  "module": "dist/date-parser.esm.js",
-  "browser": "dist/date-parser.umd.js",
+  "main": "dist/date-parser.js",
   "files": [
     "dist"
   ],
@@ -21,7 +19,7 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1",
     "preversion": "yarn build",
-    "build": "rollup -c",
+    "build": "webpack --config webpack.config.js",
     "build-cli": "yarn build && node ./cli/build.js"
   },
   "bugs": {
