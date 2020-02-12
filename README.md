@@ -2,6 +2,8 @@
 
 > Holistics open-source javascript packages
 
+[![holistics](https://circleci.com/gh/holistics/js.svg?style=svg)](https://circleci.com/gh/holistics/js)
+
 ## Contributing
 
 ### Prerequisites
