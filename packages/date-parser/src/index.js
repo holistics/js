@@ -1,5 +1,5 @@
 import ChronoNode from 'chrono-node';
-import _flatten from 'lodash/flatten';
+import _compact from 'lodash/compact';
 
 import dayjs from 'dayjs';
 
@@ -62,14 +62,21 @@ export const parse = (str, ref, { timezoneOffset = 0, output = OUTPUT_TYPES.pars
   refMoment = refMoment.add(timezoneOffset, 'minute');
   const refDateAdjustedByTz = refMoment.toDate();
 
-  const { isRange, parts, rangeSeparator, isRangeEndInclusive } = splitInputStr(str);
+  const splittedInput = splitInputStr(str);
+  const { parts, rangeSeparator } = splittedInput;
+  let { isRange, isRangeEndInclusive } = splittedInput;
 
-  const parsedResults = _flatten(parts.map(part => chrono.parse(part, refDateAdjustedByTz, { timezoneOffset })));
+  const parsedResults = _compact(parts.map(part => chrono.parse(part, refDateAdjustedByTz, { timezoneOffset })[0]));
 
   if (output === OUTPUT_TYPES.raw) return parsedResults;
 
   const first = parsedResults[0];
   if (!first) return null;
+
+  if (parsedResults.length === 1) {
+    isRange = false;
+    isRangeEndInclusive = true;
+  }
 
   const last = parsedResults[parsedResults.length - 1];
 

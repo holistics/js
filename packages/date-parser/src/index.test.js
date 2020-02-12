@@ -791,6 +791,25 @@ describe('dateParser', () => {
     expect(res.end.date().toISOString()).toEqual('2019-12-31T15:36:00.000Z');
   });
 
+  it('discards invalid range, keeps the valid part only', () => {
+    let res;
+
+    res = parse('yesterday-today', new Date('2018-06-25T05:00:00+08:00'), { timezoneOffset: 60 });
+    expect(res.text).toEqual('yesterday');
+    expect(res.start.moment().format('YYYY/MM/DD')).toEqual('2018/06/23');
+    expect(res.end.moment().format('YYYY/MM/DD')).toEqual('2018/06/24');
+
+    res = parse('yesterday till asd', new Date('2018-06-25T05:00:00+08:00'), { timezoneOffset: 60 });
+    expect(res.text).toEqual('yesterday');
+    expect(res.start.moment().format('YYYY/MM/DD')).toEqual('2018/06/23');
+    expect(res.end.moment().format('YYYY/MM/DD')).toEqual('2018/06/24');
+
+    res = parse('ahihi till yesterday', new Date('2018-06-25T05:00:00+08:00'), { timezoneOffset: 60 });
+    expect(res.text).toEqual('yesterday');
+    expect(res.start.moment().format('YYYY/MM/DD')).toEqual('2018/06/23');
+    expect(res.end.moment().format('YYYY/MM/DD')).toEqual('2018/06/24');
+  });
+
   it('can parse weekdays', () => {
     let res;
 
