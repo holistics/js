@@ -909,6 +909,10 @@ describe('dateParser', () => {
     res = parse('yesterday', new Date('2019-04-11T23:00:00+00:00'), { timezoneOffset: 540 });
     expect(res.start.date().toISOString()).toEqual('2019-04-10T15:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2019-04-11T15:00:00.000Z');
+    expect(res.start.moment().utcOffset()).toEqual(540);
+    expect(res.end.moment().utcOffset()).toEqual(540);
+    expect(res.start.moment().format('YYYY-MM-DD')).toEqual('2019-04-11');
+    expect(res.end.moment().format('YYYY-MM-DD')).toEqual('2019-04-12');
     expect(res.ref.toISOString()).toEqual('2019-04-11T23:00:00.000Z');
 
     res = parse('June 2019', new Date('2019-12-25T23:00:00+00:00'), { timezoneOffset: 540 });
@@ -980,6 +984,5 @@ describe('dateParser', () => {
     expect(() => parse('last monday', new Date())).toThrowError(/ambiguous.*monday last week/i);
     expect(() => parse('next Friday', new Date())).toThrowError(/ambiguous.*Friday next week/);
     expect(() => parse('thursday', new Date())).toThrowError(/ambiguous.*thursday last\/this\/next week/);
-
   });
 });

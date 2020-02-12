@@ -2,23 +2,14 @@ import ChronoNode from 'chrono-node';
 import _flatten from 'lodash/flatten';
 
 import dayjs from 'dayjs';
-import en from 'dayjs/locale/en';
-import utcPlugin from 'dayjs/plugin/utc';
-import weekdayPlugin from 'dayjs/plugin/weekday';
+
+import './initializers/dayjs';
+import './initializers/chrono-node';
 
 import options from './options';
 import isValidDate from './helpers/isValidDate';
 import { OUTPUT_TYPES, DATE_RANGE_PATTERNS } from './constants';
 import Errors, { InputError } from './errors';
-
-// https://github.com/iamkun/dayjs/issues/215#issuecomment-471280396
-// note that this makes weekday(0) -> monday
-dayjs.locale({
-  ...en,
-  weekStart: 1,
-});
-dayjs.extend(weekdayPlugin);
-dayjs.extend(utcPlugin);
 
 const chrono = new ChronoNode.Chrono(options);
 
@@ -92,8 +83,8 @@ export const parse = (str, ref, { timezoneOffset = 0, output = OUTPUT_TYPES.pars
   result.end = isRangeEndInclusive ? last.end.clone() : last.start.clone();
 
   if (output === OUTPUT_TYPES.date) {
-    result.start = result.start.moment().utcOffset(timezoneOffset).format('YYYY-MM-DD');
-    result.end = result.end.moment().utcOffset(timezoneOffset).format('YYYY-MM-DD');
+    result.start = result.start.moment().format('YYYY-MM-DD');
+    result.end = result.end.moment().format('YYYY-MM-DD');
   } else if (output === OUTPUT_TYPES.timestamp) {
     result.start = result.start.date().toISOString();
     result.end = result.end.date().toISOString();
