@@ -5,7 +5,7 @@ import { ParseError } from '../../errors';
 const guard = new Chrono.Parser();
 
 guard.pattern = () => {
-  return new RegExp(`^\\s*(last|this|next)? ?((?<= )${Object.keys(WEEKDAYS).join('|')})\\s*$`, 'i');
+  return new RegExp(`^\\s*((?:last|this|next) )?(${Object.keys(WEEKDAYS).join('|')})\\s*$`, 'i');
 };
 
 /**
@@ -14,7 +14,7 @@ guard.pattern = () => {
  * @param {Array} match
  */
 guard.extract = (text, ref, match) => {
-  const modifier = match[1] || 'last/this/next';
+  const modifier = (match[1] || 'last/this/next').trim();
   const weekday = match[2];
   throw new ParseError(`"${match[0]}" is ambiguous. Please try "${weekday} ${modifier} week" instead`);
 };

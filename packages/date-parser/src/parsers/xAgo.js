@@ -8,7 +8,7 @@ const parser = new Chrono.Parser();
 
 parser.pattern = () => {
   /* eslint-disable-next-line max-len */
-  return new RegExp('(exact(?:ly)? )?(\\d+) (year|month|week|day|hour|minute|second)s? (ago|from now)(?: for )?((?<= for )\\d+ (?:year|month|week|day|hour|minute|second)s?)?', 'i');
+  return new RegExp('(exact(?:ly)? )?(\\d+) (year|month|week|day|hour|minute|second)s? (ago|from now)( for \\d+ (?:year|month|week|day|hour|minute|second)s?)?', 'i');
 };
 
 /**
@@ -32,7 +32,7 @@ parser.extract = (text, ref, match) => {
 
   let endMoment = startMoment.clone();
   if (duration) {
-    const [durationValue, durationDateUnit] = duration.split(' ');
+    const [durationValue, durationDateUnit] = duration.replace(' for ', '').split(' ');
     endMoment = endMoment.add(parseInt(durationValue), durationDateUnit);
   } else if (exact) {
     endMoment = endMoment.add(1, 'second');

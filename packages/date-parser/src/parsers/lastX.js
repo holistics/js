@@ -8,7 +8,7 @@ import isTimeUnit from '../helpers/isTimeUnit';
 const parser = new Chrono.Parser();
 
 parser.pattern = () => {
-  return new RegExp('(last|next|this) ?((?<= )\\d+)? (year|month|week|day|hour|minute|second)s? ?((?<= )(?:begin|end))?', 'i');
+  return new RegExp('(last|next|this)( \\d+)? (year|month|week|day|hour|minute|second)s?( (?:begin|end))?', 'i');
 };
 
 /**
@@ -18,9 +18,9 @@ parser.pattern = () => {
  */
 parser.extract = (text, ref, match) => {
   const modifier = match[1];
-  const value = modifier === 'this' ? 0 : parseInt(match[2] || 1);
+  const value = modifier === 'this' ? 0 : parseInt((match[2] || '1').trim());
   const dateUnit = match[3].toLowerCase();
-  const pointOfTime = match[4];
+  const pointOfTime = (match[4] || '').trim();
 
   const refDateStruct = truncateDateStruct(dateStructFromDate(ref), dateUnit);
   let startMoment = momentFromStruct(refDateStruct);
