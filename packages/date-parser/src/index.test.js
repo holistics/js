@@ -642,6 +642,11 @@ describe('dateParser', () => {
     expect(res.start.date().toISOString()).toEqual('1970-01-01T00:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2019-12-29T00:00:00.000Z');
 
+    // auto reorder range
+    res = parse('3 days ago - beginning', new Date('2019-12-31T02:14:05Z'));
+    expect(res.start.date().toISOString()).toEqual('1970-01-01T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-12-29T00:00:00.000Z');
+
     res = parse('beginning - 3 days ago', new Date('2019-12-31T02:14:05Z'), { output: 'raw' });
     expect(res[0]).toMatchObject({
       text: 'beginning',
@@ -677,24 +682,6 @@ describe('dateParser', () => {
     });
     expect(res[1].start.date().toISOString()).toEqual('2019-12-28T00:00:00.000Z');
     expect(res[1].end.date().toISOString()).toEqual('2019-12-29T00:00:00.000Z');
-
-    res = parse('3 days ago till 15:36', new Date('2019-12-31T02:14:05Z'));
-    expect(res).toMatchObject({
-      start: {
-        knownValues: {
-          year: 2019, month: 12, day: 28, hour: 0, minute: 0, second: 0,
-        },
-        impliedValues: { millisecond: 0 },
-      },
-      end: {
-        knownValues: {
-          hour: 15, minute: 36,
-        },
-        impliedValues: { year: 2019, month: 12, day: 31, second: 0, millisecond: 0 },
-      },
-    });
-    expect(res.start.date().toISOString()).toEqual('2019-12-28T00:00:00.000Z');
-    expect(res.end.date().toISOString()).toEqual('2019-12-31T15:36:00.000Z');
   });
 
   it('works with end-exclusive range', () => {
@@ -789,6 +776,21 @@ describe('dateParser', () => {
     });
     expect(res.start.date().toISOString()).toEqual('2019-12-28T00:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2019-12-31T15:36:00.000Z');
+
+    // raises error when start > end
+    expect(() => parse('tomorrow till 3 days ago', new Date())).toThrowError(/must be before/i);
+  });
+
+  it('keeps order when date range boundaries overlaps', () => {
+    let res;
+
+    res = parse('this week - yesterday', new Date('2019-12-31T02:14:05Z'));
+    expect(res.start.date().toISOString()).toEqual('2019-12-30T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-12-31T00:00:00.000Z');
+
+    res = parse('yesterday - this week', new Date('2019-12-31T02:14:05Z'));
+    expect(res.start.date().toISOString()).toEqual('2019-12-30T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2020-01-06T00:00:00.000Z');
   });
 
   it('discards invalid range, keeps the valid part only', () => {

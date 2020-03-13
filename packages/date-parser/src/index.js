@@ -1,5 +1,6 @@
 import ChronoNode from 'chrono-node';
 import _compact from 'lodash/compact';
+import _some from 'lodash/some';
 
 import dayjs from 'dayjs';
 
@@ -8,7 +9,7 @@ import './initializers/chrono-node';
 
 import options from './options';
 import isValidDate from './helpers/isValidDate';
-import { OUTPUT_TYPES, DATE_RANGE_PATTERNS } from './constants';
+import { OUTPUT_TYPES, DATE_RANGE_PATTERNS, DATE_RANGE_KEYWORDS } from './constants';
 import Errors, { InputError } from './errors';
 
 const chrono = new ChronoNode.Chrono(options);
@@ -38,6 +39,18 @@ const splitInputStr = (str) => {
     rangeSeparator,
     isRangeEndInclusive,
   };
+};
+
+const getParsedResultBoundaries = (parsedResults) => {
+  const sortedResults = parsedResults.slice().sort((a, b) => {
+    if (a.end.moment().isBefore(b.start.moment())) return -1;
+    if (a.start.moment().isAfter(b.end.moment())) return 1;
+    return 0;
+  });
+  const hasOrderChanged = _some(sortedResults, (r, i) => parsedResults[i] !== r);
+  const first = sortedResults[0];
+  const last = sortedResults[sortedResults.length - 1];
+  return { first, last, hasOrderChanged };
 };
 
 /**
@@ -70,15 +83,16 @@ export const parse = (str, ref, { timezoneOffset = 0, output = OUTPUT_TYPES.pars
 
   if (output === OUTPUT_TYPES.raw) return parsedResults;
 
-  const first = parsedResults[0];
-  if (!first) return null;
-
+  if (!parsedResults[0]) return null;
   if (parsedResults.length === 1) {
     isRange = false;
     isRangeEndInclusive = true;
   }
 
-  const last = parsedResults[parsedResults.length - 1];
+  const { first, last, hasOrderChanged } = getParsedResultBoundaries(parsedResults, isRangeEndInclusive);
+  if (hasOrderChanged && !isRangeEndInclusive) {
+    throw new InputError(`Start date must be before end date when using end-exclusive syntax (${DATE_RANGE_KEYWORDS.rangeEndExclusive})`);
+  }
 
   const result = new ChronoNode.ParsedResult({
     ref: refDate,

@@ -35,7 +35,12 @@ export const OUTPUT_TYPES = {
   raw: 'raw',
 };
 
+export const DATE_RANGE_KEYWORDS = {
+  rangeEndInclusive: ['-'],
+  rangeEndExclusive: ['to', 'till', 'until'],
+};
+
 export const DATE_RANGE_PATTERNS = {
-  rangeEndInclusive: /(.+) (-) (.+)/i,
-  rangeEndExclusive: /(.+) (to|till|until) (.+)/i,
+  rangeEndInclusive: new RegExp(`(.+) (${DATE_RANGE_KEYWORDS.rangeEndInclusive.join('|')}) (.+)`, 'i'),
+  rangeEndExclusive: new RegExp(`(.+) (${DATE_RANGE_KEYWORDS.rangeEndExclusive.join('|')}) (.+)`, 'i'),
 };
