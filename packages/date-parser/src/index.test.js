@@ -647,7 +647,7 @@ describe('dateParser', () => {
     expect(res.start.date().toISOString()).toEqual('1970-01-01T00:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2019-12-29T00:00:00.000Z');
 
-    res = parse('beginning - 3 days ago', new Date('2019-12-31T02:14:05Z'), { output: 'raw' });
+    res = parse('beginning to 3 days ago', new Date('2019-12-31T02:14:05Z'), { output: 'raw' });
     expect(res[0]).toMatchObject({
       text: 'beginning',
       start: {
@@ -687,7 +687,7 @@ describe('dateParser', () => {
   it('works with end-exclusive range', () => {
     let res;
 
-    res = parse('beginning to now', new Date('2019-12-31T02:14:05Z'));
+    res = parse('beginning until now', new Date('2019-12-31T02:14:05Z'));
     expect(res).toMatchObject({
       start: {
         knownValues: {

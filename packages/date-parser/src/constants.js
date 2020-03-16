@@ -36,8 +36,8 @@ export const OUTPUT_TYPES = {
 };
 
 export const DATE_RANGE_KEYWORDS = {
-  rangeEndInclusive: ['-'],
-  rangeEndExclusive: ['to', 'till', 'until'],
+  rangeEndInclusive: ['-', 'to'],
+  rangeEndExclusive: ['till', 'until'],
 };
 
 export const DATE_RANGE_PATTERNS = {
