@@ -4,6 +4,7 @@ import _some from 'lodash/some';
 
 import dayjs from 'dayjs';
 
+// NOTE: order is important to make sure chrono-node uses plugin-enabled dayjs
 import './initializers/dayjs';
 import './initializers/chrono-node';
 
@@ -51,6 +52,15 @@ const getParsedResultBoundaries = (parsedResults) => {
   const first = sortedResults[0];
   const last = sortedResults[sortedResults.length - 1];
   return { first, last, hasOrderChanged };
+};
+
+const setDayjsUtcOffset = (parsedResult, timezoneOffset) => {
+  [parsedResult.start, parsedResult.end].forEach((parsedComp) => {
+    const origDayjs = parsedComp.dayjs.bind(parsedComp);
+    parsedComp.dayjs = () => {
+      return origDayjs().utcOffset(timezoneOffset);
+    };
+  });
 };
 
 /**
@@ -102,6 +112,9 @@ export const parse = (str, ref, { timezoneOffset = 0, output = OUTPUT_TYPES.pars
   });
   result.start = first.start.clone();
   result.end = isRangeEndInclusive ? last.end.clone() : last.start.clone();
+
+  // At the beginning, we have adjusted date by timezoneOffset, so now we must set the offset to the end result
+  setDayjsUtcOffset(result, timezoneOffset);
 
   if (output === OUTPUT_TYPES.date) {
     result.start = result.start.moment().format('YYYY-MM-DD');
