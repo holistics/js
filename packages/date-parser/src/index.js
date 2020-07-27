@@ -4,6 +4,7 @@ import _some from 'lodash/some';
 
 import dayjs from 'dayjs';
 
+// NOTE: order is important to make sure chrono-node uses plugin-enabled dayjs
 import './initializers/dayjs';
 import './initializers/chrono-node';
 
