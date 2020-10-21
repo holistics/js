@@ -54,15 +54,6 @@ const getParsedResultBoundaries = (parsedResults) => {
   return { first, last, hasOrderChanged };
 };
 
-const setDayjsUtcOffset = (parsedResult, timezoneOffset) => {
-  [parsedResult.start, parsedResult.end].forEach((parsedComp) => {
-    const origDayjs = parsedComp.dayjs.bind(parsedComp);
-    parsedComp.dayjs = () => {
-      return origDayjs().utcOffset(timezoneOffset);
-    };
-  });
-};
-
 /**
  * Parse the given date string into Chrono.ParsedResult
  * @param {String} str The date string to parse
@@ -112,9 +103,6 @@ export const parse = (str, ref, { timezoneOffset = 0, output = OUTPUT_TYPES.pars
   });
   result.start = first.start.clone();
   result.end = isRangeEndInclusive ? last.end.clone() : last.start.clone();
-
-  // At the beginning, we have adjusted date by timezoneOffset, so now we must set the offset to the end result
-  setDayjsUtcOffset(result, timezoneOffset);
 
   if (output === OUTPUT_TYPES.date) {
     result.start = result.start.moment().format('YYYY-MM-DD');

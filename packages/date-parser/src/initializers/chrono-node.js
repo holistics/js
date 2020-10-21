@@ -2,8 +2,9 @@ import dayjs from 'dayjs';
 import { ParsedComponents } from 'chrono-node';
 
 const overrideDayjs = () => {
-  // Monkey-patch the dayjs function so that the result dayjs object has the plugins that we need (see `./dayjs`).
-  // The function is copied fron chrono-node with no modification
+  // Monkey-patch the dayjs function so that:
+  // * the result dayjs object has the plugins that we need (see `./dayjs`).
+  // * the utcOffset of the result is set according to timezoneOffset
   ParsedComponents.prototype.dayjs = function () {
     let result = dayjs();
 
@@ -21,6 +22,9 @@ const overrideDayjs = () => {
 
     const adjustTimezoneOffset = targetTimezoneOffset - currentTimezoneOffset;
     result = result.add(-adjustTimezoneOffset, 'minute');
+    /* BEGIN MONKEY PATCH */
+    result = result.utcOffset(targetTimezoneOffset); // without this, the result would have timezone offset of the process
+    /* END MONKEY PATCH */
 
     return result;
   };
