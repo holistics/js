@@ -1,6 +1,6 @@
 {
   "name": "@holistics/date-parser",
-  "version": "2.7.2",
+  "version": "2.8.0",
   "description": "Date parser",
   "author": "Dat Bui <scott.bui@holistics.io>",
   "homepage": "https://github.com/holistics/js#readme",
