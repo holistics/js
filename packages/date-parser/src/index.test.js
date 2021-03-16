@@ -58,6 +58,24 @@ describe('dateParser', () => {
     expect(res.start.date().toISOString()).toEqual('2019-11-01T00:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2019-12-01T00:00:00.000Z');
 
+    res = parse('last quarter', new Date('2019-12-26T02:14:05Z'));
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2019, month: 7, day: 1, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2019, month: 10, day: 1, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2019-07-01T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-10-01T00:00:00.000Z');
+
     res = parse('last year', new Date('2020-02-29T02:14:05Z'));
     expect(res).toMatchObject({
       start: {
