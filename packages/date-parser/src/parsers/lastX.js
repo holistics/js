@@ -8,7 +8,7 @@ import isTimeUnit from '../helpers/isTimeUnit';
 const parser = new Chrono.Parser();
 
 parser.pattern = () => {
-  return new RegExp('(last|next|this)( \\d+)? (year|month|week|day|hour|minute|second)s?( (?:begin|end))?', 'i');
+  return new RegExp('(last|next|this)( \\d+)? (year|quarter|month|week|day|hour|minute|second)s?( (?:begin|end))?', 'i');
 };
 
 /**

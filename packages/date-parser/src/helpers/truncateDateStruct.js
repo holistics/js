@@ -2,6 +2,7 @@ import _pick from 'lodash/pick';
 
 const DATE_PARTS_FOR_DATE_UNIT = {
   year: ['year'],
+  quarter: ['year', 'month'],
   month: ['year', 'month'],
   week: ['year', 'month', 'day'],
   day: ['year', 'month', 'day'],

@@ -15,8 +15,9 @@ timezoneRefiner.refine = (text, results, { timezoneOffset }) => {
    * @param {Chrono.ParsedResult} res
    */
   return results.map(res => {
-    implyTimezone(res.start, timezoneOffset);
-    implyTimezone(res.end, timezoneOffset);
+    /* istanbul ignore else */
+    if (res.start) implyTimezone(res.start, timezoneOffset);
+    if (res.end) implyTimezone(res.end, timezoneOffset);
     return res;
   });
 };

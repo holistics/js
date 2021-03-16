@@ -58,6 +58,24 @@ describe('dateParser', () => {
     expect(res.start.date().toISOString()).toEqual('2019-11-01T00:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2019-12-01T00:00:00.000Z');
 
+    res = parse('last quarter', new Date('2019-12-26T02:14:05Z'));
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2019, month: 7, day: 1, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2019, month: 10, day: 1, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2019-07-01T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-10-01T00:00:00.000Z');
+
     res = parse('last year', new Date('2020-02-29T02:14:05Z'));
     expect(res).toMatchObject({
       start: {
@@ -378,11 +396,15 @@ describe('dateParser', () => {
         knownValues: {
           year: 2019, month: 12, day: 1,
         },
-        impliedValues: { hour: 0, minute: 0, second: 0, millisecond: 0 },
+        impliedValues: {
+          hour: 0, minute: 0, second: 0, millisecond: 0,
+        },
       },
       end: {
         knownValues: {},
-        impliedValues: { year: 2019, month: 12, day: 2, hour: 0, minute: 0, second: 0, millisecond: 0 },
+        impliedValues: {
+          year: 2019, month: 12, day: 2, hour: 0, minute: 0, second: 0, millisecond: 0,
+        },
       },
     });
     expect(res.start.date().toISOString()).toEqual('2019-12-01T00:00:00.000Z');
@@ -394,11 +416,15 @@ describe('dateParser', () => {
         knownValues: {
           year: 2019, month: 12, day: 1,
         },
-        impliedValues: { hour: 0, minute: 0, second: 0, millisecond: 0 },
+        impliedValues: {
+          hour: 0, minute: 0, second: 0, millisecond: 0,
+        },
       },
       end: {
         knownValues: {},
-        impliedValues: { year: 2019, month: 12, day: 2, hour: 0, minute: 0, second: 0, millisecond: 0 },
+        impliedValues: {
+          year: 2019, month: 12, day: 2, hour: 0, minute: 0, second: 0, millisecond: 0,
+        },
       },
     });
     expect(res.start.date().toISOString()).toEqual('2019-12-01T00:00:00.000Z');
@@ -410,11 +436,15 @@ describe('dateParser', () => {
         knownValues: {
           year: 2019, month: 11, day: 30,
         },
-        impliedValues: { hour: 0, minute: 0, second: 0, millisecond: 0 },
+        impliedValues: {
+          hour: 0, minute: 0, second: 0, millisecond: 0,
+        },
       },
       end: {
         knownValues: {},
-        impliedValues: { year: 2019, month: 11, day: 31, hour: 0, minute: 0, second: 0, millisecond: 0 },
+        impliedValues: {
+          year: 2019, month: 11, day: 31, hour: 0, minute: 0, second: 0, millisecond: 0,
+        },
       },
     });
     expect(res.start.date().toISOString()).toEqual('2019-11-30T00:00:00.000Z');
@@ -430,7 +460,9 @@ describe('dateParser', () => {
       },
       end: {
         knownValues: {},
-        impliedValues: { year: 2019, month: 12, day: 1, hour: 9, minute: 15, second: 33, millisecond: 0 },
+        impliedValues: {
+          year: 2019, month: 12, day: 1, hour: 9, minute: 15, second: 33, millisecond: 0,
+        },
       },
     });
     expect(res.start.date().toISOString()).toEqual('2019-12-01T09:15:32.000Z');
@@ -442,11 +474,15 @@ describe('dateParser', () => {
         knownValues: {
           hour: 19, minute: 15, second: 32,
         },
-        impliedValues: { year: 2019, month: 12, day: 26, millisecond: 0 },
+        impliedValues: {
+          year: 2019, month: 12, day: 26, millisecond: 0,
+        },
       },
       end: {
         knownValues: {},
-        impliedValues: { year: 2019, month: 12, day: 26, hour: 19, minute: 15, second: 33, millisecond: 0 },
+        impliedValues: {
+          year: 2019, month: 12, day: 26, hour: 19, minute: 15, second: 33, millisecond: 0,
+        },
       },
     });
     expect(res.start.date().toISOString()).toEqual('2019-12-26T19:15:32.000Z');
@@ -458,11 +494,15 @@ describe('dateParser', () => {
         knownValues: {
           hour: 15, minute: 32,
         },
-        impliedValues: { year: 2019, month: 12, day: 26, second: 0, millisecond: 0 },
+        impliedValues: {
+          year: 2019, month: 12, day: 26, second: 0, millisecond: 0,
+        },
       },
       end: {
         knownValues: {},
-        impliedValues: { year: 2019, month: 12, day: 26, hour: 15, minute: 33, second: 0, millisecond: 0 },
+        impliedValues: {
+          year: 2019, month: 12, day: 26, hour: 15, minute: 33, second: 0, millisecond: 0,
+        },
       },
     });
     expect(res.start.date().toISOString()).toEqual('2019-12-26T15:32:00.000Z');
@@ -477,11 +517,15 @@ describe('dateParser', () => {
         knownValues: {
           year: 2019, month: 6,
         },
-        impliedValues: { day: 1, hour: 0, minute: 0, second: 0, millisecond: 0 },
+        impliedValues: {
+          day: 1, hour: 0, minute: 0, second: 0, millisecond: 0,
+        },
       },
       end: {
         knownValues: {},
-        impliedValues: { year: 2019, month: 7, day: 1, hour: 0, minute: 0, second: 0, millisecond: 0 },
+        impliedValues: {
+          year: 2019, month: 7, day: 1, hour: 0, minute: 0, second: 0, millisecond: 0,
+        },
       },
     });
     expect(res.start.date().toISOString()).toEqual('2019-06-01T00:00:00.000Z');
@@ -493,13 +537,17 @@ describe('dateParser', () => {
         knownValues: {
           year: 2019, month: 1, day: 1,
         },
-        impliedValues: { hour: 0, minute: 0, second: 0, millisecond: 0 },
+        impliedValues: {
+          hour: 0, minute: 0, second: 0, millisecond: 0,
+        },
       },
       end: {
         knownValues: {
           year: 2020, month: 1, day: 1,
         },
-        impliedValues: { hour: 0, minute: 0, second: 0, millisecond: 0 },
+        impliedValues: {
+          hour: 0, minute: 0, second: 0, millisecond: 0,
+        },
       },
     });
     expect(res.start.date().toISOString()).toEqual('2019-01-01T00:00:00.000Z');
@@ -771,7 +819,9 @@ describe('dateParser', () => {
         knownValues: {
           hour: 15, minute: 36,
         },
-        impliedValues: { year: 2019, month: 12, day: 31, second: 0, millisecond: 0 },
+        impliedValues: {
+          year: 2019, month: 12, day: 31, second: 0, millisecond: 0,
+        },
       },
     });
     expect(res.start.date().toISOString()).toEqual('2019-12-28T00:00:00.000Z');
@@ -779,6 +829,25 @@ describe('dateParser', () => {
 
     // raises error when start > end
     expect(() => parse('tomorrow till 3 days ago', new Date())).toThrowError(/must be before/i);
+
+    // works normally even with timezoneOffset
+    res = parse('2019-12-28T09:00:00.000Z until 2019-12-28T10:00:00.000Z', new Date('2021-03-16T02:14:05Z'), { timezoneOffset: 120 });
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2019, month: 12, day: 28, hour: 9, minute: 0, second: 0, millisecond: 0,
+        },
+        impliedValues: {},
+      },
+      end: {
+        knownValues: {
+          year: 2019, month: 12, day: 28, hour: 10, minute: 0, second: 0, millisecond: 0,
+        },
+        impliedValues: {},
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2019-12-28T09:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-12-28T10:00:00.000Z');
   });
 
   it('keeps order when date range boundaries overlaps', () => {

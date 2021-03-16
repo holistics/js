@@ -46,8 +46,8 @@ export default {
     new refiner.ENMergeDateRangeRefiner(),
     new refiner.ENPrioritizeSpecificDateRefiner(),
 
-    implier,
     timezoneRefiner,
+    implier,
     ambiguityRefiner,
   ],
 };
