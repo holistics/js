@@ -25,16 +25,16 @@ const timezoneOffset = -(new Date().getTimezoneOffset); // should use the actual
 console.log(parse('3 days from now'), referenceDate, { timezoneOffset });
 // the following examples demonstrate why timezoneOffset is important
 let res;
-res = parse('yesterday', '2019-04-11T22:00:00+00:00', { output: 'date' });
+res = parse('yesterday', '2019-04-11T22:00:00+00:00', { output: OUTPUT_TYPES.date });
 console.log(res.start) // 2019-04-10
 console.log(res.end) // 2019-04-11
-res = parse('yesterday', '2019-04-12T06:00:00+08:00', { output: 'date' });
+res = parse('yesterday', '2019-04-12T06:00:00+08:00', { output: OUTPUT_TYPES.date });
 console.log(res.start) // 2019-04-10
 console.log(res.end) // 2019-04-11
-res = parse('yesterday', '2019-04-11T22:00:00+00:00', { timezoneOffset: 540, output: 'date' });
+res = parse('yesterday', '2019-04-11T22:00:00+00:00', { timezoneOffset: 540, output: OUTPUT_TYPES.date });
 console.log(res.start) // 2019-04-11
 console.log(res.end) // 2019-04-12
 ```
 
 ## Try it out
-https://pns1x.csb.app/
+https://2zs36.csb.app/
