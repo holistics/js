@@ -3,6 +3,7 @@ import _compact from 'lodash/compact';
 import _some from 'lodash/some';
 
 import dayjs from 'dayjs';
+import en from 'dayjs/locale/en';
 
 // NOTE: order is important to make sure chrono-node uses plugin-enabled dayjs
 import './initializers/dayjs';
@@ -61,9 +62,15 @@ const getParsedResultBoundaries = (parsedResults) => {
  * @param {Object} options
  * @param {Number} options.timezoneOffset Timezone offset in minutes
  * @param {OUTPUT_TYPES} options.output Type of the output dates
+ * @param {Number} weekStartDate Default weekStartDate is 1 (Monday)
  * @return {ChronoNode.ParsedResult|Array}
  */
-export const parse = (str, ref, { timezoneOffset = 0, output = OUTPUT_TYPES.parsed_component } = {}) => {
+export const parse = (str, ref, { timezoneOffset = 0, output = OUTPUT_TYPES.parsed_component } = {}, weekStartDate = 1) => {
+  dayjs.locale({
+    ...en,
+    weekStart: weekStartDate,
+  });
+
   const refDate = new Date(ref);
   if (!isValidDate(refDate)) throw new InputError(`Invalid reference date: ${ref}`);
 
