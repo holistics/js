@@ -62,7 +62,7 @@ const getParsedResultBoundaries = (parsedResults) => {
  * @param {Object} options
  * @param {Number} options.timezoneOffset Timezone offset in minutes
  * @param {OUTPUT_TYPES} options.output Type of the output dates
- * @param {Number} weekStartDate Default weekStartDate is 1 (Monday)
+ * @param {Number} weekStartDate Default weekStartDate is 1. 0 = Sunday, 1 = Monday, ..., 6 = Saturday
  * @return {ChronoNode.ParsedResult|Array}
  */
 export const parse = (str, ref, { timezoneOffset = 0, output = OUTPUT_TYPES.parsed_component } = {}, weekStartDate = 1) => {

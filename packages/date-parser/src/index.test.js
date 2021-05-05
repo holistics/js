@@ -239,84 +239,6 @@ describe('dateParser', () => {
     expect(res.end.date().toISOString()).toEqual('2019-12-26T01:17:00.000Z');
   });
 
-  it('works with lastX format and week start date is wednesday', () => {
-    let res;
-
-    res = parse('last week', new Date('2019-12-26T02:14:05Z'), {}, 3);
-    expect(res).toMatchObject({
-      start: {
-        knownValues: {
-          year: 2019, month: 12, day: 18, hour: 0, minute: 0, second: 0,
-        },
-        impliedValues: { millisecond: 0 },
-      },
-      end: {
-        knownValues: {
-          year: 2019, month: 12, day: 25, hour: 0, minute: 0, second: 0,
-        },
-        impliedValues: { millisecond: 0 },
-      },
-    });
-    expect(res.start.date().toISOString()).toEqual('2019-12-18T00:00:00.000Z');
-    expect(res.end.date().toISOString()).toEqual('2019-12-25T00:00:00.000Z');
-
-    res = parse('this week', new Date('2019-12-26T02:14:05Z'), {}, 3);
-    expect(res).toMatchObject({
-      start: {
-        knownValues: {
-          year: 2019, month: 12, day: 25, hour: 0, minute: 0, second: 0,
-        },
-        impliedValues: { millisecond: 0 },
-      },
-      end: {
-        knownValues: {
-          year: 2020, month: 1, day: 1, hour: 0, minute: 0, second: 0,
-        },
-        impliedValues: { millisecond: 0 },
-      },
-    });
-    expect(res.start.date().toISOString()).toEqual('2019-12-25T00:00:00.000Z');
-    expect(res.end.date().toISOString()).toEqual('2020-01-01T00:00:00.000Z');
-
-    // This test to make sure the WSD does not effect last month
-    res = parse('last 2 month', new Date('2019-02-09T02:14:05Z'), {}, 3);
-    expect(res).toMatchObject({
-      start: {
-        knownValues: {
-          year: 2018, month: 12, day: 1, hour: 0, minute: 0, second: 0,
-        },
-        impliedValues: { millisecond: 0 },
-      },
-      end: {
-        knownValues: {
-          year: 2019, month: 2, day: 1, hour: 0, minute: 0, second: 0,
-        },
-        impliedValues: { millisecond: 0 },
-      },
-    });
-    expect(res.start.date().toISOString()).toEqual('2018-12-01T00:00:00.000Z');
-    expect(res.end.date().toISOString()).toEqual('2019-02-01T00:00:00.000Z');
-
-    // This test to make sure the WSD does not effect the last year
-    res = parse('last year', new Date('2020-02-29T02:14:05Z'), {}, 3);
-    expect(res).toMatchObject({
-      start: {
-        knownValues: {
-          year: 2019, month: 1, day: 1, hour: 0, minute: 0, second: 0,
-        },
-        impliedValues: { millisecond: 0 },
-      },
-      end: {
-        knownValues: {
-          year: 2020, month: 1, day: 1, hour: 0, minute: 0, second: 0,
-        },
-        impliedValues: { millisecond: 0 },
-      },
-    });
-    expect(res.start.date().toISOString()).toEqual('2019-01-01T00:00:00.000Z');
-    expect(res.end.date().toISOString()).toEqual('2020-01-01T00:00:00.000Z');
-  });
-
   it('works with xAgo format', () => {
     let res;
 
@@ -1152,5 +1074,119 @@ describe('dateParser', () => {
     expect(() => parse('last monday', new Date())).toThrowError(/ambiguous.*monday last week/i);
     expect(() => parse('next Friday', new Date())).toThrowError(/ambiguous.*Friday next week/);
     expect(() => parse('thursday', new Date())).toThrowError(/ambiguous.*thursday last\/this\/next week/);
+  });
+
+  it('works with week start date', () => {
+    let res;
+
+    res = parse('last week', new Date('2019-12-26T02:14:05Z'), {}, 3);
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2019, month: 12, day: 18, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2019, month: 12, day: 25, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2019-12-18T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-12-25T00:00:00.000Z');
+
+    res = parse('last 2 weeks', new Date('2019-12-26T02:14:05Z'), {}, 3);
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2019, month: 12, day: 11, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2019, month: 12, day: 25, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2019-12-11T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-12-25T00:00:00.000Z');
+
+    res = parse('2 weeks from now', new Date('2019-12-26T02:14:05Z'), {}, 3);
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2020, month: 1, day: 9, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2020, month: 1, day: 16, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2020-01-09T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2020-01-16T00:00:00.000Z');
+
+    res = parse('this week', new Date('2019-12-26T02:14:05Z'), {}, 3);
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2019, month: 12, day: 25, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2020, month: 1, day: 1, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2019-12-25T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2020-01-01T00:00:00.000Z');
+
+    // This test to make sure the WSD does not effect last month
+    res = parse('last 2 month', new Date('2019-02-09T02:14:05Z'), {}, 3);
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2018, month: 12, day: 1, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2019, month: 2, day: 1, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2018-12-01T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-02-01T00:00:00.000Z');
+
+    // This test to make sure the WSD does not effect the last year
+    res = parse('last year', new Date('2020-02-29T02:14:05Z'), {}, 3);
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2019, month: 1, day: 1, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2020, month: 1, day: 1, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2019-01-01T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2020-01-01T00:00:00.000Z');
   });
 });
