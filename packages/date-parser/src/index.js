@@ -3,7 +3,6 @@ import _compact from 'lodash/compact';
 import _some from 'lodash/some';
 
 import dayjs from 'dayjs';
-import en from 'dayjs/locale/en';
 
 // NOTE: order is important to make sure chrono-node uses plugin-enabled dayjs
 import './initializers/dayjs';
@@ -66,11 +65,6 @@ const getParsedResultBoundaries = (parsedResults) => {
  * @return {ChronoNode.ParsedResult|Array}
  */
 export const parse = (str, ref, { timezoneOffset = 0, output = OUTPUT_TYPES.parsed_component } = {}, weekStartDate = 1) => {
-  dayjs.locale({
-    ...en,
-    weekStart: weekStartDate,
-  });
-
   const refDate = new Date(ref);
   if (!isValidDate(refDate)) throw new InputError(`Invalid reference date: ${ref}`);
 
@@ -87,7 +81,7 @@ export const parse = (str, ref, { timezoneOffset = 0, output = OUTPUT_TYPES.pars
   const { parts, rangeSeparator } = splittedInput;
   let { isRange, isRangeEndInclusive } = splittedInput;
 
-  const parsedResults = _compact(parts.map(part => chrono.parse(part, refDateAdjustedByTz, { timezoneOffset })[0]));
+  const parsedResults = _compact(parts.map(part => chrono.parse(part, refDateAdjustedByTz, { timezoneOffset, weekStartDate })[0]));
 
   if (output === OUTPUT_TYPES.raw) return parsedResults;
 
