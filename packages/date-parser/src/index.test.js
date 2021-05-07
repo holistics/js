@@ -1265,18 +1265,54 @@ describe('dateParser', () => {
     expect(res).toMatchObject({
       start: {
         knownValues: {
-          year: 2020, month: 1, day: 4, hour: 0, minute: 0, second: 0,
+          year: 2019, month: 12, day: 28, hour: 0, minute: 0, second: 0,
         },
         impliedValues: { millisecond: 0 },
       },
       end: {
         knownValues: {
-          year: 2020, month: 1, day: 5, hour: 0, minute: 0, second: 0,
+          year: 2019, month: 12, day: 29, hour: 0, minute: 0, second: 0,
         },
         impliedValues: { millisecond: 0 },
       },
     });
-    expect(res.start.date().toISOString()).toEqual('2020-01-04T00:00:00.000Z');
-    expect(res.end.date().toISOString()).toEqual('2020-01-05T00:00:00.000Z');
+    expect(res.start.date().toISOString()).toEqual('2019-12-28T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-12-29T00:00:00.000Z');
+
+    res = parse('thu next week', new Date('2019-12-26T02:14:05Z'), {}, 4);
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2020, month: 1, day: 2, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2020, month: 1, day: 3, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2020-01-02T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2020-01-03T00:00:00.000Z');
+
+    res = parse('thu last week', new Date('2019-12-26T02:14:05Z'), {}, 4);
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2019, month: 12, day: 19, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2019, month: 12, day: 20, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2019-12-19T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-12-20T00:00:00.000Z');
   });
 });

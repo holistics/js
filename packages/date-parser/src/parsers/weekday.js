@@ -3,7 +3,7 @@ import dateStructFromDate from '../helpers/dateStructFromDate';
 import truncateDateStruct from '../helpers/truncateDateStruct';
 import momentFromStruct from '../helpers/momentFromStruct';
 import chronoDateStructFromMoment from '../helpers/chronoDateStructFromMoment';
-import { WEEKDAYS, WSD_REMAPPING } from '../constants';
+import { WEEKDAYS } from '../constants';
 
 const parser = new Chrono.Parser();
 
@@ -19,7 +19,6 @@ parser.pattern = () => {
  * @param {Object} opt
  */
 parser.extract = (text, ref, match, opt) => {
-  // We manually handle this case instead of using the wsd
   const { weekStartDate } = opt;
   const weekday = match[1].toLowerCase();
   const modifier = match[2];
@@ -33,12 +32,9 @@ parser.extract = (text, ref, match, opt) => {
   }
 
   const refDateStruct = truncateDateStruct(dateStructFromDate(ref), 'day');
-  let startMoment = momentFromStruct(refDateStruct, 1);
-  if (startMoment.day() > weekStartDate && weekStartDate > WSD_REMAPPING[weekday]) {
-    startMoment = startMoment.add(7, 'days');
-  }
+  let startMoment = momentFromStruct(refDateStruct, weekStartDate);
   startMoment = startMoment.add(value, 'week');
-  startMoment = startMoment.weekday(WEEKDAYS[weekday]);
+  startMoment = startMoment.weekday((7 + WEEKDAYS[weekday] - weekStartDate) % 7);
 
   const endMoment = startMoment.add(1, 'day');
 

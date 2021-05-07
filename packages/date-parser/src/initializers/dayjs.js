@@ -8,7 +8,6 @@ import quarterOfYearPlugin from 'dayjs/plugin/quarterOfYear';
 // note that this makes weekday(0) -> monday
 dayjs.locale({
   ...en,
-  weekStart: 0,
 });
 dayjs.extend(weekdayPlugin);
 dayjs.extend(utcPlugin);
