@@ -27,7 +27,7 @@ parser.extract = (text, ref, match, opt) => {
   if (!exact) {
     refDateStruct = truncateDateStruct(refDateStruct, dateUnit);
   }
-  let startMoment = momentFromStruct(refDateStruct, { weekStartDate: opt.weekStartDate });
+  let startMoment = momentFromStruct(refDateStruct, { weekStartDay: opt.weekStartDay });
   startMoment = startMoment.add(value, dateUnit);
 
   let endMoment = startMoment.clone();

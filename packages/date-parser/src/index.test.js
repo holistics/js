@@ -1078,10 +1078,10 @@ describe('dateParser', () => {
     expect(() => parse('thursday', new Date())).toThrowError(/ambiguous.*thursday last\/this\/next week/);
   });
 
-  it('works with weekStartDate', () => {
+  it('works with weekStartDay', () => {
     let res;
 
-    res = parse('last week', new Date('2019-12-26T02:14:05Z'), { weekStartDate: WEEKDAYS.Wednesday });
+    res = parse('last week', new Date('2019-12-26T02:14:05Z'), { weekStartDay: WEEKDAYS.Wednesday });
     expect(res).toMatchObject({
       start: {
         knownValues: {
@@ -1099,7 +1099,7 @@ describe('dateParser', () => {
     expect(res.start.date().toISOString()).toEqual('2019-12-18T00:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2019-12-25T00:00:00.000Z');
 
-    res = parse('last 2 weeks', new Date('2019-12-26T02:14:05Z'), { weekStartDate: WEEKDAYS.Wednesday });
+    res = parse('last 2 weeks', new Date('2019-12-26T02:14:05Z'), { weekStartDay: WEEKDAYS.Wednesday });
     expect(res).toMatchObject({
       start: {
         knownValues: {
@@ -1117,7 +1117,7 @@ describe('dateParser', () => {
     expect(res.start.date().toISOString()).toEqual('2019-12-11T00:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2019-12-25T00:00:00.000Z');
 
-    res = parse('2 weeks from now', new Date('2019-12-26T02:14:05Z'), { weekStartDate: WEEKDAYS.Wednesday });
+    res = parse('2 weeks from now', new Date('2019-12-26T02:14:05Z'), { weekStartDay: WEEKDAYS.Wednesday });
     expect(res).toMatchObject({
       start: {
         knownValues: {
@@ -1135,7 +1135,7 @@ describe('dateParser', () => {
     expect(res.start.date().toISOString()).toEqual('2020-01-09T00:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2020-01-16T00:00:00.000Z');
 
-    res = parse('this week', new Date('2019-12-26T02:14:05Z'), { weekStartDate: WEEKDAYS.Wednesday });
+    res = parse('this week', new Date('2019-12-26T02:14:05Z'), { weekStartDay: WEEKDAYS.Wednesday });
     expect(res).toMatchObject({
       start: {
         knownValues: {
@@ -1154,7 +1154,7 @@ describe('dateParser', () => {
     expect(res.end.date().toISOString()).toEqual('2020-01-01T00:00:00.000Z');
 
     // This test to make sure the WSD does not effect last month
-    res = parse('last 2 month', new Date('2019-02-09T02:14:05Z'), { weekStartDate: WEEKDAYS.Wednesday });
+    res = parse('last 2 month', new Date('2019-02-09T02:14:05Z'), { weekStartDay: WEEKDAYS.Wednesday });
     expect(res).toMatchObject({
       start: {
         knownValues: {
@@ -1173,7 +1173,7 @@ describe('dateParser', () => {
     expect(res.end.date().toISOString()).toEqual('2019-02-01T00:00:00.000Z');
 
     // This test to make sure the WSD does not effect the last year
-    res = parse('last year', new Date('2020-02-29T02:14:05Z'), { weekStartDate: WEEKDAYS.Wednesday });
+    res = parse('last year', new Date('2020-02-29T02:14:05Z'), { weekStartDay: WEEKDAYS.Wednesday });
     expect(res).toMatchObject({
       start: {
         knownValues: {
@@ -1191,7 +1191,7 @@ describe('dateParser', () => {
     expect(res.start.date().toISOString()).toEqual('2019-01-01T00:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2020-01-01T00:00:00.000Z');
 
-    res = parse('tue last week', new Date('2019-12-26T02:14:05Z'), { weekStartDate: WEEKDAYS.Wednesday });
+    res = parse('tue last week', new Date('2019-12-26T02:14:05Z'), { weekStartDay: WEEKDAYS.Wednesday });
     expect(res).toMatchObject({
       start: {
         knownValues: {
@@ -1209,7 +1209,7 @@ describe('dateParser', () => {
     expect(res.start.date().toISOString()).toEqual('2019-12-24T00:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2019-12-25T00:00:00.000Z');
 
-    res = parse('tue next 2 weeks', new Date('2019-12-26T02:14:05Z'), { weekStartDate: WEEKDAYS.Wednesday });
+    res = parse('tue next 2 weeks', new Date('2019-12-26T02:14:05Z'), { weekStartDay: WEEKDAYS.Wednesday });
     expect(res).toMatchObject({
       start: {
         knownValues: {
@@ -1227,7 +1227,7 @@ describe('dateParser', () => {
     expect(res.start.date().toISOString()).toEqual('2020-01-14T00:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2020-01-15T00:00:00.000Z');
 
-    res = parse('mon next week', new Date('2019-12-26T02:14:05Z'), { weekStartDate: WEEKDAYS.Sunday });
+    res = parse('mon next week', new Date('2019-12-26T02:14:05Z'), { weekStartDay: WEEKDAYS.Sunday });
     expect(res).toMatchObject({
       start: {
         knownValues: {
@@ -1245,7 +1245,7 @@ describe('dateParser', () => {
     expect(res.start.date().toISOString()).toEqual('2019-12-30T00:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2019-12-31T00:00:00.000Z');
 
-    res = parse('sat next week', new Date('2019-12-26T02:14:05Z'), { weekStartDate: WEEKDAYS.Sunday });
+    res = parse('sat next week', new Date('2019-12-26T02:14:05Z'), { weekStartDay: WEEKDAYS.Sunday });
     expect(res).toMatchObject({
       start: {
         knownValues: {
@@ -1263,7 +1263,7 @@ describe('dateParser', () => {
     expect(res.start.date().toISOString()).toEqual('2020-01-04T00:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2020-01-05T00:00:00.000Z');
 
-    res = parse('sat next week', new Date('2019-12-26T02:14:05Z'), { weekStartDate: WEEKDAYS.Saturday });
+    res = parse('sat next week', new Date('2019-12-26T02:14:05Z'), { weekStartDay: WEEKDAYS.Saturday });
     expect(res).toMatchObject({
       start: {
         knownValues: {
@@ -1281,7 +1281,7 @@ describe('dateParser', () => {
     expect(res.start.date().toISOString()).toEqual('2019-12-28T00:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2019-12-29T00:00:00.000Z');
 
-    res = parse('thu next week', new Date('2019-12-26T02:14:05Z'), { weekStartDate: WEEKDAYS.Thursday });
+    res = parse('thu next week', new Date('2019-12-26T02:14:05Z'), { weekStartDay: WEEKDAYS.Thursday });
     expect(res).toMatchObject({
       start: {
         knownValues: {
@@ -1299,7 +1299,7 @@ describe('dateParser', () => {
     expect(res.start.date().toISOString()).toEqual('2020-01-02T00:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2020-01-03T00:00:00.000Z');
 
-    res = parse('thu last week', new Date('2019-12-26T02:14:05Z'), { weekStartDate: WEEKDAYS.Friday });
+    res = parse('thu last week', new Date('2019-12-26T02:14:05Z'), { weekStartDay: WEEKDAYS.Friday });
     expect(res).toMatchObject({
       start: {
         knownValues: {
@@ -1317,7 +1317,7 @@ describe('dateParser', () => {
     expect(res.start.date().toISOString()).toEqual('2019-12-19T00:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2019-12-20T00:00:00.000Z');
 
-    res = parse('last week begin', new Date('2021-05-10T22:14:05Z'), { weekStartDate: WEEKDAYS.Tuesday });
+    res = parse('last week begin', new Date('2021-05-10T22:14:05Z'), { weekStartDay: WEEKDAYS.Tuesday });
     expect(res).toMatchObject({
       start: {
         knownValues: {
@@ -1335,7 +1335,7 @@ describe('dateParser', () => {
     expect(res.start.date().toISOString()).toEqual('2021-04-27T00:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2021-04-28T00:00:00.000Z');
 
-    res = parse('last week end', new Date('2021-05-10T22:14:05Z'), { weekStartDate: WEEKDAYS.Tuesday });
+    res = parse('last week end', new Date('2021-05-10T22:14:05Z'), { weekStartDay: WEEKDAYS.Tuesday });
     expect(res).toMatchObject({
       start: {
         knownValues: {
@@ -1353,7 +1353,7 @@ describe('dateParser', () => {
     expect(res.start.date().toISOString()).toEqual('2021-05-03T00:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2021-05-04T00:00:00.000Z');
 
-    res = parse('last week end', new Date('2021-05-10T22:14:05Z'), { weekStartDate: WEEKDAYS.Tuesday, timezoneOffset: 480 });
+    res = parse('last week end', new Date('2021-05-10T22:14:05Z'), { weekStartDay: WEEKDAYS.Tuesday, timezoneOffset: 480 });
     expect(res).toMatchObject({
       start: {
         knownValues: {
@@ -1372,7 +1372,7 @@ describe('dateParser', () => {
     expect(res.end.date().toISOString()).toEqual('2021-05-10T16:00:00.000Z');
   });
 
-  it('raises error when weekStartDate is invalid', () => {
-    expect(() => parse('this mon', new Date(), { weekStartDate: 'ahihi' })).toThrowError(/invalid weekStartDate/i);
+  it('raises error when weekStartDay is invalid', () => {
+    expect(() => parse('this mon', new Date(), { weekStartDay: 'ahihi' })).toThrowError(/invalid weekStartDay/i);
   });
 });

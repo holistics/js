@@ -4,12 +4,12 @@ import en from 'dayjs/locale/en';
 export default ({
   year, month, day, hour, minute, second,
 }, {
-  weekStartDate,
+  weekStartDay,
 }) => {
   /* eslint-disable-next-line no-param-reassign */
-  weekStartDate = parseInt(weekStartDate);
-  if (Number.isNaN(weekStartDate) || weekStartDate < 0 || weekStartDate > 6) {
-    throw new Error(`Invalid weekStartDate index: ${weekStartDate}`);
+  weekStartDay = parseInt(weekStartDay);
+  if (Number.isNaN(weekStartDay) || weekStartDay < 0 || weekStartDay > 6) {
+    throw new Error(`Invalid weekStartDay index: ${weekStartDay}`);
   }
 
   return dayjs.utc()
@@ -21,6 +21,6 @@ export default ({
     .second(second)
     .locale({
       ...en,
-      weekStart: weekStartDate,
+      weekStart: weekStartDay,
     });
 };
