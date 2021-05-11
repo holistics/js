@@ -837,13 +837,13 @@ describe('dateParser', () => {
     expect(res).toMatchObject({
       start: {
         knownValues: {
-          year: 2019, month: 12, day: 28, hour: 9, minute: 0, second: 0, millisecond: 0,
+          year: 2019, month: 12, day: 28, hour: 9, minute: 0, second: 0, millisecond: 0, timezoneOffset: 0,
         },
         impliedValues: {},
       },
       end: {
         knownValues: {
-          year: 2019, month: 12, day: 28, hour: 10, minute: 0, second: 0, millisecond: 0,
+          year: 2019, month: 12, day: 28, hour: 10, minute: 0, second: 0, millisecond: 0, timezoneOffset: 0,
         },
         impliedValues: {},
       },
@@ -1316,6 +1316,60 @@ describe('dateParser', () => {
     });
     expect(res.start.date().toISOString()).toEqual('2019-12-19T00:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2019-12-20T00:00:00.000Z');
+
+    res = parse('last week begin', new Date('2021-05-10T22:14:05Z'), { weekStartDate: WEEKDAYS.Tuesday });
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2021, month: 4, day: 27, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2021, month: 4, day: 28, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2021-04-27T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2021-04-28T00:00:00.000Z');
+
+    res = parse('last week end', new Date('2021-05-10T22:14:05Z'), { weekStartDate: WEEKDAYS.Tuesday });
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2021, month: 5, day: 3, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2021, month: 5, day: 4, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2021-05-03T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2021-05-04T00:00:00.000Z');
+
+    res = parse('last week end', new Date('2021-05-10T22:14:05Z'), { weekStartDate: WEEKDAYS.Tuesday, timezoneOffset: 480 });
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2021, month: 5, day: 10, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0, timezoneOffset: 480 },
+      },
+      end: {
+        knownValues: {
+          year: 2021, month: 5, day: 11, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0, timezoneOffset: 480 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2021-05-09T16:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2021-05-10T16:00:00.000Z');
   });
 
   it('raises error when weekStartDate is invalid', () => {
