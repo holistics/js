@@ -10,7 +10,13 @@ import './initializers/chrono-node';
 
 import options from './options';
 import isValidDate from './helpers/isValidDate';
-import { OUTPUT_TYPES, DATE_RANGE_PATTERNS, DATE_RANGE_KEYWORDS } from './constants';
+import {
+  WEEKDAYS,
+  WEEKDAYS_MAP,
+  OUTPUT_TYPES,
+  DATE_RANGE_PATTERNS,
+  DATE_RANGE_KEYWORDS,
+} from './constants';
 import Errors, { InputError } from './errors';
 
 const chrono = new ChronoNode.Chrono(options);
@@ -61,15 +67,20 @@ const getParsedResultBoundaries = (parsedResults) => {
  * @param {Object} options
  * @param {Number} options.timezoneOffset Timezone offset in minutes
  * @param {OUTPUT_TYPES} options.output Type of the output dates
+ * @param {Number} weekStartDate The weekday chosen to be the start of a week. See WEEKDAYS constant for possible values
  * @return {ChronoNode.ParsedResult|Array}
  */
-export const parse = (str, ref, { timezoneOffset = 0, output = OUTPUT_TYPES.parsed_component } = {}) => {
+export const parse = (str, ref, { timezoneOffset = 0, output = OUTPUT_TYPES.parsed_component, weekStartDate = WEEKDAYS.Monday } = {}) => {
   const refDate = new Date(ref);
   if (!isValidDate(refDate)) throw new InputError(`Invalid reference date: ${ref}`);
 
   /* eslint-disable-next-line no-param-reassign */
   timezoneOffset = parseInt(timezoneOffset);
   if (Number.isNaN(timezoneOffset)) throw new InputError(`Invalid timezoneOffset: ${timezoneOffset}`);
+
+  if (!(weekStartDate in WEEKDAYS_MAP)) throw new InputError(`Invalid weekStartDate: ${weekStartDate}. See exported constant WEEKDAYS for valid values`);
+  /* eslint-disable-next-line no-param-reassign */
+  weekStartDate = WEEKDAYS_MAP[weekStartDate];
 
   // Adjust refDate by timezoneOffset
   let refMoment = dayjs.utc(refDate);
@@ -80,7 +91,7 @@ export const parse = (str, ref, { timezoneOffset = 0, output = OUTPUT_TYPES.pars
   const { parts, rangeSeparator } = splittedInput;
   let { isRange, isRangeEndInclusive } = splittedInput;
 
-  const parsedResults = _compact(parts.map(part => chrono.parse(part, refDateAdjustedByTz, { timezoneOffset })[0]));
+  const parsedResults = _compact(parts.map(part => chrono.parse(part, refDateAdjustedByTz, { timezoneOffset, weekStartDate })[0]));
 
   if (output === OUTPUT_TYPES.raw) return parsedResults;
 
@@ -115,11 +126,12 @@ export const parse = (str, ref, { timezoneOffset = 0, output = OUTPUT_TYPES.pars
   return result;
 };
 
-export { OUTPUT_TYPES } from './constants';
+export { WEEKDAYS, OUTPUT_TYPES } from './constants';
 export { default as Errors } from './errors';
 
 export default {
   parse,
+  WEEKDAYS,
   OUTPUT_TYPES,
   Errors,
 };

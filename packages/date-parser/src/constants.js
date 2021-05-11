@@ -9,20 +9,30 @@ export const DATE_UNIT_LEVELS = {
 };
 
 export const WEEKDAYS = {
-  mon: 0,
-  monday: 0,
-  tue: 1,
-  tuesday: 1,
-  wed: 2,
-  wednesday: 2,
-  thu: 3,
-  thursday: 3,
-  fri: 4,
-  friday: 4,
-  sat: 5,
-  saturday: 5,
-  sun: 6,
-  sunday: 6,
+  Sunday: 'sunday',
+  Monday: 'monday',
+  Tuesday: 'tuesday',
+  Wednesday: 'wednesday',
+  Thursday: 'thursday',
+  Friday: 'friday',
+  Saturday: 'saturday',
+};
+
+export const WEEKDAYS_MAP = {
+  sun: 0,
+  [WEEKDAYS.Sunday]: 0,
+  mon: 1,
+  [WEEKDAYS.Monday]: 1,
+  tue: 2,
+  [WEEKDAYS.Tuesday]: 2,
+  wed: 3,
+  [WEEKDAYS.Wednesday]: 3,
+  thu: 4,
+  [WEEKDAYS.Thursday]: 4,
+  fri: 5,
+  [WEEKDAYS.Friday]: 5,
+  sat: 6,
+  [WEEKDAYS.Saturday]: 6,
 };
 
 /**

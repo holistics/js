@@ -15,15 +15,17 @@ parser.pattern = () => {
  * @param {String} text
  * @param {Date} ref
  * @param {Array} match
+ * @param {Object} opt
  */
-parser.extract = (text, ref, match) => {
+parser.extract = (text, ref, match, opt) => {
+  const { weekStartDate } = opt;
   const modifier = match[1];
   const value = modifier === 'this' ? 0 : parseInt((match[2] || '1').trim());
   const dateUnit = match[3].toLowerCase();
   const pointOfTime = (match[4] || '').trim();
 
   const refDateStruct = truncateDateStruct(dateStructFromDate(ref), dateUnit);
-  let startMoment = momentFromStruct(refDateStruct);
+  let startMoment = momentFromStruct(refDateStruct, { weekStartDate });
   let endMoment = startMoment.clone();
 
   // Set range according to past/future relativity

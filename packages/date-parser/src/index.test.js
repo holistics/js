@@ -1,4 +1,6 @@
-import { parse, OUTPUT_TYPES, Errors } from './index';
+import {
+  parse, WEEKDAYS, OUTPUT_TYPES, Errors,
+} from './index';
 
 describe('dateParser', () => {
   it('works with lastX format', () => {
@@ -1074,5 +1076,249 @@ describe('dateParser', () => {
     expect(() => parse('last monday', new Date())).toThrowError(/ambiguous.*monday last week/i);
     expect(() => parse('next Friday', new Date())).toThrowError(/ambiguous.*Friday next week/);
     expect(() => parse('thursday', new Date())).toThrowError(/ambiguous.*thursday last\/this\/next week/);
+  });
+
+  it('works with weekStartDate', () => {
+    let res;
+
+    res = parse('last week', new Date('2019-12-26T02:14:05Z'), { weekStartDate: WEEKDAYS.Wednesday });
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2019, month: 12, day: 18, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2019, month: 12, day: 25, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2019-12-18T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-12-25T00:00:00.000Z');
+
+    res = parse('last 2 weeks', new Date('2019-12-26T02:14:05Z'), { weekStartDate: WEEKDAYS.Wednesday });
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2019, month: 12, day: 11, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2019, month: 12, day: 25, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2019-12-11T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-12-25T00:00:00.000Z');
+
+    res = parse('2 weeks from now', new Date('2019-12-26T02:14:05Z'), { weekStartDate: WEEKDAYS.Wednesday });
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2020, month: 1, day: 9, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2020, month: 1, day: 16, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2020-01-09T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2020-01-16T00:00:00.000Z');
+
+    res = parse('this week', new Date('2019-12-26T02:14:05Z'), { weekStartDate: WEEKDAYS.Wednesday });
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2019, month: 12, day: 25, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2020, month: 1, day: 1, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2019-12-25T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2020-01-01T00:00:00.000Z');
+
+    // This test to make sure the WSD does not effect last month
+    res = parse('last 2 month', new Date('2019-02-09T02:14:05Z'), { weekStartDate: WEEKDAYS.Wednesday });
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2018, month: 12, day: 1, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2019, month: 2, day: 1, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2018-12-01T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-02-01T00:00:00.000Z');
+
+    // This test to make sure the WSD does not effect the last year
+    res = parse('last year', new Date('2020-02-29T02:14:05Z'), { weekStartDate: WEEKDAYS.Wednesday });
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2019, month: 1, day: 1, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2020, month: 1, day: 1, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2019-01-01T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2020-01-01T00:00:00.000Z');
+
+    res = parse('tue last week', new Date('2019-12-26T02:14:05Z'), { weekStartDate: WEEKDAYS.Wednesday });
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2019, month: 12, day: 24, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2019, month: 12, day: 25, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2019-12-24T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-12-25T00:00:00.000Z');
+
+    res = parse('tue next 2 weeks', new Date('2019-12-26T02:14:05Z'), { weekStartDate: WEEKDAYS.Wednesday });
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2020, month: 1, day: 14, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2020, month: 1, day: 15, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2020-01-14T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2020-01-15T00:00:00.000Z');
+
+    res = parse('mon next week', new Date('2019-12-26T02:14:05Z'), { weekStartDate: WEEKDAYS.Sunday });
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2019, month: 12, day: 30, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2019, month: 12, day: 31, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2019-12-30T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-12-31T00:00:00.000Z');
+
+    res = parse('sat next week', new Date('2019-12-26T02:14:05Z'), { weekStartDate: WEEKDAYS.Sunday });
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2020, month: 1, day: 4, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2020, month: 1, day: 5, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2020-01-04T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2020-01-05T00:00:00.000Z');
+
+    res = parse('sat next week', new Date('2019-12-26T02:14:05Z'), { weekStartDate: WEEKDAYS.Saturday });
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2019, month: 12, day: 28, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2019, month: 12, day: 29, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2019-12-28T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-12-29T00:00:00.000Z');
+
+    res = parse('thu next week', new Date('2019-12-26T02:14:05Z'), { weekStartDate: WEEKDAYS.Thursday });
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2020, month: 1, day: 2, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2020, month: 1, day: 3, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2020-01-02T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2020-01-03T00:00:00.000Z');
+
+    res = parse('thu last week', new Date('2019-12-26T02:14:05Z'), { weekStartDate: WEEKDAYS.Friday });
+    expect(res).toMatchObject({
+      start: {
+        knownValues: {
+          year: 2019, month: 12, day: 19, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+      end: {
+        knownValues: {
+          year: 2019, month: 12, day: 20, hour: 0, minute: 0, second: 0,
+        },
+        impliedValues: { millisecond: 0 },
+      },
+    });
+    expect(res.start.date().toISOString()).toEqual('2019-12-19T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-12-20T00:00:00.000Z');
+  });
+
+  it('raises error when weekStartDate is invalid', () => {
+    expect(() => parse('this mon', new Date(), { weekStartDate: 'ahihi' })).toThrowError(/invalid weekStartDate/i);
   });
 });
