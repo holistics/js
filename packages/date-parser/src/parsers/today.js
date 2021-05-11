@@ -15,7 +15,7 @@ parser.pattern = () => {
  * @param {Date} ref
  * @param {Array} match
  */
-parser.extract = (text, ref, match) => {
+parser.extract = (text, ref, match, opt) => {
   const date = match[1].toLowerCase();
   let value = 0;
   if (date === 'yesterday') {
@@ -25,7 +25,7 @@ parser.extract = (text, ref, match) => {
   }
 
   const refDateStruct = truncateDateStruct(dateStructFromDate(ref), 'day');
-  let startMoment = momentFromStruct(refDateStruct);
+  let startMoment = momentFromStruct(refDateStruct, { weekStartDate: opt.weekStartDate });
   startMoment = startMoment.add(value, 'day');
 
   const endMoment = startMoment.add(1, 'day');

@@ -1,11 +1,11 @@
 import Chrono from 'chrono-node';
-import { WEEKDAYS } from '../../constants';
+import { WEEKDAYS_MAP } from '../../constants';
 import { ParseError } from '../../errors';
 
 const guard = new Chrono.Parser();
 
 guard.pattern = () => {
-  return new RegExp(`^\\s*((?:last|this|next) )?(${Object.keys(WEEKDAYS).join('|')})\\s*$`, 'i');
+  return new RegExp(`^\\s*((?:last|this|next) )?(${Object.keys(WEEKDAYS_MAP).join('|')})\\s*$`, 'i');
 };
 
 /**

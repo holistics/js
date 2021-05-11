@@ -25,7 +25,7 @@ parser.extract = (text, ref, match, opt) => {
   const pointOfTime = (match[4] || '').trim();
 
   const refDateStruct = truncateDateStruct(dateStructFromDate(ref), dateUnit);
-  let startMoment = momentFromStruct(refDateStruct, weekStartDate);
+  let startMoment = momentFromStruct(refDateStruct, { weekStartDate });
   let endMoment = startMoment.clone();
 
   // Set range according to past/future relativity

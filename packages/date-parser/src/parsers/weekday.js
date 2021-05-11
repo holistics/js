@@ -3,13 +3,13 @@ import dateStructFromDate from '../helpers/dateStructFromDate';
 import truncateDateStruct from '../helpers/truncateDateStruct';
 import momentFromStruct from '../helpers/momentFromStruct';
 import chronoDateStructFromMoment from '../helpers/chronoDateStructFromMoment';
-import { WEEKDAYS } from '../constants';
+import { WEEKDAYS_MAP } from '../constants';
 
 const parser = new Chrono.Parser();
 
 parser.pattern = () => {
   /* eslint-disable-next-line max-len */
-  return new RegExp(`(${Object.keys(WEEKDAYS).join('|')}) (last|this|next)( \\d+)? weeks?`, 'i');
+  return new RegExp(`(${Object.keys(WEEKDAYS_MAP).join('|')}) (last|this|next)( \\d+)? weeks?`, 'i');
 };
 
 /**
@@ -32,9 +32,9 @@ parser.extract = (text, ref, match, opt) => {
   }
 
   const refDateStruct = truncateDateStruct(dateStructFromDate(ref), 'day');
-  let startMoment = momentFromStruct(refDateStruct, weekStartDate);
+  let startMoment = momentFromStruct(refDateStruct, { weekStartDate });
   startMoment = startMoment.add(value, 'week');
-  startMoment = startMoment.weekday((7 + WEEKDAYS[weekday] - weekStartDate) % 7);
+  startMoment = startMoment.weekday((7 + WEEKDAYS_MAP[weekday] - weekStartDate) % 7);
 
   const endMoment = startMoment.add(1, 'day');
 
