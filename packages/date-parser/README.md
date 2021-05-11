@@ -5,7 +5,7 @@
 ## Usage
 
 ```javascript
-import { parse, OUTPUT_TYPES } from '@holistics/date-parser';
+import { parse, OUTPUT_TYPES, WEEKDAYS } from '@holistics/date-parser';
 
 const referenceDate = new Date();
 
@@ -34,7 +34,11 @@ console.log(res.end) // 2019-04-11
 res = parse('yesterday', '2019-04-11T22:00:00+00:00', { timezoneOffset: 540, output: OUTPUT_TYPES.date });
 console.log(res.start) // 2019-04-11
 console.log(res.end) // 2019-04-12
+
+// Set weekStartDay (weekStartDay is Monday by default)
+res = parse('last week begin', '2021-05-10T22:14:05Z', { weekStartDay: WEEKDAYS.Tuesday, output: OUTPUT_TYPES.date });
+console.log(res.start) // 2021-04-27
 ```
 
 ## Try it out
-https://2zs36.csb.app/
+https://uho5b.csb.app/

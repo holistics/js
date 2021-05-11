@@ -25,7 +25,7 @@ parser.extract = (text, ref, match, opt) => {
   }
 
   const refDateStruct = truncateDateStruct(dateStructFromDate(ref), 'day');
-  let startMoment = momentFromStruct(refDateStruct, { weekStartDate: opt.weekStartDate });
+  let startMoment = momentFromStruct(refDateStruct, { weekStartDay: opt.weekStartDay });
   startMoment = startMoment.add(value, 'day');
 
   const endMoment = startMoment.add(1, 'day');

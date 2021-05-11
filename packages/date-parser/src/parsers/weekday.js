@@ -19,7 +19,7 @@ parser.pattern = () => {
  * @param {Object} opt
  */
 parser.extract = (text, ref, match, opt) => {
-  const { weekStartDate } = opt;
+  const { weekStartDay } = opt;
   const weekday = match[1].toLowerCase();
   const modifier = match[2];
   let value;
@@ -32,9 +32,9 @@ parser.extract = (text, ref, match, opt) => {
   }
 
   const refDateStruct = truncateDateStruct(dateStructFromDate(ref), 'day');
-  let startMoment = momentFromStruct(refDateStruct, { weekStartDate });
+  let startMoment = momentFromStruct(refDateStruct, { weekStartDay });
   startMoment = startMoment.add(value, 'week');
-  startMoment = startMoment.weekday((7 + WEEKDAYS_MAP[weekday] - weekStartDate) % 7);
+  startMoment = startMoment.weekday((7 + WEEKDAYS_MAP[weekday] - weekStartDay) % 7);
 
   const endMoment = startMoment.add(1, 'day');
 
