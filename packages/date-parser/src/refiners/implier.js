@@ -1,4 +1,3 @@
-import Chrono from 'chrono-node';
 import getHighestLevelDateUnit from '../helpers/getHighestLevelDateUnit';
 
 /**
@@ -44,12 +43,13 @@ const implyResult = (res) => {
   return res;
 };
 
-const implier = new Chrono.Refiner();
-implier.refine = (text, results) => {
-  /**
-   *
-   * @param {Chrono.ParsedResult} res
-   */
+const implier = {};
+/**
+ * @param {ParsingContext} context
+ * @param {ParsedResult[]} results
+ * @return {ParsedResult[]}
+ */
+implier.refine = (context, results) => {
   return results.map(res => implyResult(res));
 };
 

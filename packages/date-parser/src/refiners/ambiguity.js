@@ -1,4 +1,3 @@
-import Chrono from 'chrono-node';
 import _isEmpty from 'lodash/isEmpty';
 import _compact from 'lodash/compact';
 
@@ -10,12 +9,14 @@ const isAmbiguous = (parsedResult) => {
   return _isEmpty(parsedResult.start.knownValues);
 };
 
-const ambiguityRefiner = new Chrono.Refiner();
-ambiguityRefiner.refine = (text, results) => {
-  /**
-   *
-   * @param {Chrono.ParsedResult} res
-   */
+const ambiguityRefiner = {};
+
+/**
+ * @param {Chrono.ParsingContext} context
+ * @param {Chrono.ParsedResult[]} results
+ * @return {Chrono.ParsedResult[]}
+ */
+ambiguityRefiner.refine = (context, results) => {
   return _compact(results.map(res => {
     return isAmbiguous(res) ? null : res;
   }));
