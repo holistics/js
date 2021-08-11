@@ -1,29 +1,24 @@
-import Chrono from 'chrono-node';
-
-const parser = new Chrono.Parser();
+const parser = {};
 
 parser.pattern = () => {
   return new RegExp('(\\d\\d\\d\\d)');
 };
 
 /**
- * @param {String} text
- * @param {Date} ref
+ * @param {Chrono.ParsingContext} context
  * @param {Array} match
  */
-parser.extract = (text, ref, match) => {
+parser.extract = (context, match) => {
   const year = parseInt(match[1]);
   const month = 1;
   const day = 1;
 
-  return new Chrono.ParsedResult({
-    ref,
-    text: match[0],
-    index: match.index,
-    tags: { yearParser: true },
-    start: { year, month, day },
-    end: { year: year + 1, month, day },
-  });
+  return context.createParsingResult(
+    match.index,
+    match[0],
+    { year, month, day },
+    { year: year + 1, month, day },
+  );
 };
 
 export default parser;
