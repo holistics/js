@@ -1,30 +1,27 @@
-import Chrono from 'chrono-node';
 import truncateDateStruct from '../helpers/truncateDateStruct';
 import dateStructFromDate from '../helpers/dateStructFromDate';
 import momentFromStruct from '../helpers/momentFromStruct';
 import chronoDateStructFromMoment from '../helpers/chronoDateStructFromMoment';
 import isTimeUnit from '../helpers/isTimeUnit';
 
-const parser = new Chrono.Parser();
+const parser = {};
 
 parser.pattern = () => {
   return new RegExp('(last|next|this)( \\d+)? (year|quarter|month|week|day|hour|minute|second)s?( (?:begin|end))?', 'i');
 };
 
 /**
- * @param {String} text
- * @param {Date} ref
- * @param {Array} match
+ * @param {Chrono.ParsingContext} context
  * @param {Object} opt
  */
-parser.extract = (text, ref, match, opt) => {
-  const { weekStartDay } = opt;
+parser.extract = (context, match) => {
+  const { weekStartDay } = context.option;
   const modifier = match[1];
   const value = modifier === 'this' ? 0 : parseInt((match[2] || '1').trim());
   const dateUnit = match[3].toLowerCase();
   const pointOfTime = (match[4] || '').trim();
 
-  const refDateStruct = truncateDateStruct(dateStructFromDate(ref), dateUnit);
+  const refDateStruct = truncateDateStruct(dateStructFromDate(context.reference.instant), dateUnit);
   let startMoment = momentFromStruct(refDateStruct, { weekStartDay });
   let endMoment = startMoment.clone();
 
@@ -48,14 +45,12 @@ parser.extract = (text, ref, match, opt) => {
     startMoment = endMoment.subtract(1, isTimeUnit(dateUnit) ? 'second' : 'day');
   }
 
-  return new Chrono.ParsedResult({
-    ref,
-    text: match[0],
-    index: match.index,
-    tags: { lastXParser: true },
-    start: chronoDateStructFromMoment(startMoment),
-    end: chronoDateStructFromMoment(endMoment),
-  });
+  return context.createParsingResult(
+    match.index,
+    match[0],
+    chronoDateStructFromMoment(startMoment),
+    chronoDateStructFromMoment(endMoment),
+  );
 };
 
 export default parser;
