@@ -1,11 +1,10 @@
-import Chrono from 'chrono-node';
 import dateStructFromDate from '../helpers/dateStructFromDate';
 import truncateDateStruct from '../helpers/truncateDateStruct';
 import momentFromStruct from '../helpers/momentFromStruct';
 import chronoDateStructFromMoment from '../helpers/chronoDateStructFromMoment';
 import { WEEKDAYS_MAP } from '../constants';
 
-const parser = new Chrono.Parser();
+const parser = {};
 
 parser.pattern = () => {
   /* eslint-disable-next-line max-len */
@@ -13,13 +12,11 @@ parser.pattern = () => {
 };
 
 /**
- * @param {String} text
- * @param {Date} ref
+ * @param {Chrono.ParsingContext} context
  * @param {Array} match
- * @param {Object} opt
  */
-parser.extract = (text, ref, match, opt) => {
-  const { weekStartDay } = opt;
+parser.extract = (context, match) => {
+  const { weekStartDay } = context.option;
   const weekday = match[1].toLowerCase();
   const modifier = match[2];
   let value;
@@ -31,21 +28,19 @@ parser.extract = (text, ref, match, opt) => {
     value = parseInt(match[3] || 1);
   }
 
-  const refDateStruct = truncateDateStruct(dateStructFromDate(ref), 'day');
+  const refDateStruct = truncateDateStruct(dateStructFromDate(context.reference.instant), 'day');
   let startMoment = momentFromStruct(refDateStruct, { weekStartDay });
   startMoment = startMoment.add(value, 'week');
   startMoment = startMoment.weekday((7 + WEEKDAYS_MAP[weekday] - weekStartDay) % 7);
 
   const endMoment = startMoment.add(1, 'day');
 
-  return new Chrono.ParsedResult({
-    ref,
-    text: match[0],
-    index: match.index,
-    tags: { weekdayParser: true },
-    start: chronoDateStructFromMoment(startMoment),
-    end: chronoDateStructFromMoment(endMoment),
-  });
+  return context.createParsingResult(
+    match.index,
+    match[0],
+    chronoDateStructFromMoment(startMoment),
+    chronoDateStructFromMoment(endMoment),
+  );
 };
 
 export default parser;
