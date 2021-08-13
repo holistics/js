@@ -13,7 +13,7 @@
     "lerna:bootstrap": "lerna bootstrap",
     "lerna:publish": "yarn test && lerna publish",
     "lint": "eslint --ext .js --ignore-path .gitignore .",
-    "test": "jest"
+    "test": "env TZ='Etc/UTC' jest"
   },
   "devDependencies": {
     "@babel/cli": "^7.7.7",
