@@ -44,7 +44,6 @@ const parsers = [
 
   new ISOFormatParser(),
   new SlashDateFormatParser(littleEndian),
-  // new ENTimeUnitWithinFormatParser(),
   new ENMonthNameLittleEndianParser(),
   new ENMonthNameMiddleEndianParser(),
   new ENCasualYearMonthDayParser(),
