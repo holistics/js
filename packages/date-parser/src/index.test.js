@@ -832,24 +832,28 @@ describe('dateParser', () => {
     // raises error when start > end
     expect(() => parse('tomorrow till 3 days ago', new Date())).toThrowError(/must be before/i);
 
-    // works normally even with timezoneOffset
-    res = parse('2019-12-28T09:00:00.000Z until 2019-12-28T10:00:00.000Z', new Date('2021-03-16T02:14:05Z'), { timezoneOffset: 120 });
+    const tzPlus2 = 'Africa/Blantyre';
+
+    // works normally even with timezone
+    res = parse('2019-12-28T09:00:00.000Z until 2019-12-28T10:00:00.000Z', new Date('2021-03-16T02:14:05Z'), { timezone: tzPlus2 });
     expect(res).toMatchObject({
       start: {
         knownValues: {
-          year: 2019, month: 12, day: 28, hour: 9, minute: 0, second: 0, millisecond: 0, timezoneOffset: 0,
+          year: 2019, month: 12, day: 28, hour: 9, minute: 0, second: 0, millisecond: 0,
         },
         impliedValues: {},
       },
       end: {
         knownValues: {
-          year: 2019, month: 12, day: 28, hour: 10, minute: 0, second: 0, millisecond: 0, timezoneOffset: 0,
+          year: 2019, month: 12, day: 28, hour: 10, minute: 0, second: 0, millisecond: 0,
         },
         impliedValues: {},
       },
     });
-    expect(res.start.date().toISOString()).toEqual('2019-12-28T09:00:00.000Z');
-    expect(res.end.date().toISOString()).toEqual('2019-12-28T10:00:00.000Z');
+
+    res = parse('2019-12-28T09:00:00.000Z until 2019-12-28T10:00:00.000Z', new Date('2021-03-16T02:14:05Z'), { timezone: tzPlus2, output: 'timestamp' });
+    expect(res.start).toEqual('2019-12-28T09:00:00.000Z');
+    expect(res.end).toEqual('2019-12-28T10:00:00.000Z');
   });
 
   it('keeps order when date range boundaries overlaps', () => {
@@ -867,20 +871,22 @@ describe('dateParser', () => {
   it('discards invalid range, keeps the valid part only', () => {
     let res;
 
-    res = parse('yesterday-today', new Date('2018-06-25T05:00:00+08:00'), { timezoneOffset: 60 });
-    expect(res.text).toEqual('yesterday');
-    expect(res.start.moment().format('YYYY/MM/DD')).toEqual('2018/06/23');
-    expect(res.end.moment().format('YYYY/MM/DD')).toEqual('2018/06/24');
+    const tzPlus1 = 'Africa/Algiers';
 
-    res = parse('yesterday till asd', new Date('2018-06-25T05:00:00+08:00'), { timezoneOffset: 60 });
+    res = parse('yesterday-today', new Date('2018-06-25T05:00:00+08:00'), { timezone: tzPlus1, output: 'date' });
     expect(res.text).toEqual('yesterday');
-    expect(res.start.moment().format('YYYY/MM/DD')).toEqual('2018/06/23');
-    expect(res.end.moment().format('YYYY/MM/DD')).toEqual('2018/06/24');
+    expect(res.start).toEqual('2018-06-23');
+    expect(res.end).toEqual('2018-06-24');
 
-    res = parse('ahihi till yesterday', new Date('2018-06-25T05:00:00+08:00'), { timezoneOffset: 60 });
+    res = parse('yesterday till asd', new Date('2018-06-25T05:00:00+08:00'), { timezone: tzPlus1, output: 'date' });
     expect(res.text).toEqual('yesterday');
-    expect(res.start.moment().format('YYYY/MM/DD')).toEqual('2018/06/23');
-    expect(res.end.moment().format('YYYY/MM/DD')).toEqual('2018/06/24');
+    expect(res.start).toEqual('2018-06-23');
+    expect(res.end).toEqual('2018-06-24');
+
+    res = parse('ahihi till yesterday', new Date('2018-06-25T05:00:00+08:00'), { timezone: tzPlus1, output: 'date' });
+    expect(res.text).toEqual('yesterday');
+    expect(res.start).toEqual('2018-06-23');
+    expect(res.end).toEqual('2018-06-24');
   });
 
   it('can parse weekdays', () => {
@@ -962,70 +968,77 @@ describe('dateParser', () => {
   it('works with timezones', () => {
     let res;
 
-    res = parse('last week begin', new Date('2018-06-25T05:00:00+08:00'), { timezoneOffset: 60 });
-    expect(res.start.date().toISOString()).toEqual('2018-06-10T23:00:00.000Z');
-    expect(res.end.date().toISOString()).toEqual('2018-06-11T23:00:00.000Z');
-    res = parse('last week begin', new Date('2018-06-25T05:00:00+08:00'), { timezoneOffset: 180 });
-    expect(res.start.date().toISOString()).toEqual('2018-06-17T21:00:00.000Z');
-    expect(res.end.date().toISOString()).toEqual('2018-06-18T21:00:00.000Z');
+    // Below are non-DST timezones
+    const tzPlus1 = 'Africa/Algiers';
+    const tzPlus3 = 'Africa/Nairobi';
+    const tzPlus9 = 'Asia/Seoul';
 
-    res = parse('this week end', new Date('2018-01-01T05:00:00+08:00'), { timezoneOffset: 60 });
-    expect(res.start.date().toISOString()).toEqual('2017-12-30T23:00:00.000Z');
-    expect(res.end.date().toISOString()).toEqual('2017-12-31T23:00:00.000Z');
-    res = parse('this week end', new Date('2018-01-01T05:00:00+08:00'), { timezoneOffset: 180 });
-    expect(res.start.date().toISOString()).toEqual('2018-01-06T21:00:00.000Z');
-    expect(res.end.date().toISOString()).toEqual('2018-01-07T21:00:00.000Z');
+    res = parse('last week begin', new Date('2018-06-25T05:00:00+08:00'), { timezone: tzPlus1, output: 'timestamp' });
+    expect(res.start).toEqual('2018-06-10T23:00:00.000Z');
+    expect(res.end).toEqual('2018-06-11T23:00:00.000Z');
 
-    res = parse('this month begin', new Date('2018-01-01T05:00:00+08:00'), { timezoneOffset: 60 });
-    expect(res.start.date().toISOString()).toEqual('2017-11-30T23:00:00.000Z');
-    expect(res.end.date().toISOString()).toEqual('2017-12-01T23:00:00.000Z');
-    res = parse('this month begin', new Date('2018-01-01T05:00:00+08:00'), { timezoneOffset: 180 });
-    expect(res.start.date().toISOString()).toEqual('2017-12-31T21:00:00.000Z');
-    expect(res.end.date().toISOString()).toEqual('2018-01-01T21:00:00.000Z');
+    res = parse('last week begin', new Date('2018-06-25T05:00:00+08:00'), { timezone: tzPlus3, output: 'timestamp' });
+    expect(res.start).toEqual('2018-06-17T21:00:00.000Z');
+    expect(res.end).toEqual('2018-06-18T21:00:00.000Z');
 
-    res = parse('last month end', new Date('2018-01-01T05:00:00+08:00'), { timezoneOffset: 60 });
-    expect(res.start.date().toISOString()).toEqual('2017-11-29T23:00:00.000Z');
-    expect(res.end.date().toISOString()).toEqual('2017-11-30T23:00:00.000Z');
-    res = parse('last month end', new Date('2018-01-01T05:00:00+08:00'), { timezoneOffset: 180 });
-    expect(res.start.date().toISOString()).toEqual('2017-12-30T21:00:00.000Z');
-    expect(res.end.date().toISOString()).toEqual('2017-12-31T21:00:00.000Z');
+    res = parse('this week end', new Date('2018-01-01T05:00:00+08:00'), { timezone: tzPlus1, output: 'timestamp' });
+    expect(res.start).toEqual('2017-12-30T23:00:00.000Z');
+    expect(res.end).toEqual('2017-12-31T23:00:00.000Z');
+    res = parse('this week end', new Date('2018-01-01T05:00:00+08:00'), { timezone: tzPlus3, output: 'timestamp' });
+    expect(res.start).toEqual('2018-01-06T21:00:00.000Z');
+    expect(res.end).toEqual('2018-01-07T21:00:00.000Z');
 
-    res = parse('next month end', '2018-01-01T05:00:00+08:00', { timezoneOffset: 60 });
-    expect(res.start.date().toISOString()).toEqual('2018-01-30T23:00:00.000Z');
-    expect(res.end.date().toISOString()).toEqual('2018-01-31T23:00:00.000Z');
-    res = parse('next month end', '2018-01-01T05:00:00+08:00', { timezoneOffset: 180 });
-    expect(res.start.date().toISOString()).toEqual('2018-02-27T21:00:00.000Z');
-    expect(res.end.date().toISOString()).toEqual('2018-02-28T21:00:00.000Z');
+    res = parse('this month begin', new Date('2018-01-01T05:00:00+08:00'), { timezone: tzPlus1, output: 'timestamp' });
+    expect(res.start).toEqual('2017-11-30T23:00:00.000Z');
+    expect(res.end).toEqual('2017-12-01T23:00:00.000Z');
+    res = parse('this month begin', new Date('2018-01-01T05:00:00+08:00'), { timezone: tzPlus3, output: 'timestamp' });
+    expect(res.start).toEqual('2017-12-31T21:00:00.000Z');
+    expect(res.end).toEqual('2018-01-01T21:00:00.000Z');
+
+    res = parse('last month end', new Date('2018-01-01T05:00:00+08:00'), { timezone: tzPlus1, output: 'timestamp' });
+    expect(res.start).toEqual('2017-11-29T23:00:00.000Z');
+    expect(res.end).toEqual('2017-11-30T23:00:00.000Z');
+    res = parse('last month end', new Date('2018-01-01T05:00:00+08:00'), { timezone: tzPlus3, output: 'timestamp' });
+    expect(res.start).toEqual('2017-12-30T21:00:00.000Z');
+    expect(res.end).toEqual('2017-12-31T21:00:00.000Z');
+
+    res = parse('next month end', '2018-01-01T05:00:00+08:00', { timezone: tzPlus1, output: 'timestamp' });
+    expect(res.start).toEqual('2018-01-30T23:00:00.000Z');
+    expect(res.end).toEqual('2018-01-31T23:00:00.000Z');
+    res = parse('next month end', '2018-01-01T05:00:00+08:00', { timezone: tzPlus3, output: 'timestamp' });
+    expect(res.start).toEqual('2018-02-27T21:00:00.000Z');
+    expect(res.end).toEqual('2018-02-28T21:00:00.000Z');
 
 
-    res = parse('yesterday', new Date('2019-04-11T23:00:00+00:00'), { timezoneOffset: 540 });
-    expect(res.start.date().toISOString()).toEqual('2019-04-10T15:00:00.000Z');
-    expect(res.end.date().toISOString()).toEqual('2019-04-11T15:00:00.000Z');
-    expect(res.start.moment().utcOffset()).toEqual(540);
-    expect(res.end.moment().utcOffset()).toEqual(540);
-    expect(res.start.moment().format('YYYY-MM-DD')).toEqual('2019-04-11');
-    expect(res.end.moment().format('YYYY-MM-DD')).toEqual('2019-04-12');
+    res = parse('yesterday', new Date('2019-04-11T23:00:00+00:00'), { timezone: tzPlus9, output: 'timestamp' });
+    expect(res.start).toEqual('2019-04-10T15:00:00.000Z');
+    expect(res.end).toEqual('2019-04-11T15:00:00.000Z');
     expect(res.ref.toISOString()).toEqual('2019-04-11T23:00:00.000Z');
 
-    res = parse('June 2019', new Date('2019-12-25T23:00:00+00:00'), { timezoneOffset: 540 });
-    expect(res.start.date().toISOString()).toEqual('2019-05-31T15:00:00.000Z');
-    expect(res.end.date().toISOString()).toEqual('2019-06-30T15:00:00.000Z');
+    res = parse('yesterday', new Date('2019-04-11T23:00:00+00:00'), { timezone: tzPlus9, output: 'date' });
+    expect(res.start).toEqual('2019-04-11');
+    expect(res.end).toEqual('2019-04-12');
 
-    res = parse('exactly 3 days ago', new Date('2019-12-26T04:35:19+08:00'), { timezoneOffset: 540 });
-    expect(res.start.date().toISOString()).toEqual('2019-12-22T20:35:19.000Z');
-    expect(res.end.date().toISOString()).toEqual('2019-12-22T20:35:20.000Z');
+    res = parse('June 2019', new Date('2019-12-25T23:00:00+00:00'), { timezone: tzPlus9, output: 'timestamp' });
+    expect(res.start).toEqual('2019-05-31T15:00:00.000Z');
+    expect(res.end).toEqual('2019-06-30T15:00:00.000Z');
+
+    res = parse('exactly 3 days ago', new Date('2019-12-26T04:35:19+08:00'), { timezone: tzPlus9, output: 'timestamp' });
+    expect(res.start).toEqual('2019-12-22T20:35:19.000Z');
+    expect(res.end).toEqual('2019-12-22T20:35:20.000Z');
   });
 
   it('has good behavior with default parsers', () => {
     let res;
+    const tzPlus9 = 'Asia/Seoul';
 
-    res = parse('3 o\'clock - 3 minutes ago', new Date('2019-12-26T04:35:19+08:00'), { timezoneOffset: 540 });
+    res = parse('3 o\'clock - 3 minutes ago', new Date('2019-12-26T04:35:19+08:00'), { timezone: tzPlus9, output: 'timestamp' });
     expect(res.text).toEqual("3 o'clock - 3 minutes ago");
-    expect(res.start.date().toISOString()).toEqual('2019-12-25T18:00:00.000Z');
-    expect(res.end.date().toISOString()).toEqual('2019-12-25T20:33:00.000Z');
+    expect(res.start).toEqual('2019-12-25T18:00:00.000Z');
+    expect(res.end).toEqual('2019-12-25T20:33:00.000Z');
 
     // ambiguous
-    res = parse('within 3 days', new Date('2019-12-26T04:35:19+08:00'), { timezoneOffset: 540 });
+    res = parse('within 3 days', new Date('2019-12-26T04:35:19+08:00'), { timezone: tzPlus9 });
     expect(res).toEqual(null);
   });
 
@@ -1033,30 +1046,34 @@ describe('dateParser', () => {
     expect(() => parse('today', 'ahehe')).toThrowError(/invalid ref/i);
   });
 
-  it('rejects invalid timezoneOffset', () => {
-    expect(() => parse('today', new Date(), { timezoneOffset: 'asd' })).toThrowError(/invalid timezoneOffset/i);
+  it('rejects invalid timezone', () => {
+    expect(() => parse('today', new Date(), { timezone: 'asd' })).toThrowError(/invalid time zone/i);
   });
 
-  it('cant output in timestamp format', () => {
+  it('can output in timestamp format', () => {
+    const tzPlus1 = 'Africa/Algiers';
+    const tzPlus7 = 'Asia/Bangkok';
+    const tzPlus9 = 'Asia/Seoul';
+
     let res;
 
-    res = parse('yesterday', new Date('2019-04-11T22:00:00+00:00'), { timezoneOffset: 420, output: 'timestamp' });
+    res = parse('yesterday', new Date('2019-04-11T22:00:00+00:00'), { timezone: tzPlus7, output: 'timestamp' });
     expect(res.start).toEqual('2019-04-10T17:00:00.000Z');
     expect(res.end).toEqual('2019-04-11T17:00:00.000Z');
-    res = parse('yesterday', new Date('2019-04-11T22:00:00+00:00'), { timezoneOffset: 540, output: 'timestamp' });
+    res = parse('yesterday', new Date('2019-04-11T22:00:00+00:00'), { timezone: tzPlus9, output: 'timestamp' });
     expect(res.start).toEqual('2019-04-10T15:00:00.000Z');
     expect(res.end).toEqual('2019-04-11T15:00:00.000Z');
-    res = parse('yesterday', new Date('2019-04-11T22:00:00+00:00'), { timezoneOffset: 60, output: 'timestamp' });
+    res = parse('yesterday', new Date('2019-04-11T22:00:00+00:00'), { timezone: tzPlus1, output: 'timestamp' });
     expect(res.start).toEqual('2019-04-09T23:00:00.000Z');
     expect(res.end).toEqual('2019-04-10T23:00:00.000Z');
 
-    res = parse('yesterday', new Date('2019-04-11T22:00:00+00:00'), { timezoneOffset: 420, output: 'date' });
+    res = parse('yesterday', new Date('2019-04-11T22:00:00+00:00'), { timezone: tzPlus7, output: 'date' });
     expect(res.start).toEqual('2019-04-11');
     expect(res.end).toEqual('2019-04-12');
-    res = parse('yesterday', new Date('2019-04-11T22:00:00+00:00'), { timezoneOffset: 540, output: 'date' });
+    res = parse('yesterday', new Date('2019-04-11T22:00:00+00:00'), { timezone: tzPlus9, output: 'date' });
     expect(res.start).toEqual('2019-04-11');
     expect(res.end).toEqual('2019-04-12');
-    res = parse('yesterday', new Date('2019-04-11T22:00:00+00:00'), { timezoneOffset: 60, output: 'date' });
+    res = parse('yesterday', new Date('2019-04-11T22:00:00+00:00'), { timezone: tzPlus1, output: 'date' });
     expect(res.start).toEqual('2019-04-10');
     expect(res.end).toEqual('2019-04-11');
     res = parse('yesterday', new Date('2019-04-11T22:00:00+00:00'), { output: 'date' });
@@ -1353,26 +1370,135 @@ describe('dateParser', () => {
     expect(res.start.date().toISOString()).toEqual('2021-05-03T00:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2021-05-04T00:00:00.000Z');
 
-    res = parse('last week end', new Date('2021-05-10T22:14:05Z'), { weekStartDay: WEEKDAYS.Tuesday, timezoneOffset: 480 });
+    const tzPlus8 = 'Asia/Singapore';
+
+    res = parse('last week end', new Date('2021-05-10T22:14:05Z'), { weekStartDay: WEEKDAYS.Tuesday, timezone: tzPlus8 });
     expect(res).toMatchObject({
+      ref: new Date('2021-05-10T22:14:05.000Z'),
       start: {
+        reference: {
+          instant: new Date('2021-05-11T06:14:05.000Z'),
+          timezoneOffset: 0,
+        },
         knownValues: {
           year: 2021, month: 5, day: 10, hour: 0, minute: 0, second: 0,
         },
         impliedValues: { millisecond: 0, timezoneOffset: 480 },
       },
       end: {
+        reference: {
+          instant: new Date('2021-05-11T06:14:05.000Z'),
+          timezoneOffset: 0,
+        },
         knownValues: {
           year: 2021, month: 5, day: 11, hour: 0, minute: 0, second: 0,
         },
         impliedValues: { millisecond: 0, timezoneOffset: 480 },
       },
     });
-    expect(res.start.date().toISOString()).toEqual('2021-05-09T16:00:00.000Z');
-    expect(res.end.date().toISOString()).toEqual('2021-05-10T16:00:00.000Z');
+
+    res = parse('last week end', new Date('2021-05-10T22:14:05Z'), { weekStartDay: WEEKDAYS.Tuesday, timezone: tzPlus8, output: 'timestamp' });
+    expect(res.start).toEqual('2021-05-09T16:00:00.000Z');
+    expect(res.end).toEqual('2021-05-10T16:00:00.000Z');
   });
 
   it('raises error when weekStartDay is invalid', () => {
     expect(() => parse('this mon', new Date(), { weekStartDay: 'ahihi' })).toThrowError(/invalid weekStartDay/i);
+  });
+
+  it('can run with invalid input', () => {
+    const res = parse('sayonara', new Date(), {});
+    expect(res).toEqual(null);
+  });
+
+  it('work with DST shit for absolute-like inputs', () => {
+    // At 2021-03-28T01:00:00Z, the DST will happen +01 -> +02
+    const timezone = 'Europe/Copenhagen';
+    const output = 'timestamp';
+    let res = null;
+
+    // Ref date: +01 offset for below tests
+
+    // Input: +02 offset
+    res = parse('2021-09-05T22:00:00Z', new Date('2021-11-05T02:14:05Z'), { timezone, output });
+    expect(res.start).toEqual('2021-09-05T22:00:00.000Z');
+    expect(res.end).toEqual('2021-09-05T22:00:01.000Z');
+
+    // Input: +01 offset
+    res = parse('2021-12-04', new Date('2021-11-05T02:14:05Z'), { timezone, output });
+    expect(res.start).toEqual('2021-12-03T23:00:00.000Z');
+    expect(res.end).toEqual('2021-12-04T23:00:00.000Z');
+
+    // Input: +01 offset
+    res = parse('2021-12-04', new Date('2021-11-05T02:14:05Z'), { timezone, output: 'date' });
+    expect(res.start).toEqual('2021-12-04');
+    expect(res.end).toEqual('2021-12-05');
+
+    // // Input: +02 offset - +01 offset
+
+    res = parse('2021-09-05T22:00:00 - 2021-11-04T23:00:00', new Date('2021-11-05T02:14:05Z'), { timezone, output });
+    expect(res.start).toEqual('2021-09-05T22:00:00.000Z');
+    expect(res.end).toEqual('2021-11-04T23:00:01.000Z');
+
+    res = parse('2021-09-05 - 2021-11-04', new Date('2021-11-05T02:14:05Z'), { timezone, output });
+    expect(res.start).toEqual('2021-09-04T22:00:00.000Z');
+    expect(res.end).toEqual('2021-11-04T23:00:00.000Z');
+
+    res = parse('2021-09-05 - 2021-11-04', new Date('2021-11-20T02:14:05Z'), { timezone });
+    expect(res).toMatchObject({
+      ref: new Date('2021-11-20T02:14:05.000Z'),
+      start: {
+        reference: {
+          instant: new Date('2021-11-20T03:14:05.000Z'),
+          timezoneOffset: 0,
+        },
+        knownValues: {
+          year: 2021, month: 9, day: 5,
+        },
+        impliedValues: {
+          hour: 0, minute: 0, second: 0, millisecond: 0, timezoneOffset: 120,
+        },
+      },
+      end: {
+        reference: {
+          instant: new Date('2021-11-20T03:14:05.000Z'),
+          timezoneOffset: 0,
+        },
+        knownValues: {},
+        impliedValues: {
+          year: 2021, month: 11, day: 5, hour: 0, minute: 0, second: 0, millisecond: 0, timezoneOffset: 60,
+        },
+      },
+    });
+  });
+
+  it('work with DST for relative-like inputs', () => {
+    // At 2021-03-28T01:00:00Z, the DST will happen +01 -> +02
+    const timezone = 'Europe/Copenhagen';
+    const output = 'timestamp';
+    let res = null;
+
+    // Ref date is at the time when DST happens, +01 -> +02
+    // But inputs are not yet affected by DST
+    res = parse('yesterday', new Date('2021-03-28T01:00:00Z'), { timezone, output });
+    expect(res.start).toEqual('2021-03-26T23:00:00.000Z');
+    expect(res.end).toEqual('2021-03-27T23:00:00.000Z');
+
+    // End input is affected by DST changing
+    res = parse('yesterday till now', new Date('2021-03-28T01:00:00Z'), { timezone, output });
+    expect(res.start).toEqual('2021-03-26T23:00:00.000Z');
+    expect(res.end).toEqual('2021-03-28T01:00:00.000Z');
+  });
+
+  // We haven't support hour operations that span between different timezones due to DST
+  // See this notion: https://www.notion.so/holistics/Date-Parser-NLP-NodeJS-00d866649791467887d451e160993da5
+  xit('hours operation should work will with DST', () => {
+    const timezone = 'Europe/Copenhagen';
+    const output = 'timestamp';
+    let res = null;
+
+    res = parse('3 hours ago till now', new Date('2021-03-28T01:00:00Z'), { timezone, output });
+    expect(res.start).toEqual('2021-03-27T22:00:00.000Z');
+    expect(res.end).toEqual('2021-03-28T01:00:00.000Z');
   });
 });
