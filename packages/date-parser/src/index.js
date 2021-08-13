@@ -1,4 +1,4 @@
-import ChronoNode from 'chrono-node';
+import { Chrono } from 'chrono-node';
 import _compact from 'lodash/compact';
 import _some from 'lodash/some';
 
@@ -6,9 +6,8 @@ import dayjs from 'dayjs';
 
 // NOTE: order is important to make sure chrono-node uses plugin-enabled dayjs
 import './initializers/dayjs';
-import './initializers/chrono-node';
+import optionsV2 from './optionsV2';
 
-import options from './options';
 import isValidDate from './helpers/isValidDate';
 import {
   WEEKDAYS,
@@ -18,8 +17,9 @@ import {
   DATE_RANGE_KEYWORDS,
 } from './constants';
 import Errors, { InputError } from './errors';
+import PostResult from './result';
 
-const chrono = new ChronoNode.Chrono(options);
+const chrono = new Chrono(optionsV2);
 
 const splitInputStr = (str) => {
   let parts = [str];
@@ -50,8 +50,8 @@ const splitInputStr = (str) => {
 
 const getParsedResultBoundaries = (parsedResults) => {
   const sortedResults = parsedResults.slice().sort((a, b) => {
-    if (a.end.moment().isBefore(b.start.moment())) return -1;
-    if (a.start.moment().isAfter(b.end.moment())) return 1;
+    if (a.end.dayjs().isBefore(b.start.dayjs())) return -1;
+    if (a.start.dayjs().isAfter(b.end.dayjs())) return 1;
     return 0;
   });
   const hasOrderChanged = _some(sortedResults, (r, i) => parsedResults[i] !== r);
@@ -65,33 +65,35 @@ const getParsedResultBoundaries = (parsedResults) => {
  * @param {String} str The date string to parse
  * @param {String|Date} ref Reference date
  * @param {Object} options
- * @param {Number} options.timezoneOffset Timezone offset in minutes
+ * @param {String} options.timezone Timezone region
  * @param {OUTPUT_TYPES} options.output Type of the output dates
  * @param {Number} weekStartDay The weekday chosen to be the start of a week. See WEEKDAYS constant for possible values
  * @return {ChronoNode.ParsedResult|Array}
  */
-export const parse = (str, ref, { timezoneOffset = 0, output = OUTPUT_TYPES.parsed_component, weekStartDay = WEEKDAYS.Monday } = {}) => {
+export const parse = (str, ref, { timezone = 'Etc/UTC', output = OUTPUT_TYPES.parsed_component, weekStartDay = WEEKDAYS.Monday } = {}) => {
   const refDate = new Date(ref);
   if (!isValidDate(refDate)) throw new InputError(`Invalid reference date: ${ref}`);
 
-  /* eslint-disable-next-line no-param-reassign */
-  timezoneOffset = parseInt(timezoneOffset);
-  if (Number.isNaN(timezoneOffset)) throw new InputError(`Invalid timezoneOffset: ${timezoneOffset}`);
+  // Check if timezone is valid by parsing a random date
+  dayjs.tz('2016-05-01 12:00:00', timezone);
 
   if (!(weekStartDay in WEEKDAYS_MAP)) throw new InputError(`Invalid weekStartDay: ${weekStartDay}. See exported constant WEEKDAYS for valid values`);
   /* eslint-disable-next-line no-param-reassign */
   weekStartDay = WEEKDAYS_MAP[weekStartDay];
 
-  // Adjust refDate by timezoneOffset
-  let refMoment = dayjs.utc(refDate);
-  refMoment = refMoment.add(timezoneOffset, 'minute');
-  const refDateAdjustedByTz = refMoment.toDate();
+  // Adjust refDate by timezone, then change its timezone without changing its absolute value
+  const refMoment = dayjs.tz(refDate, timezone).utc(true).toDate();
+
+  const parsingReference = {
+    instant: refMoment,
+    timezone: 0, // We will handle tz offset by timezone refiner
+  };
 
   const splittedInput = splitInputStr(str);
   const { parts, rangeSeparator } = splittedInput;
   let { isRange, isRangeEndInclusive } = splittedInput;
 
-  const parsedResults = _compact(parts.map(part => chrono.parse(part, refDateAdjustedByTz, { timezoneOffset, weekStartDay })[0]));
+  const parsedResults = _compact(parts.map(part => chrono.parse(part, parsingReference, { weekStartDay, timezone })[0]));
 
   if (output === OUTPUT_TYPES.raw) return parsedResults;
 
@@ -106,24 +108,22 @@ export const parse = (str, ref, { timezoneOffset = 0, output = OUTPUT_TYPES.pars
     throw new InputError(`Start date must be before end date when using end-exclusive syntax (${DATE_RANGE_KEYWORDS.rangeEndExclusive})`);
   }
 
-  const result = new ChronoNode.ParsedResult({
+  const postResult = new PostResult({
     ref: refDate,
     index: first.index,
-    tags: { ...first.tags, ...last.tags },
     text: isRange ? `${first.text} ${rangeSeparator} ${last.text}` : first.text,
+    start: first.start.clone(),
+    end: isRangeEndInclusive ? last.end.clone() : last.start.clone(),
   });
-  result.start = first.start.clone();
-  result.end = isRangeEndInclusive ? last.end.clone() : last.start.clone();
 
-  if (output === OUTPUT_TYPES.date) {
-    result.start = result.start.moment().format('YYYY-MM-DD');
-    result.end = result.end.moment().format('YYYY-MM-DD');
-  } else if (output === OUTPUT_TYPES.timestamp) {
-    result.start = result.start.date().toISOString();
-    result.end = result.end.date().toISOString();
+  switch (output) {
+    case OUTPUT_TYPES.date:
+      return postResult.asDateType();
+    case OUTPUT_TYPES.timestamp:
+      return postResult.asTimestampType();
+    default:
+      return postResult.asChronoType();
   }
-
-  return result;
 };
 
 export { WEEKDAYS, OUTPUT_TYPES } from './constants';
