@@ -114,6 +114,7 @@ export const parse = (str, ref, { timezone = 'Etc/UTC', output = OUTPUT_TYPES.pa
     text: isRange ? `${first.text} ${rangeSeparator} ${last.text}` : first.text,
     start: first.start.clone(),
     end: isRangeEndInclusive ? last.end.clone() : last.start.clone(),
+    timezone,
   });
 
   switch (output) {
@@ -121,6 +122,8 @@ export const parse = (str, ref, { timezone = 'Etc/UTC', output = OUTPUT_TYPES.pa
       return postResult.asDateType();
     case OUTPUT_TYPES.timestamp:
       return postResult.asTimestampType();
+    case OUTPUT_TYPES.dayjs:
+      return postResult.asDayJsType();
     default:
       return postResult.asChronoType();
   }

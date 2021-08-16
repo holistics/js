@@ -43,6 +43,7 @@ export const OUTPUT_TYPES = {
   date: 'date',
   timestamp: 'timestamp',
   raw: 'raw',
+  dayjs: 'dayjs',
 };
 
 export const DATE_RANGE_KEYWORDS = {

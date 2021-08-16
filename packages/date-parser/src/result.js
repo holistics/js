@@ -1,12 +1,15 @@
+import dayjs from 'dayjs';
 import { merge } from 'lodash';
 
-const convertToTargetTimezone = (parsedComponent) => {
-  if (!parsedComponent) return null;
-  const offset = parsedComponent.get('timezoneOffset');
-
-  return parsedComponent.dayjs().utcOffset(offset);
+/**
+   *
+   * @param {Date} date
+   * @param {String} timezone
+   */
+const toDayJS = (date, timezone) => {
+  if (!date) { return null; }
+  return dayjs(date).tz(timezone);
 };
-
 export default class PostResult {
   /**
    * @param {Date} ref
@@ -17,13 +20,14 @@ export default class PostResult {
    * @param {String} timezone
    */
   constructor ({
-    ref, index, text, start, end,
+    ref, index, text, start, end, timezone,
   }) {
     this.ref = ref;
     this.index = index;
     this.text = text;
     this.start = start;
     this.end = end;
+    this.timezone = timezone;
   }
 
   toObject () {
@@ -40,24 +44,32 @@ export default class PostResult {
     return this.toObject();
   }
 
-  asDateType () {
-    const start = convertToTargetTimezone(this.start);
-    const end = convertToTargetTimezone(this.end);
-
+  asDayJsType () {
     return merge(
       this.toObject(), {
-        start: start ? start.format('YYYY-MM-DD') : null,
-        end: end ? end.format('YYYY-MM-DD') : null,
+        start: this.start ? toDayJS(this.start.date(), this.timezone) : null,
+        end: this.end ? toDayJS(this.end.date(), this.timezone) : null,
+      },
+    );
+  }
+
+  asDateType () {
+    const dayJsResult = this.asDayJsType();
+    return merge(
+      dayJsResult, {
+        start: dayJsResult.start ? dayJsResult.start.format('YYYY-MM-DD') : null,
+        end: dayJsResult.end ? dayJsResult.end.format('YYYY-MM-DD') : null,
       },
     );
   }
 
   asTimestampType () {
-    const start = this.start ? this.start.dayjs().toISOString() : null;
-    const end = this.end ? this.end.dayjs().toISOString() : null;
-
+    const dayJsResult = this.asDayJsType();
     return merge(
-      this.toObject(), { start, end },
+      dayJsResult, {
+        start: dayJsResult.start ? dayJsResult.start.toISOString() : null,
+        end: dayJsResult.end ? dayJsResult.end.toISOString() : null,
+      },
     );
   }
 }
