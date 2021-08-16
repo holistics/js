@@ -7,7 +7,6 @@ import { merge } from 'lodash';
    * @param {String} timezone
    */
 const toDayJS = (date, timezone) => {
-  if (!date) { return null; }
   return dayjs(date).tz(timezone);
 };
 export default class PostResult {

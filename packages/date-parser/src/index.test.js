@@ -1490,6 +1490,18 @@ describe('dateParser', () => {
     expect(res.end).toEqual('2021-03-28T01:00:00.000Z');
   });
 
+  it('return result as dayjs instance', () => {
+    let res = null;
+
+    res = parse('last week begin', new Date('2021-08-16T11:44:00+00:00'), { output: OUTPUT_TYPES.dayjs });
+    expect(res.start.toISOString()).toEqual('2021-08-09T00:00:00.000Z');
+    expect(res.end.format('YYYY-MM-DD')).toEqual('2021-08-10');
+
+    res = parse('yesterday', new Date('2021-08-16T21:44:00+00:00'), { output: OUTPUT_TYPES.dayjs, timezone: 'Asia/Singapore' });
+    expect(res.start.toISOString()).toEqual('2021-08-15T16:00:00.000Z');
+    expect(res.end.toISOString()).toEqual('2021-08-16T16:00:00.000Z');
+  });
+
   // We haven't support hour operations that span between different timezones due to DST
   // See this notion: https://www.notion.so/holistics/Date-Parser-NLP-NodeJS-00d866649791467887d451e160993da5
   xit('hours operation should work will with DST', () => {
