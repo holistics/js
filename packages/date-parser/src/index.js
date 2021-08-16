@@ -72,10 +72,15 @@ const getParsedResultBoundaries = (parsedResults) => {
  */
 export const parse = (str, ref, { timezone = 'Etc/UTC', output = OUTPUT_TYPES.parsed_component, weekStartDay = WEEKDAYS.Monday } = {}) => {
   const refDate = new Date(ref);
+
   if (!isValidDate(refDate)) throw new InputError(`Invalid reference date: ${ref}`);
 
-  // Check if timezone is valid by parsing a random date
-  dayjs.tz('2016-05-01 12:00:00', timezone);
+  try {
+    // Check if timezone is valid by parsing a random date
+    dayjs.tz('2016-05-01 12:00:00', timezone);
+  } catch (err) {
+    throw new InputError(`Invalid time zone: ${timezone}`);
+  }
 
   if (!(weekStartDay in WEEKDAYS_MAP)) throw new InputError(`Invalid weekStartDay: ${weekStartDay}. See exported constant WEEKDAYS for valid values`);
   /* eslint-disable-next-line no-param-reassign */
