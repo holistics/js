@@ -17,7 +17,7 @@ import {
   DATE_RANGE_KEYWORDS,
 } from './constants';
 import Errors, { InputError } from './errors';
-import PostResult from './result';
+import Result from './result';
 
 const chrono = new Chrono(optionsV2);
 
@@ -113,7 +113,7 @@ export const parse = (str, ref, { timezone = 'Etc/UTC', output = OUTPUT_TYPES.pa
     throw new InputError(`Start date must be before end date when using end-exclusive syntax (${DATE_RANGE_KEYWORDS.rangeEndExclusive})`);
   }
 
-  const postResult = new PostResult({
+  const postResult = new Result({
     ref: refDate,
     index: first.index,
     text: isRange ? `${first.text} ${rangeSeparator} ${last.text}` : first.text,

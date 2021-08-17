@@ -9,7 +9,7 @@ import { merge } from 'lodash';
 const toDayJS = (date, timezone) => {
   return dayjs(date).tz(timezone);
 };
-export default class PostResult {
+export default class Result {
   /**
    * @param {Date} ref
    * @param {Number} index
