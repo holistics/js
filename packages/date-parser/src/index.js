@@ -113,7 +113,7 @@ export const parse = (str, ref, { timezone = 'Etc/UTC', output = OUTPUT_TYPES.pa
     throw new InputError(`Start date must be before end date when using end-exclusive syntax (${DATE_RANGE_KEYWORDS.rangeEndExclusive})`);
   }
 
-  const postResult = new Result({
+  const postChronoResult = new Result({
     ref: refDate,
     index: first.index,
     text: isRange ? `${first.text} ${rangeSeparator} ${last.text}` : first.text,
@@ -124,13 +124,13 @@ export const parse = (str, ref, { timezone = 'Etc/UTC', output = OUTPUT_TYPES.pa
 
   switch (output) {
     case OUTPUT_TYPES.date:
-      return postResult.asDateType();
+      return postChronoResult.asDateType();
     case OUTPUT_TYPES.timestamp:
-      return postResult.asTimestampType();
+      return postChronoResult.asTimestampType();
     case OUTPUT_TYPES.dayjs:
-      return postResult.asDayJsType();
+      return postChronoResult.asDayJsType();
     default:
-      return postResult.asChronoType();
+      return postChronoResult.asChronoType();
   }
 };
 
