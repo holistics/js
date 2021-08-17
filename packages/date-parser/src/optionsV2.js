@@ -26,7 +26,6 @@ import lastXParser from './parsers/lastX';
 
 // Custom refiners
 import implier from './refiners/implier';
-import ambiguityRefiner from './refiners/ambiguity';
 import timezone from './refiners/timezone';
 
 const littleEndian = false;
@@ -62,7 +61,6 @@ const refiners = [
   new ForwardDateRefiner(),
 
   implier,
-  ambiguityRefiner,
   timezone,
 ];
 
