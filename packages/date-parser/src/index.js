@@ -86,11 +86,8 @@ export const parse = (str, ref, { timezone = 'Etc/UTC', output = OUTPUT_TYPES.pa
   /* eslint-disable-next-line no-param-reassign */
   weekStartDay = WEEKDAYS_MAP[weekStartDay];
 
-  // Change timezone to UTC
-  const refMoment = dayjs.tz(refDate, timezone).utc(true).toDate();
-
   const parsingReference = {
-    instant: refMoment,
+    instant: refDate,
     timezone: 0, // We will handle tz offset by timezone refiner
   };
 
