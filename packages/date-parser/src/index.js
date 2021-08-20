@@ -70,7 +70,7 @@ const getParsedResultBoundaries = (parsedResults) => {
  * @param {Number} weekStartDay The weekday chosen to be the start of a week. See WEEKDAYS constant for possible values
  * @return {ChronoNode.ParsedResult|Array}
  */
-export const parse = (str, ref, { timezone = 'Etc/UTC', output = OUTPUT_TYPES.parsed_component, weekStartDay = WEEKDAYS.Monday } = {}) => {
+export const parse = (str, ref, { timezone = 'Etc/UTC', output = OUTPUT_TYPES.dayjs, weekStartDay = WEEKDAYS.Monday } = {}) => {
   const refDate = new Date(ref);
 
   if (!isValidDate(refDate)) throw new InputError(`Invalid reference date: ${ref}`);
