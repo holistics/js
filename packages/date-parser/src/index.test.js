@@ -1420,7 +1420,7 @@ describe('dateParser', () => {
     expect(res).toEqual(null);
   });
 
-  it('work with DST shit for absolute-like inputs', () => {
+  it('work with DST for absolute-like inputs', () => {
     // At 2021-03-28T01:00:00Z, the DST will happen +01 -> +02
     const timezone = 'Europe/Copenhagen';
     const output = 'timestamp';
@@ -1458,7 +1458,7 @@ describe('dateParser', () => {
       ref: new Date('2021-11-20T02:14:05.000Z'),
       start: {
         reference: {
-          instant: new Date('2021-11-20T03:14:05.000Z'),
+          instant: new Date('2021-11-20T02:14:05.000Z'),
           timezoneOffset: 0,
         },
         knownValues: {
@@ -1470,7 +1470,7 @@ describe('dateParser', () => {
       },
       end: {
         reference: {
-          instant: new Date('2021-11-20T03:14:05.000Z'),
+          instant: new Date('2021-11-20T02:14:05.000Z'),
           timezoneOffset: 0,
         },
         knownValues: {},
