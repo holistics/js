@@ -5,17 +5,16 @@ import ENMonthNameLittleEndianParser from 'chrono-node/dist/locales/en/parsers/E
 import ENMonthNameMiddleEndianParser from 'chrono-node/dist/locales/en/parsers/ENMonthNameMiddleEndianParser';
 import ENCasualYearMonthDayParser from 'chrono-node/dist/locales/en/parsers/ENCasualYearMonthDayParser';
 import ENSlashMonthFormatParser from 'chrono-node/dist/locales/en/parsers/ENSlashMonthFormatParser';
-import ENTimeExpressionParser from 'chrono-node/dist/locales/en/parsers/ENTimeExpressionParser';
 import ENMonthNameParser from 'chrono-node/dist/locales/en/parsers/ENMonthNameParser';
 
 // Chrono refiners
 import OverlapRemovalRefiner from 'chrono-node/dist/common/refiners/OverlapRemovalRefiner';
-import ForwardDateRefiner from 'chrono-node/dist/common/refiners/ForwardDateRefiner';
 import ENMergeDateTimeRefiner from 'chrono-node/dist/locales/en/refiners/ENMergeDateTimeRefiner';
 import ENMergeDateRangeRefiner from 'chrono-node/dist/locales/en/refiners/ENMergeDateRangeRefiner';
 
 
 // Custom parsers
+import wrapENTimeExpressionParser from './parsers/wrapENTimeExpression';
 import ambiguousWeekdayGuard from './parsers/guards/ambiguousWeekday';
 import constantsParser from './parsers/constants';
 import todayParser from './parsers/today';
@@ -47,7 +46,7 @@ const parsers = [
   new ENMonthNameMiddleEndianParser(),
   new ENCasualYearMonthDayParser(),
   new ENSlashMonthFormatParser(),
-  new ENTimeExpressionParser(strictMode),
+  wrapENTimeExpressionParser(strictMode),
   new ENMonthNameParser(),
 ];
 
@@ -58,7 +57,6 @@ const refiners = [
   new ENMergeDateRangeRefiner(),
 
   new OverlapRemovalRefiner(),
-  new ForwardDateRefiner(),
 
   implier,
   timezone,
