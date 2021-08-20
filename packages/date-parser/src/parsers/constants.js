@@ -18,11 +18,11 @@ parser.extract = (context, match) => {
   /* istanbul ignore else */
   if (date === 'beginning') {
     start = {
-      year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0,
+      year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0, timezoneOffset: 0,
     };
   } else if (date === 'now') {
     const refDateStruct = dateStructFromDate(context.reference.instant);
-    const nowDateStruct = { ...refDateStruct, month: refDateStruct.month + 1 };
+    const nowDateStruct = { ...refDateStruct, month: refDateStruct.month + 1, timezoneOffset: 0 };
     start = nowDateStruct;
   }
 
