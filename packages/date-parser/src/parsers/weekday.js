@@ -3,6 +3,7 @@ import truncateDateStruct from '../helpers/truncateDateStruct';
 import momentFromStruct from '../helpers/momentFromStruct';
 import chronoDateStructFromMoment from '../helpers/chronoDateStructFromMoment';
 import { WEEKDAYS_MAP } from '../constants';
+import offsetTimezoneForJSDate from '../helpers/offsetTimezoneForJSDate';
 
 const parser = {};
 
@@ -28,7 +29,9 @@ parser.extract = (context, match) => {
     value = parseInt(match[3] || 1);
   }
 
-  const refDateStruct = truncateDateStruct(dateStructFromDate(context.reference.instant), 'day');
+  const offsetRef = offsetTimezoneForJSDate(context.reference.instant, context.option.timezone);
+
+  const refDateStruct = truncateDateStruct(dateStructFromDate(offsetRef), 'day');
   let startMoment = momentFromStruct(refDateStruct, { weekStartDay });
   startMoment = startMoment.add(value, 'week');
   startMoment = startMoment.weekday((7 + WEEKDAYS_MAP[weekday] - weekStartDay) % 7);

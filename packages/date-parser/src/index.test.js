@@ -968,6 +968,10 @@ describe('dateParser', () => {
     });
     expect(res.start.date().toISOString()).toEqual('2020-01-03T00:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2020-01-04T00:00:00.000Z');
+
+    res = parse('friday last weeks', new Date('2021-08-22T20:14:05Z'), { output: 'timestamp', timezone: 'Asia/Singapore' });
+    expect(res.start).toEqual('2021-08-19T16:00:00.000Z');
+    expect(res.end).toEqual('2021-08-20T16:00:00.000Z');
   });
 
   it('works with timezones', () => {
@@ -1382,7 +1386,7 @@ describe('dateParser', () => {
       ref: new Date('2021-05-10T22:14:05.000Z'),
       start: {
         reference: {
-          instant: new Date('2021-05-11T06:14:05.000Z'),
+          instant: new Date('2021-05-10T22:14:05.000Z'),
           timezoneOffset: 0,
         },
         knownValues: {
@@ -1392,7 +1396,7 @@ describe('dateParser', () => {
       },
       end: {
         reference: {
-          instant: new Date('2021-05-11T06:14:05.000Z'),
+          instant: new Date('2021-05-10T22:14:05.000Z'),
           timezoneOffset: 0,
         },
         knownValues: {
