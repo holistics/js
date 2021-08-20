@@ -2,6 +2,8 @@ import dateStructFromDate from '../helpers/dateStructFromDate';
 import truncateDateStruct from '../helpers/truncateDateStruct';
 import momentFromStruct from '../helpers/momentFromStruct';
 import chronoDateStructFromMoment from '../helpers/chronoDateStructFromMoment';
+import { DATE_UNIT_LEVELS } from '../constants';
+import offsetTimezoneForJSDate from '../helpers/offsetTimezoneForJSDate';
 
 const parser = {};
 
@@ -21,7 +23,15 @@ parser.extract = (context, match) => {
   const value = parseInt(match[2]) * (isPast ? -1 : 1);
   const duration = match[5];
 
-  let refDateStruct = dateStructFromDate(context.reference.instant);
+  // hour level and above is affected by DST, using UTC is much simpler
+  const shouldUseUTC = DATE_UNIT_LEVELS[dateUnit] >= DATE_UNIT_LEVELS.hour;
+
+  let refDate = context.reference.instant;
+  if (!shouldUseUTC) {
+    refDate = offsetTimezoneForJSDate(refDate, context.option.timezone);
+  }
+
+  let refDateStruct = dateStructFromDate(refDate);
   if (!exact) {
     refDateStruct = truncateDateStruct(refDateStruct, dateUnit);
   }
@@ -38,11 +48,19 @@ parser.extract = (context, match) => {
     endMoment = endMoment.add(1, dateUnit);
   }
 
+  const chronoStart = chronoDateStructFromMoment(startMoment);
+  const chronoEnd = chronoDateStructFromMoment(endMoment);
+
+  if (shouldUseUTC) {
+    chronoStart.timezoneOffset = 0;
+    chronoEnd.timezoneOffset = 0;
+  }
+
   return context.createParsingResult(
     match.index,
     match[0],
-    chronoDateStructFromMoment(startMoment),
-    chronoDateStructFromMoment(endMoment),
+    chronoStart,
+    chronoEnd,
   );
 };
 

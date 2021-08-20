@@ -1511,15 +1511,25 @@ describe('dateParser', () => {
     expect(res.end.toISOString()).toEqual('2021-08-16T16:00:00.000Z');
   });
 
-  // We haven't support hour operations that span between different timezones due to DST
-  // See this notion: https://www.notion.so/holistics/Date-Parser-NLP-NodeJS-00d866649791467887d451e160993da5
-  xit('hours operation should work will with DST', () => {
+  it('xAgo works with DST', () => {
     const timezone = 'Europe/Copenhagen';
     const output = 'timestamp';
     let res = null;
 
-    res = parse('3 hours ago till now', new Date('2021-03-28T01:00:00Z'), { timezone, output });
+    res = parse('3 hours ago', new Date('2021-03-28T01:00:00Z'), { timezone, output });
     expect(res.start).toEqual('2021-03-27T22:00:00.000Z');
-    expect(res.end).toEqual('2021-03-28T01:00:00.000Z');
+    expect(res.end).toEqual('2021-03-27T23:00:00.000Z');
+
+    res = parse('180 minutes ago', new Date('2021-03-28T01:00:00Z'), { timezone, output });
+    expect(res.start).toEqual('2021-03-27T22:00:00.000Z');
+    expect(res.end).toEqual('2021-03-27T22:01:00.000Z');
+
+    res = parse('exact 3 hours ago', new Date('2021-03-28T01:00:00Z'), { timezone, output });
+    expect(res.start).toEqual('2021-03-27T22:00:00.000Z');
+    expect(res.end).toEqual('2021-03-27T22:00:01.000Z');
+
+    res = parse('1 day ago', new Date('2021-03-28T01:00:00Z'), { timezone, output });
+    expect(res.start).toEqual('2021-03-26T23:00:00.000Z');
+    expect(res.end).toEqual('2021-03-27T23:00:00.000Z');
   });
 });
