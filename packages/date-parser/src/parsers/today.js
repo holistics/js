@@ -2,6 +2,7 @@ import dateStructFromDate from '../helpers/dateStructFromDate';
 import momentFromStruct from '../helpers/momentFromStruct';
 import chronoDateStructFromMoment from '../helpers/chronoDateStructFromMoment';
 import truncateDateStruct from '../helpers/truncateDateStruct';
+import offsetTimezoneForJSDate from '../helpers/offsetTimezoneForJSDate';
 
 const parser = {};
 
@@ -22,7 +23,9 @@ parser.extract = (context, match) => {
     value = 1;
   }
 
-  const refDateStruct = truncateDateStruct(dateStructFromDate(context.reference.instant), 'day');
+  const offsetRef = offsetTimezoneForJSDate(context.reference.instant, context.option.timezone);
+
+  const refDateStruct = truncateDateStruct(dateStructFromDate(offsetRef), 'day');
   let startMoment = momentFromStruct(refDateStruct, { weekStartDay: context.option.weekStartDay });
   startMoment = startMoment.add(value, 'day');
 

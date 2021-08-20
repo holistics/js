@@ -612,6 +612,11 @@ describe('dateParser', () => {
     });
     expect(res.start.date().toISOString()).toEqual('2019-12-30T00:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2019-12-31T00:00:00.000Z');
+
+
+    res = parse('yesterday', new Date('2021-08-19T23:00:00Z'), { timezone: 'Asia/Singapore', output: 'timestamp' });
+    expect(res.start).toEqual('2021-08-18T16:00:00.000Z');
+    expect(res.end).toEqual('2021-08-19T16:00:00.000Z');
   });
 
   it('can parse constants', () => {
