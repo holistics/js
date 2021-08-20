@@ -3,6 +3,8 @@ import dateStructFromDate from '../helpers/dateStructFromDate';
 import momentFromStruct from '../helpers/momentFromStruct';
 import chronoDateStructFromMoment from '../helpers/chronoDateStructFromMoment';
 import isTimeUnit from '../helpers/isTimeUnit';
+import { DATE_UNIT_LEVELS } from '../constants';
+import offsetTimezoneForJSDate from '../helpers/offsetTimezoneForJSDate';
 
 const parser = {};
 
@@ -21,7 +23,14 @@ parser.extract = (context, match) => {
   const dateUnit = match[3].toLowerCase();
   const pointOfTime = (match[4] || '').trim();
 
-  const refDateStruct = truncateDateStruct(dateStructFromDate(context.reference.instant), dateUnit);
+  const shouldUseUTC = DATE_UNIT_LEVELS[dateUnit] >= DATE_UNIT_LEVELS.hour;
+
+  let refDate = context.reference.instant;
+  if (!shouldUseUTC) {
+    refDate = offsetTimezoneForJSDate(refDate, context.option.timezone);
+  }
+
+  const refDateStruct = truncateDateStruct(dateStructFromDate(refDate), dateUnit);
   let startMoment = momentFromStruct(refDateStruct, { weekStartDay });
   let endMoment = startMoment.clone();
 
@@ -43,6 +52,14 @@ parser.extract = (context, match) => {
     endMoment = startMoment.add(1, isTimeUnit(dateUnit) ? 'second' : 'day');
   } else if (pointOfTime === 'end') {
     startMoment = endMoment.subtract(1, isTimeUnit(dateUnit) ? 'second' : 'day');
+  }
+
+  const chronoStart = chronoDateStructFromMoment(startMoment);
+  const chronoEnd = chronoDateStructFromMoment(endMoment);
+
+  if (shouldUseUTC) {
+    chronoStart.timezoneOffset = 0;
+    chronoEnd.timezoneOffset = 0;
   }
 
   return context.createParsingResult(
