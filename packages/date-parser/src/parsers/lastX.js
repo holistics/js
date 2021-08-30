@@ -9,7 +9,7 @@ import pluralize from '../helpers/pluralize';
 const parser = new Chrono.Parser();
 
 parser.pattern = () => {
-  return new RegExp('(last|next|this)( \\d+)? (year|quarter|month|week|day|hour|minute|second)s?( (?:begin|end))?', 'i');
+  return new RegExp('(last|next|this|current)( \\d+)? (year|quarter|month|week|day|hour|minute|second)s?( (?:begin|end))?', 'i');
 };
 
 /**

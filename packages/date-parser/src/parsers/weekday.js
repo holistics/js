@@ -10,7 +10,7 @@ const parser = new Chrono.Parser();
 
 parser.pattern = () => {
   /* eslint-disable-next-line max-len */
-  return new RegExp(`(${Object.keys(WEEKDAYS_MAP).join('|')}) (last|this|next)( \\d+)? weeks?`, 'i');
+  return new RegExp(`(${Object.keys(WEEKDAYS_MAP).join('|')}) (last|this|current|next)( \\d+)? weeks?`, 'i');
 };
 
 /**

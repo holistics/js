@@ -114,6 +114,10 @@ describe('dateParser', () => {
     expect(res.start.date().toISOString()).toEqual('2019-12-01T00:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2019-12-02T00:00:00.000Z');
 
+    res = parse('current month begin', new Date('2019-12-26T02:14:05Z'));
+    expect(res.start.date().toISOString()).toEqual('2019-12-01T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-12-02T00:00:00.000Z');
+
     res = parse('last month end', new Date('2019-12-26T02:14:05Z'));
     expect(res).toMatchObject({
       start: {
@@ -912,6 +916,10 @@ describe('dateParser', () => {
 
     // uppercase chars
     res = parse('thuRsday tHis Week', new Date('2019-12-26T02:14:05Z'));
+    expect(res.start.date().toISOString()).toEqual('2019-12-26T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-12-27T00:00:00.000Z');
+
+    res = parse('thursday current week', new Date('2019-12-26T02:14:05Z'));
     expect(res.start.date().toISOString()).toEqual('2019-12-26T00:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2019-12-27T00:00:00.000Z');
 
