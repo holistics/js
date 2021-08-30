@@ -12,6 +12,7 @@
   "scripts": {
     "lerna:bootstrap": "lerna bootstrap",
     "lerna:publish": "yarn test && lerna publish",
+    "lerna:version": "yarn test && lerna version --conventional-commits",
     "lint": "eslint --ext .js --ignore-path .gitignore .",
     "test": "jest"
   },
