@@ -150,6 +150,7 @@ describe('dateParser', () => {
     expect(res.start.date().toISOString()).toEqual('2018-12-01T00:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2019-02-01T00:00:00.000Z');
 
+    // plural date unit
     res = parse('last 2 months', new Date('2019-02-09T02:14:05Z'));
     expect(res).toMatchObject({
       start: {
@@ -165,6 +166,11 @@ describe('dateParser', () => {
         impliedValues: { millisecond: 0 },
       },
     });
+    expect(res.start.date().toISOString()).toEqual('2018-12-01T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-02-01T00:00:00.000Z');
+
+    // uppercase chars
+    res = parse('LAST 2 mOnth', new Date('2019-02-09T02:14:05Z'));
     expect(res.start.date().toISOString()).toEqual('2018-12-01T00:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2019-02-01T00:00:00.000Z');
 
@@ -901,6 +907,11 @@ describe('dateParser', () => {
         impliedValues: { millisecond: 0 },
       },
     });
+    expect(res.start.date().toISOString()).toEqual('2019-12-26T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2019-12-27T00:00:00.000Z');
+
+    // uppercase chars
+    res = parse('thuRsday tHis Week', new Date('2019-12-26T02:14:05Z'));
     expect(res.start.date().toISOString()).toEqual('2019-12-26T00:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2019-12-27T00:00:00.000Z');
 

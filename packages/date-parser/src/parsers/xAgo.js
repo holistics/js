@@ -19,7 +19,7 @@ parser.pattern = () => {
 parser.extract = (text, ref, match, opt) => {
   const exact = !!match[1];
   const dateUnit = match[3].toLowerCase();
-  const isPast = match[4] !== 'from now';
+  const isPast = match[4].toLowerCase() !== 'from now';
   const value = parseInt(match[2]) * (isPast ? -1 : 1);
   const duration = match[5];
 
@@ -33,7 +33,7 @@ parser.extract = (text, ref, match, opt) => {
   let endMoment = startMoment.clone();
   if (duration) {
     const [durationValue, durationDateUnit] = duration.replace(' for ', '').split(' ');
-    endMoment = endMoment.add(parseInt(durationValue), durationDateUnit);
+    endMoment = endMoment.add(parseInt(durationValue), durationDateUnit.toLowerCase());
   } else if (exact) {
     endMoment = endMoment.add(1, 'second');
   } else {
