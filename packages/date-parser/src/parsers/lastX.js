@@ -4,11 +4,12 @@ import dateStructFromDate from '../helpers/dateStructFromDate';
 import momentFromStruct from '../helpers/momentFromStruct';
 import chronoDateStructFromMoment from '../helpers/chronoDateStructFromMoment';
 import isTimeUnit from '../helpers/isTimeUnit';
+import pluralize from '../helpers/pluralize';
 
 const parser = new Chrono.Parser();
 
 parser.pattern = () => {
-  return new RegExp('(last|next|this)( \\d+)? (year|quarter|month|week|day|hour|minute|second)s?( (?:begin|end))?', 'i');
+  return new RegExp('(last|next|this|current)( \\d+)? (year|quarter|month|week|day|hour|minute|second)s?( (?:begin|end))?', 'i');
 };
 
 /**
@@ -19,7 +20,7 @@ parser.pattern = () => {
  */
 parser.extract = (text, ref, match, opt) => {
   const { weekStartDay } = opt;
-  const modifier = match[1];
+  const modifier = match[1].toLowerCase();
   const value = modifier === 'this' ? 0 : parseInt((match[2] || '1').trim());
   const dateUnit = match[3].toLowerCase();
   const pointOfTime = (match[4] || '').trim();
@@ -51,6 +52,8 @@ parser.extract = (text, ref, match, opt) => {
   return new Chrono.ParsedResult({
     ref,
     text: match[0],
+    // NOTE: just keeping normalized_text here for possible future UX improvement, it is not actually kept in Chrono.ParsedResult
+    normalized_text: `${match[1]}${value ? match[2] : ''} ${pluralize(match[3], value || 1)}${match[4] || ''}`,
     index: match.index,
     tags: { lastXParser: true },
     start: chronoDateStructFromMoment(startMoment),
