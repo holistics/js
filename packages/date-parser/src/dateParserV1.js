@@ -1,6 +1,5 @@
 import ChronoNode from 'chrono-node';
 import _compact from 'lodash/compact';
-import _some from 'lodash/some';
 
 import dayjs from 'dayjs';
 
@@ -14,51 +13,14 @@ import {
   WEEKDAYS,
   WEEKDAYS_MAP,
   OUTPUT_TYPES,
-  DATE_RANGE_PATTERNS,
   DATE_RANGE_KEYWORDS,
 } from './constants';
 import Errors, { InputError } from './errors';
 
+import splitInputStr from './helpers/splitInputString';
+import getParsedResultBoundaries from './helpers/getParsedResultBoundaries';
+
 const chrono = new ChronoNode.Chrono(options);
-
-const splitInputStr = (str) => {
-  let parts = [str];
-  let isRangeEndInclusive = true;
-  let rangeSeparator;
-  let matches;
-
-  if (str.match(DATE_RANGE_PATTERNS.rangeEndInclusive)) {
-    matches = str.match(DATE_RANGE_PATTERNS.rangeEndInclusive);
-    isRangeEndInclusive = true;
-  } else if (str.match(DATE_RANGE_PATTERNS.rangeEndExclusive)) {
-    matches = str.match(DATE_RANGE_PATTERNS.rangeEndExclusive);
-    isRangeEndInclusive = false;
-  }
-
-  if (matches) {
-    rangeSeparator = matches[2];
-    parts = [matches[1], matches[3]];
-  }
-
-  return {
-    isRange: !!rangeSeparator,
-    parts,
-    rangeSeparator,
-    isRangeEndInclusive,
-  };
-};
-
-const getParsedResultBoundaries = (parsedResults) => {
-  const sortedResults = parsedResults.slice().sort((a, b) => {
-    if (a.end.moment().isBefore(b.start.moment())) return -1;
-    if (a.start.moment().isAfter(b.end.moment())) return 1;
-    return 0;
-  });
-  const hasOrderChanged = _some(sortedResults, (r, i) => parsedResults[i] !== r);
-  const first = sortedResults[0];
-  const last = sortedResults[sortedResults.length - 1];
-  return { first, last, hasOrderChanged };
-};
 
 /**
  * Parse the given date string into Chrono.ParsedResult
