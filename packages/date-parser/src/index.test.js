@@ -1395,3 +1395,26 @@ describe('dateParser', () => {
     expect(() => parse('this mon', new Date(), { weekStartDay: 'ahihi' })).toThrowError(/invalid weekStartDay/i);
   });
 });
+
+describe('dateParser V2: Timezone region', () => {
+  it('can parse constants', () => {
+    let res;
+
+    res = parse('beginning', new Date('2019-12-31T02:14:05Z'), { parserVersion: 2, output: 'raw' });
+    expect(res.asTimestampUtc().start).toEqual('1970-01-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('1970-01-01T00:00:01.000+00:00');
+
+
+    res = parse('now', new Date('2019-12-31T02:14:05Z'), { parserVersion: 2, output: 'raw' });
+    expect(res.asTimestampUtc().start).toEqual('2019-12-31T02:14:05.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-31T02:14:06.000+00:00');
+
+    res = parse('now', new Date('2019-12-31T02:14:05Z'), { parserVersion: 2, output: 'raw', timezoneRegion: 'Asia/Singapore' });
+    expect(res.asTimestamp().start).toEqual('2019-12-31T10:14:05.000+08:00');
+    expect(res.asTimestamp().end).toEqual('2019-12-31T10:14:06.000+08:00');
+
+    res = parse('now', new Date('2019-12-31T02:14:05Z'), { parserVersion: 2, output: 'raw', timezoneRegion: 'Europe/Copenhagen' });
+    expect(res.asTimestamp().start).toEqual('2019-12-31T03:14:05.000+01:00');
+    expect(res.asTimestamp().end).toEqual('2019-12-31T03:14:06.000+01:00');
+  });
+});
