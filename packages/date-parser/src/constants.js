@@ -43,6 +43,10 @@ export const OUTPUT_TYPES = {
   date: 'date',
   timestamp: 'timestamp',
   raw: 'raw',
+
+  // v2 only
+  timestamp_utc: 'timestamp_utc',
+  luxon: 'luxon',
 };
 
 export const DATE_RANGE_KEYWORDS = {
