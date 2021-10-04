@@ -3,6 +3,7 @@ import dateStructFromDate from '../helpers/dateStructFromDate';
 import momentFromStruct from '../helpers/momentFromStruct';
 import chronoDateStructFromMoment from '../helpers/chronoDateStructFromMoment';
 import truncateDateStruct from '../helpers/truncateDateStruct';
+import convertTimezone from '../helpers/convertTimezone';
 
 const parser = new Chrono.Parser();
 
@@ -16,6 +17,9 @@ parser.pattern = () => {
  * @param {Array} match
  */
 parser.extract = (text, ref, match, opt) => {
+  const { timezone } = opt;
+  const adjustedRef = timezone ? convertTimezone(ref, timezone) : ref;
+
   const date = match[1].toLowerCase();
   let value = 0;
   if (date === 'yesterday') {
@@ -24,19 +28,22 @@ parser.extract = (text, ref, match, opt) => {
     value = 1;
   }
 
-  const refDateStruct = truncateDateStruct(dateStructFromDate(ref), 'day');
+  const refDateStruct = truncateDateStruct(dateStructFromDate(adjustedRef), 'day');
   let startMoment = momentFromStruct(refDateStruct, { weekStartDay: opt.weekStartDay });
   startMoment = startMoment.add(value, 'day');
 
   const endMoment = startMoment.add(1, 'day');
+
+  const startStruct = chronoDateStructFromMoment(startMoment, timezone);
+  const endStruct = chronoDateStructFromMoment(endMoment, timezone);
 
   return new Chrono.ParsedResult({
     ref,
     text: match[0],
     index: match.index,
     tags: { todayParser: true },
-    start: chronoDateStructFromMoment(startMoment),
-    end: chronoDateStructFromMoment(endMoment),
+    start: startStruct,
+    end: endStruct,
   });
 };
 

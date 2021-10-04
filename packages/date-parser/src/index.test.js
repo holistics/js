@@ -1397,23 +1397,54 @@ describe('dateParser', () => {
 });
 
 describe('dateParser V2: Timezone region', () => {
+  const defaultOpts = { parserVersion: 2, output: 'raw' };
+
+  it('works with today format', () => {
+    let res;
+
+    res = parse('today', new Date('2019-12-31T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-12-31T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2020-01-01T00:00:00.000+00:00');
+
+    res = parse('tomorrow', new Date('2019-12-31T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2020-01-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2020-01-02T00:00:00.000+00:00');
+
+    res = parse('yesterday', new Date('2019-12-31T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-12-30T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-31T00:00:00.000+00:00');
+
+    // New tests with tz
+    res = parse('today', new Date('2019-12-31T18:00:00Z'), { ...defaultOpts, timezoneRegion: 'Asia/Singapore' });
+    expect(res.asTimestamp().start).toEqual('2020-01-01T00:00:00.000+08:00');
+    expect(res.asTimestamp().end).toEqual('2020-01-02T00:00:00.000+08:00');
+
+    res = parse('tomorrow', new Date('2021-10-30T02:14:05Z'), { ...defaultOpts, timezoneRegion: 'Europe/Copenhagen' });
+    expect(res.asTimestamp().start).toEqual('2021-10-31T00:00:00.000+02:00');
+    expect(res.asTimestamp().end).toEqual('2021-11-01T00:00:00.000+01:00');
+
+    res = parse('yesterday', new Date('2021-03-15T06:00:00Z'), { ...defaultOpts, timezoneRegion: 'America/Chicago' });
+    expect(res.asTimestamp().start).toEqual('2021-03-14T00:00:00.000-06:00');
+    expect(res.asTimestamp().end).toEqual('2021-03-15T00:00:00.000-05:00');
+  });
+
   it('can parse constants', () => {
     let res;
 
-    res = parse('beginning', new Date('2019-12-31T02:14:05Z'), { parserVersion: 2, output: 'raw' });
+    res = parse('beginning', new Date('2019-12-31T02:14:05Z'), defaultOpts);
     expect(res.asTimestampUtc().start).toEqual('1970-01-01T00:00:00.000+00:00');
     expect(res.asTimestampUtc().end).toEqual('1970-01-01T00:00:01.000+00:00');
 
-
-    res = parse('now', new Date('2019-12-31T02:14:05Z'), { parserVersion: 2, output: 'raw' });
+    res = parse('now', new Date('2019-12-31T02:14:05Z'), defaultOpts);
     expect(res.asTimestampUtc().start).toEqual('2019-12-31T02:14:05.000+00:00');
     expect(res.asTimestampUtc().end).toEqual('2019-12-31T02:14:06.000+00:00');
 
-    res = parse('now', new Date('2019-12-31T02:14:05Z'), { parserVersion: 2, output: 'raw', timezoneRegion: 'Asia/Singapore' });
+    // New tests with tz
+    res = parse('now', new Date('2019-12-31T02:14:05Z'), { ...defaultOpts, timezoneRegion: 'Asia/Singapore' });
     expect(res.asTimestamp().start).toEqual('2019-12-31T10:14:05.000+08:00');
     expect(res.asTimestamp().end).toEqual('2019-12-31T10:14:06.000+08:00');
 
-    res = parse('now', new Date('2019-12-31T02:14:05Z'), { parserVersion: 2, output: 'raw', timezoneRegion: 'Europe/Copenhagen' });
+    res = parse('now', new Date('2019-12-31T02:14:05Z'), { ...defaultOpts, timezoneRegion: 'Europe/Copenhagen' });
     expect(res.asTimestamp().start).toEqual('2019-12-31T03:14:05.000+01:00');
     expect(res.asTimestamp().end).toEqual('2019-12-31T03:14:06.000+01:00');
   });
