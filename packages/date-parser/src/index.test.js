@@ -1399,6 +1399,20 @@ describe('dateParser', () => {
 describe('dateParser V2: Timezone region', () => {
   const defaultOpts = { parserVersion: 2, output: 'raw' };
 
+  it('works with absolute, both full and partial, dates', () => {
+    let res;
+
+    res = parse('2019', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-01-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2020-01-01T00:00:00.000+00:00');
+
+    // New tests with tz
+
+    res = parse('2019', new Date('2019-12-26T02:14:05Z'), { ...defaultOpts, timezoneRegion: 'America/Chicago' });
+    expect(res.asTimestamp().start).toEqual('2019-01-01T00:00:00.000-06:00');
+    expect(res.asTimestamp().end).toEqual('2020-01-01T00:00:00.000-06:00');
+  });
+
   it('works with today format', () => {
     let res;
 
