@@ -1400,6 +1400,7 @@ describe('dateParser V2: Timezone region', () => {
   const defaultOpts = { parserVersion: 2, output: 'raw' };
 
   it('works with absolute, both full and partial, dates', () => {
+    // TODO: thist test is not complete
     let res;
 
     res = parse('2019', new Date('2019-12-26T02:14:05Z'), defaultOpts);
@@ -1461,5 +1462,43 @@ describe('dateParser V2: Timezone region', () => {
     res = parse('now', new Date('2019-12-31T02:14:05Z'), { ...defaultOpts, timezoneRegion: 'Europe/Copenhagen' });
     expect(res.asTimestamp().start).toEqual('2019-12-31T03:14:05.000+01:00');
     expect(res.asTimestamp().end).toEqual('2019-12-31T03:14:06.000+01:00');
+  });
+
+  it('can parse weekdays', () => {
+    let res;
+
+    res = parse('thursday this week', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-12-26T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-27T00:00:00.000+00:00');
+
+    // uppercase chars
+    res = parse('thuRsday tHis Week', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-12-26T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-27T00:00:00.000+00:00');
+
+    res = parse('thursday current week', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-12-26T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-27T00:00:00.000+00:00');
+
+    res = parse('tue last week', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-12-17T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-18T00:00:00.000+00:00');
+
+    res = parse('wed next 2 weeks', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2020-01-08T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2020-01-09T00:00:00.000+00:00');
+
+    res = parse('friday next weeks', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2020-01-03T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2020-01-04T00:00:00.000+00:00');
+
+    // New tests with tz
+    res = parse('sunday this week', new Date('2021-11-08T05:00:00Z'), { ...defaultOpts, timezoneRegion: 'America/Chicago' });
+    expect(res.asTimestamp().start).toEqual('2021-11-07T00:00:00.000-05:00');
+    expect(res.asTimestamp().end).toEqual('2021-11-08T00:00:00.000-06:00');
+
+    res = parse('sunday last week', new Date('2021-03-28T22:00:00Z'), { ...defaultOpts, timezoneRegion: 'Europe/Copenhagen' });
+    expect(res.asTimestamp().start).toEqual('2021-03-28T00:00:00.000+01:00');
+    expect(res.asTimestamp().end).toEqual('2021-03-29T00:00:00.000+02:00');
   });
 });
