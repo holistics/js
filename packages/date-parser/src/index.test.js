@@ -1399,6 +1399,68 @@ describe('dateParser', () => {
 describe('dateParser V2: Timezone region', () => {
   const defaultOpts = { parserVersion: 2, output: 'raw' };
 
+  it('works with xAgo format', () => {
+    let res;
+
+    res = parse('2 days ago', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-12-24T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-25T00:00:00.000+00:00');
+
+    res = parse('exact 2 days ago', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-12-24T02:14:05.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-24T02:14:06.000+00:00');
+
+    res = parse('3 weeks from now', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2020-01-16T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2020-01-23T00:00:00.000+00:00');
+
+    res = parse('exactly 3 weeks from now', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2020-01-16T02:14:05.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2020-01-16T02:14:06.000+00:00');
+
+    res = parse('1 year ago', new Date('2020-02-29T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-01-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2020-01-01T00:00:00.000+00:00');
+
+    res = parse('exactly 1 year ago', new Date('2020-02-29T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-02-28T02:14:05.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-02-28T02:14:06.000+00:00');
+
+    res = parse('1 year ago for 5 days', new Date('2020-02-29T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-01-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-01-06T00:00:00.000+00:00');
+
+    res = parse('exactly 1 year ago for 5 days', new Date('2020-02-29T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-02-28T02:14:05.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-03-05T02:14:05.000+00:00');
+
+    // New tests with tz
+
+    res = parse('2 days ago', new Date('2019-12-26T02:14:05Z'), { ...defaultOpts, timezoneRegion: 'America/Chicago' });
+    expect(res.asTimestamp().start).toEqual('2019-12-23T00:00:00.000-06:00');
+    expect(res.asTimestamp().end).toEqual('2019-12-24T00:00:00.000-06:00');
+
+    res = parse('1 year ago for 5 days', new Date('2020-02-29T02:14:05Z'), { ...defaultOpts, timezoneRegion: 'America/Chicago' });
+    expect(res.asTimestamp().start).toEqual('2019-01-01T00:00:00.000-06:00');
+    expect(res.asTimestamp().end).toEqual('2019-01-06T00:00:00.000-06:00');
+
+    res = parse('3 hours ago', new Date('2021-03-28T01:00:00Z'), { ...defaultOpts, timezoneRegion: 'Europe/Copenhagen' });
+    expect(res.asTimestamp().start).toEqual('2021-03-27T23:00:00.000+01:00');
+    expect(res.asTimestamp().end).toEqual('2021-03-28T00:00:00.000+01:00');
+
+    res = parse('180 minutes ago', new Date('2021-03-28T01:00:00Z'), { ...defaultOpts, timezoneRegion: 'Europe/Copenhagen' });
+    expect(res.asTimestamp().start).toEqual('2021-03-27T23:00:00.000+01:00');
+    expect(res.asTimestamp().end).toEqual('2021-03-27T23:01:00.000+01:00');
+
+    res = parse('exact 3 hours ago', new Date('2021-03-28T01:00:00Z'), { ...defaultOpts, timezoneRegion: 'Europe/Copenhagen' });
+    expect(res.asTimestamp().start).toEqual('2021-03-27T23:00:00.000+01:00');
+    expect(res.asTimestamp().end).toEqual('2021-03-27T23:00:01.000+01:00');
+
+    res = parse('1 day ago', new Date('2021-03-29T01:00:00Z'), { ...defaultOpts, timezoneRegion: 'Europe/Copenhagen' });
+    expect(res.asTimestamp().start).toEqual('2021-03-28T00:00:00.000+01:00');
+    expect(res.asTimestamp().end).toEqual('2021-03-29T00:00:00.000+02:00');
+  });
+
   it('works with absolute, both full and partial, dates', () => {
     // TODO: thist test is not complete
     let res;
