@@ -39,7 +39,19 @@ export const WEEKDAYS_MAP = {
  * @enum {String}
  */
 export const OUTPUT_TYPES = {
-  parsed_component: 'parsed_component',
+  // v1 only
+  parsed_component: 'parsed_component', // deprecated in v2
+
+  // v1 and v2
+  // Note these behavior changes in v2
+  //
+  // * timestamp: v1 returns UTC, while in v2 it returns the timestamp with correct timezone offset
+  //     E.g. v1: 2021-12-01 16:00:00Z, v2: 2021-12-02 00:00:00+08:00
+  //
+  // * date: same as v2
+  //
+  // * raw: v1 returns Chrono Parsed component, v2 returns the `Result` class itself
+  //
   date: 'date',
   timestamp: 'timestamp',
   raw: 'raw',
