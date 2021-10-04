@@ -22,16 +22,17 @@ export default class Result {
    * @param {String} text
    * @param {Chrono.ParsingComponents} start
    * @param {Chrono.ParsingComponents} end
-   * @param {String} timezone
+   * @param {String} weekStartDay
    */
   constructor ({
-    ref, index, text, start, end,
+    ref, index, text, start, end, weekStartDay,
   }) {
     this.ref = ref;
     this.index = index;
     this.text = text;
     this.start = start;
     this.end = end;
+    this.weekStartDay = weekStartDay;
   }
 
   toObject () {
@@ -41,6 +42,7 @@ export default class Result {
       text: this.text,
       start: this.start,
       end: this.end,
+      weekStartDay: this.weekStartDay,
     };
   }
 

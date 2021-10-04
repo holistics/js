@@ -22,7 +22,7 @@ import Result from './result';
 /**
  * @param {String} ref
  * @param {String} weekStartDay
- * @returns
+ * @returns { refDate: Date, wsday: Number}
  */
 const parseInputs = (ref, weekStartDay) => {
   const refDate = new Date(ref);
@@ -42,9 +42,10 @@ const parseInputs = (ref, weekStartDay) => {
  * @param {Chrono.ParsedResult} parsedResults
  * @param {String} strInput Original input
  * @param {Date} refDate
+ * @param {String} weekStartDay
  * @returns
  */
-const buildResult = (parsedResults, strInput, refDate) => {
+const buildResult = (parsedResults, strInput, refDate, weekStartDay) => {
   if (!parsedResults[0]) return null;
 
   const {
@@ -75,6 +76,7 @@ const buildResult = (parsedResults, strInput, refDate) => {
     text: isRange ? `${first.text} ${rangeSeparator} ${last.text}` : first.text,
     start: first.start.clone(),
     end: isRangeEndInclusive ? last.end.clone() : last.start.clone(),
+    weekStartDay,
   });
 
   return result;
@@ -119,7 +121,7 @@ export const parse = (str, ref, {
   /**
    * Parsed result processing
    */
-  const result = buildResult(parsedResults, str, refDate);
+  const result = buildResult(parsedResults, str, refDate, weekStartDay);
 
   switch (output) {
     case OUTPUT_TYPES.date:
