@@ -4,20 +4,31 @@ import Chrono from 'chrono-node';
  *
  * @param {Chrono.ParsedComponents} parsedComponent
  */
-const implyTimezone = (parsedComponent, timezoneOffset) => {
+const implyTimezoneOffset = (parsedComponent, timezoneOffset) => {
   parsedComponent.imply('timezoneOffset', (timezoneOffset || 0));
 };
 
+const implyTimezoneRegion = (parsedComponent, timezone) => {
+  if (!parsedComponent.get('timezone')) {
+    parsedComponent.imply('timezone', timezone);
+  }
+};
+
 const timezoneRefiner = new Chrono.Refiner();
-timezoneRefiner.refine = (text, results, { timezoneOffset }) => {
+timezoneRefiner.refine = (text, results, { timezoneOffset, timezone }) => {
   /**
    *
    * @param {Chrono.ParsedResult} res
    */
   return results.map(res => {
-    /* istanbul ignore else */
-    if (res.start) implyTimezone(res.start, timezoneOffset);
-    if (res.end) implyTimezone(res.end, timezoneOffset);
+    if (timezone) {
+      if (res.start) implyTimezoneRegion(res.start, timezone);
+      if (res.end) implyTimezoneRegion(res.end, timezone);
+    } else {
+      if (res.start) implyTimezoneOffset(res.start, timezoneOffset);
+      if (res.end) implyTimezoneOffset(res.end, timezoneOffset);
+    }
+
     return res;
   });
 };
