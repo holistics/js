@@ -1399,6 +1399,90 @@ describe('dateParser', () => {
 describe('dateParser V2: Timezone region', () => {
   const defaultOpts = { parserVersion: 2, output: 'raw' };
 
+  it('works with lastX format', () => {
+    let res;
+
+    res = parse('last week', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-12-16T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-23T00:00:00.000+00:00');
+
+    res = parse('this week', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-12-23T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-30T00:00:00.000+00:00');
+
+    res = parse('last month', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-11-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-01T00:00:00.000+00:00');
+
+    res = parse('last quarter', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-07-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-10-01T00:00:00.000+00:00');
+
+    res = parse('last year', new Date('2020-02-29T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-01-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2020-01-01T00:00:00.000+00:00');
+
+    res = parse('this month begin', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-12-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-02T00:00:00.000+00:00');
+
+    res = parse('current month begin', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-12-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-02T00:00:00.000+00:00');
+
+    res = parse('last month end', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-11-30T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-01T00:00:00.000+00:00');
+
+    res = parse('last 2 month', new Date('2019-02-09T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2018-12-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-02-01T00:00:00.000+00:00');
+
+    // plural date unit
+    res = parse('last 2 months', new Date('2019-02-09T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2018-12-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-02-01T00:00:00.000+00:00');
+
+    // uppercase chars
+    res = parse('LAST 2 mOnth', new Date('2019-02-09T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2018-12-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-02-01T00:00:00.000+00:00');
+
+    res = parse('last 2 months begin', new Date('2019-02-09T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2018-12-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2018-12-02T00:00:00.000+00:00');
+
+    res = parse('last 2 days', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-12-24T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-26T00:00:00.000+00:00');
+
+    res = parse('last 2 hours begin', new Date('2019-12-26T01:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-12-25T23:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-25T23:00:01.000+00:00');
+
+    res = parse('next 2 minutes end', new Date('2019-12-26T01:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-12-26T01:16:59.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-26T01:17:00.000+00:00');
+
+    // New tests with tz
+
+    res = parse('last 2 days', new Date('2019-12-26T02:14:05Z'), { ...defaultOpts, timezoneRegion: 'America/Chicago' });
+    expect(res.asTimestamp().start).toEqual('2019-12-23T00:00:00.000-06:00');
+    expect(res.asTimestamp().end).toEqual('2019-12-25T00:00:00.000-06:00');
+
+    res = parse('last 1 day', new Date('2021-03-29T01:00:00Z'), { ...defaultOpts, timezoneRegion: 'Europe/Copenhagen' });
+    expect(res.asTimestamp().start).toEqual('2021-03-28T00:00:00.000+01:00');
+    expect(res.asTimestamp().end).toEqual('2021-03-29T00:00:00.000+02:00');
+
+    res = parse('last 3 hours', new Date('2021-03-28T01:00:00Z'), { ...defaultOpts, timezoneRegion: 'Europe/Copenhagen' });
+    expect(res.asTimestamp().start).toEqual('2021-03-27T23:00:00.000+01:00');
+    expect(res.asTimestamp().end).toEqual('2021-03-28T03:00:00.000+02:00');
+
+    res = parse('last 180 minutes', new Date('2021-03-28T01:00:00Z'), { ...defaultOpts, timezoneRegion: 'Europe/Copenhagen' });
+    expect(res.asTimestamp().start).toEqual('2021-03-27T23:00:00.000+01:00');
+    expect(res.asTimestamp().end).toEqual('2021-03-28T03:00:00.000+02:00');
+  });
+
   it('works with xAgo format', () => {
     let res;
 
