@@ -2,6 +2,15 @@ import {
   parse, WEEKDAYS, OUTPUT_TYPES, Errors,
 } from './index';
 
+describe('common tests', () => {
+  it('exports necessary constants', () => {
+    expect(!!OUTPUT_TYPES).toBe(true);
+
+    expect(!!Errors).toBe(true);
+    expect(!!Errors.InputError).toBe(true);
+  });
+});
+
 describe('dateParser', () => {
   it('works with lastX format', () => {
     let res;
@@ -1083,13 +1092,6 @@ describe('dateParser', () => {
     expect(res.end).toEqual('2019-04-11');
   });
 
-  it('exports necessary constants', () => {
-    expect(!!OUTPUT_TYPES).toBe(true);
-
-    expect(!!Errors).toBe(true);
-    expect(!!Errors.InputError).toBe(true);
-  });
-
   it('detect ambiguous input and raise informative error', () => {
     expect(() => parse('this mon', new Date())).toThrowError(/ambiguous.*mon this week/i);
     expect(() => parse('last monday', new Date())).toThrowError(/ambiguous.*monday last week/i);
@@ -1546,8 +1548,38 @@ describe('dateParser V2: Timezone region', () => {
   });
 
   it('works with absolute, both full and partial, dates', () => {
-    // TODO: thist test is not complete
     let res;
+
+    res = parse('2019/12/01', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-12-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-02T00:00:00.000+00:00');
+
+    res = parse('2019-12-01', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-12-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-02T00:00:00.000+00:00');
+
+    res = parse('2019-11-30', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-11-30T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-01T00:00:00.000+00:00');
+
+    res = parse('2019-12-01T09:15:32Z', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-12-01T09:15:32.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-01T09:15:33.000+00:00');
+
+    res = parse('19:15:32', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-12-26T19:15:32.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-26T19:15:33.000+00:00');
+
+    res = parse('15:32', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-12-26T15:32:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-26T15:33:00.000+00:00');
+
+    res = parse('30:32', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res).toEqual(null);
+
+    res = parse('June 2019', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-06-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-07-01T00:00:00.000+00:00');
 
     res = parse('2019', new Date('2019-12-26T02:14:05Z'), defaultOpts);
     expect(res.asTimestampUtc().start).toEqual('2019-01-01T00:00:00.000+00:00');
@@ -1608,6 +1640,86 @@ describe('dateParser V2: Timezone region', () => {
     res = parse('now', new Date('2019-12-31T02:14:05Z'), { ...defaultOpts, timezoneRegion: 'Europe/Copenhagen' });
     expect(res.asTimestamp().start).toEqual('2019-12-31T03:14:05.000+01:00');
     expect(res.asTimestamp().end).toEqual('2019-12-31T03:14:06.000+01:00');
+  });
+
+  it('works with end-inclusive range', () => {
+    let res;
+
+    res = parse('beginning - now', new Date('2019-12-31T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('1970-01-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-31T02:14:06.000+00:00');
+
+    res = parse('beginning - 3 days ago', new Date('2019-12-31T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('1970-01-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-29T00:00:00.000+00:00');
+
+    // auto reorder range
+    res = parse('3 days ago - beginning', new Date('2019-12-31T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('1970-01-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-29T00:00:00.000+00:00');
+
+    res = parse('beginning to 3 days ago', new Date('2019-12-31T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('1970-01-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-29T00:00:00.000+00:00');
+  });
+
+  it('works with end-exclusive range', () => {
+    let res;
+
+    res = parse('beginning until now', new Date('2019-12-31T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('1970-01-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-31T02:14:05.000+00:00');
+
+    res = parse('beginning till 3 days ago', new Date('2019-12-31T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('1970-01-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-28T00:00:00.000+00:00');
+
+    res = parse('beginning until 3 days ago', new Date('2019-12-31T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('1970-01-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-28T00:00:00.000+00:00');
+
+    res = parse('3 days ago till 15:36', new Date('2019-12-31T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-12-28T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-31T15:36:00.000+00:00');
+
+    // raises error when start > end
+    expect(() => parse('tomorrow till 3 days ago', new Date())).toThrowError(/must be before/i);
+
+    // works normally even with timezoneOffset
+    res = parse('2019-12-28T09:00:00.000+00:00 until 2019-12-28T10:00:00.000+00:00', new Date('2021-03-16T02:14:05Z'), { ...defaultOpts, timezoneRegion: 'Africa/Blantyre' });
+    expect(res.asTimestampUtc().start).toEqual('2019-12-28T09:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-28T10:00:00.000+00:00');
+  });
+
+  it('keeps order when date range boundaries overlaps', () => {
+    let res;
+
+    res = parse('this week - yesterday', new Date('2019-12-31T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-12-30T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-31T00:00:00.000+00:00');
+
+    res = parse('yesterday - this week', new Date('2019-12-31T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-12-30T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2020-01-06T00:00:00.000+00:00');
+  });
+
+  it('discards invalid range, keeps the valid part only', () => {
+    let res;
+
+    res = parse('yesterday-today', new Date('2018-06-25T05:00:00+08:00'), { ...defaultOpts, timezoneRegion: 'Africa/Blantyre' });
+    expect(res.text).toEqual('yesterday');
+    expect(res.asLuxon().start.toFormat('yyyy/MM/dd')).toEqual('2018/06/23');
+    expect(res.asLuxon().end.toFormat('yyyy/MM/dd')).toEqual('2018/06/24');
+
+    res = parse('yesterday till asd', new Date('2018-06-25T05:00:00+08:00'), { ...defaultOpts, timezoneRegion: 'Africa/Blantyre' });
+    expect(res.text).toEqual('yesterday');
+    expect(res.asLuxon().start.toFormat('yyyy/MM/dd')).toEqual('2018/06/23');
+    expect(res.asLuxon().end.toFormat('yyyy/MM/dd')).toEqual('2018/06/24');
+
+    res = parse('ahihi till yesterday', new Date('2018-06-25T05:00:00+08:00'), { ...defaultOpts, timezoneRegion: 'Africa/Blantyre' });
+    expect(res.text).toEqual('yesterday');
+    expect(res.asLuxon().start.toFormat('yyyy/MM/dd')).toEqual('2018/06/23');
+    expect(res.asLuxon().end.toFormat('yyyy/MM/dd')).toEqual('2018/06/24');
   });
 
   it('can parse weekdays', () => {
@@ -1718,18 +1830,35 @@ describe('dateParser V2: Timezone region', () => {
     expect(res.asTimestamp().end).toEqual('2021-05-11T00:00:00.000-05:00');
   });
 
-  /**
-   * TODO:
-   * - 'works with end-inclusive range'
-   * - 'works with end-exclusive range'
-   * - 'keeps order when date range boundaries overlaps'
-   * - 'discards invalid range, keeps the valid part only'
-   * - 'has good behavior with default parsers'
-   * - 'rejects invalid reference date'
-   * - 'cant output in timestamp format'
-   * - 'exports necessary constants'
-   * - 'detect ambiguous input and raise informative error'
-   * - 'works with weekStartDay'
-   * - 'raises error when weekStartDay is invalid'
-   */
+  it('has good behavior with default parsers', () => {
+    let res;
+
+    res = parse('3 o\'clock - 3 minutes ago', new Date('2019-12-26T04:35:19+08:00'), { ...defaultOpts, timezoneRegion: 'Asia/Seoul' });
+    expect(res.text).toEqual("3 o'clock - 3 minutes ago");
+    expect(res.asTimestampUtc().start).toEqual('2019-12-25T18:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-25T20:33:00.000+00:00');
+
+    // ambiguous
+    res = parse('within 3 days', new Date('2019-12-26T04:35:19+08:00'), { ...defaultOpts, timezoneRegion: 'Asia/Seoul' });
+    expect(res).toEqual(null);
+  });
+
+  it('rejects invalid reference date', () => {
+    expect(() => parse('today', 'ahehe')).toThrowError(/invalid ref/i);
+  });
+
+  it('rejects invalid timezone region', () => {
+    expect(() => parse('today', new Date(), { ...defaultOpts, timezoneRegion: 'asd' })).toThrowError(/invalid timezone region/i);
+  });
+
+  it('detect ambiguous input and raise informative error', () => {
+    expect(() => parse('this mon', new Date(), defaultOpts)).toThrowError(/ambiguous.*mon this week/i);
+    expect(() => parse('last monday', new Date(), defaultOpts)).toThrowError(/ambiguous.*monday last week/i);
+    expect(() => parse('next Friday', new Date(), defaultOpts)).toThrowError(/ambiguous.*Friday next week/);
+    expect(() => parse('thursday', new Date(), defaultOpts)).toThrowError(/ambiguous.*thursday last\/this\/next week/);
+  });
+
+  it('raises error when weekStartDay is invalid', () => {
+    expect(() => parse('this mon', new Date(), { ...defaultOpts, weekStartDay: 'ahihi' })).toThrowError(/invalid weekStartDay/i);
+  });
 });
