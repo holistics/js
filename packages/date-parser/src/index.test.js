@@ -1647,4 +1647,89 @@ describe('dateParser V2: Timezone region', () => {
     expect(res.asTimestamp().start).toEqual('2021-03-28T00:00:00.000+01:00');
     expect(res.asTimestamp().end).toEqual('2021-03-29T00:00:00.000+02:00');
   });
+
+  it('works with weekStartDay', () => {
+    let res;
+
+    res = parse('last week', new Date('2019-12-26T02:14:05Z'), { ...defaultOpts, weekStartDay: WEEKDAYS.Wednesday });
+    expect(res.asTimestampUtc().start).toEqual('2019-12-18T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-25T00:00:00.000+00:00');
+
+    res = parse('last 2 weeks', new Date('2019-12-26T02:14:05Z'), { ...defaultOpts, weekStartDay: WEEKDAYS.Wednesday });
+    expect(res.asTimestampUtc().start).toEqual('2019-12-11T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-25T00:00:00.000+00:00');
+
+    res = parse('2 weeks from now', new Date('2019-12-26T02:14:05Z'), { ...defaultOpts, weekStartDay: WEEKDAYS.Wednesday });
+    expect(res.asTimestampUtc().start).toEqual('2020-01-09T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2020-01-16T00:00:00.000+00:00');
+
+    res = parse('this week', new Date('2019-12-26T02:14:05Z'), { ...defaultOpts, weekStartDay: WEEKDAYS.Wednesday });
+    expect(res.asTimestampUtc().start).toEqual('2019-12-25T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2020-01-01T00:00:00.000+00:00');
+
+    // This test to make sure the WSD does not effect last month
+    res = parse('last 2 month', new Date('2019-02-09T02:14:05Z'), { ...defaultOpts, weekStartDay: WEEKDAYS.Wednesday });
+    expect(res.asTimestampUtc().start).toEqual('2018-12-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-02-01T00:00:00.000+00:00');
+
+    // This test to make sure the WSD does not effect the last year
+    res = parse('last year', new Date('2020-02-29T02:14:05Z'), { ...defaultOpts, weekStartDay: WEEKDAYS.Wednesday });
+    expect(res.asTimestampUtc().start).toEqual('2019-01-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2020-01-01T00:00:00.000+00:00');
+
+    res = parse('tue last week', new Date('2019-12-26T02:14:05Z'), { ...defaultOpts, weekStartDay: WEEKDAYS.Wednesday });
+    expect(res.asTimestampUtc().start).toEqual('2019-12-24T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-25T00:00:00.000+00:00');
+
+    res = parse('tue next 2 weeks', new Date('2019-12-26T02:14:05Z'), { ...defaultOpts, weekStartDay: WEEKDAYS.Wednesday });
+    expect(res.asTimestampUtc().start).toEqual('2020-01-14T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2020-01-15T00:00:00.000+00:00');
+
+    res = parse('mon next week', new Date('2019-12-26T02:14:05Z'), { ...defaultOpts, weekStartDay: WEEKDAYS.Sunday });
+    expect(res.asTimestampUtc().start).toEqual('2019-12-30T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-31T00:00:00.000+00:00');
+
+    res = parse('sat next week', new Date('2019-12-26T02:14:05Z'), { ...defaultOpts, weekStartDay: WEEKDAYS.Sunday });
+    expect(res.asTimestampUtc().start).toEqual('2020-01-04T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2020-01-05T00:00:00.000+00:00');
+
+    res = parse('sat next week', new Date('2019-12-26T02:14:05Z'), { ...defaultOpts, weekStartDay: WEEKDAYS.Saturday });
+    expect(res.asTimestampUtc().start).toEqual('2019-12-28T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-29T00:00:00.000+00:00');
+
+    res = parse('thu next week', new Date('2019-12-26T02:14:05Z'), { ...defaultOpts, weekStartDay: WEEKDAYS.Thursday });
+    expect(res.asTimestampUtc().start).toEqual('2020-01-02T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2020-01-03T00:00:00.000+00:00');
+
+    res = parse('thu last week', new Date('2019-12-26T02:14:05Z'), { ...defaultOpts, weekStartDay: WEEKDAYS.Friday });
+    expect(res.asTimestampUtc().start).toEqual('2019-12-19T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-20T00:00:00.000+00:00');
+
+    res = parse('last week begin', new Date('2021-05-10T22:14:05Z'), { ...defaultOpts, weekStartDay: WEEKDAYS.Tuesday });
+    expect(res.asTimestampUtc().start).toEqual('2021-04-27T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2021-04-28T00:00:00.000+00:00');
+
+    res = parse('last week end', new Date('2021-05-10T22:14:05Z'), { ...defaultOpts, weekStartDay: WEEKDAYS.Tuesday });
+    expect(res.asTimestampUtc().start).toEqual('2021-05-03T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2021-05-04T00:00:00.000+00:00');
+
+    res = parse('last week end', new Date('2021-05-12T03:14:05Z'), { ...defaultOpts, weekStartDay: WEEKDAYS.Tuesday, timezoneRegion: 'America/Chicago' });
+    expect(res.asTimestamp().start).toEqual('2021-05-10T00:00:00.000-05:00');
+    expect(res.asTimestamp().end).toEqual('2021-05-11T00:00:00.000-05:00');
+  });
+
+  /**
+   * TODO:
+   * - 'works with end-inclusive range'
+   * - 'works with end-exclusive range'
+   * - 'keeps order when date range boundaries overlaps'
+   * - 'discards invalid range, keeps the valid part only'
+   * - 'has good behavior with default parsers'
+   * - 'rejects invalid reference date'
+   * - 'cant output in timestamp format'
+   * - 'exports necessary constants'
+   * - 'detect ambiguous input and raise informative error'
+   * - 'works with weekStartDay'
+   * - 'raises error when weekStartDay is invalid'
+   */
 });
