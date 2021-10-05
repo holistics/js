@@ -8,6 +8,7 @@ import yearParser from './parsers/year';
 import weekdayParser from './parsers/weekday';
 import xAgoParser from './parsers/xAgo';
 import lastXParser from './parsers/lastX';
+import wrapChronoISOParser from './parsers/wrapChronoISOParser';
 
 import implier from './refiners/implier';
 import timezoneRefiner from './refiners/timezone';
@@ -27,7 +28,7 @@ export default {
     xAgoParser,
     lastXParser,
 
-    new parser.ENISOFormatParser(parserConfig),
+    wrapChronoISOParser(parserConfig),
     new parser.ENDeadlineFormatParser(parserConfig),
     new parser.ENMonthNameLittleEndianParser(parserConfig),
     new parser.ENMonthNameMiddleEndianParser(parserConfig),
