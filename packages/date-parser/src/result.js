@@ -1,19 +1,5 @@
-import { DateTime } from 'luxon';
 import { merge } from 'lodash';
-
-const toLuxon = (chronoResult) => {
-  return DateTime.fromObject({
-    year: chronoResult.get('year'),
-    month: chronoResult.get('month'),
-    day: chronoResult.get('day'),
-    hour: chronoResult.get('hour'),
-    minute: chronoResult.get('minute'),
-    second: chronoResult.get('second'),
-    millisecond: chronoResult.get('millisecond'),
-  }, {
-    zone: chronoResult.get('timezone'),
-  });
-};
+import luxonFromChronoStruct from './helpers/luxonFromChronoStruct';
 
 export default class Result {
   /**
@@ -49,8 +35,8 @@ export default class Result {
   asLuxon () {
     return merge(
       this.toObject(), {
-        start: this.start ? toLuxon(this.start) : null,
-        end: this.end ? toLuxon(this.end) : null,
+        start: this.start ? luxonFromChronoStruct(this.start) : null,
+        end: this.end ? luxonFromChronoStruct(this.end) : null,
       },
     );
   }
