@@ -109,7 +109,7 @@ export const parse = (str, ref, {
   const chrono = new ChronoNode.Chrono(options);
   const parsedResults = _compact(
     parts.map(
-      part => chrono.parse(part, refDate, { timezone: zone.toString(), weekStartDay: wsday })[0],
+      part => chrono.parse(part, refDate, { timezone: zone.toString(), weekStartDay: wsday, parserVersion: 2 })[0],
     ),
   );
 
