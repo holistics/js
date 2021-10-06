@@ -50,7 +50,7 @@ const implyWithCorrectness = (start) => {
   // increment the highest-level known date unit
   const incrementedUnit = getHighestLevelDateUnit(start.knownValues) || 'millisecond';
   const incremental = {};
-  incremental[`${incrementedUnit}s`] = 1; // days, months, years
+  incremental[`${incrementedUnit}s`] = 1; // days, months, years...
   const luxonInstance = luxonFromChronoStruct(end).plus(incremental);
   end.impliedValues = dateStructFromLuxon(luxonInstance);
 

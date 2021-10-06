@@ -3,8 +3,9 @@ import { DateTime } from 'luxon';
 /**
  * Offseting the time of a JavaScript date object.
  * The final result is a JS date object whose value is offset from UTC to the target timezone
+ * Note that JSDate is always UTC
  *
- * Step 1: Create a Luxon date from JSDate. Note that JSDate is always UTC
+ * Step 1: Create a Luxon date from JSDate
  *
  * Step 2: Convert from UTC to target timezone. This is done by passing the "timezone" option in fromJSDate()
  *
