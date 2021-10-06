@@ -11,6 +11,27 @@ describe('common tests', () => {
   });
 });
 
+describe('system timezone affected cases', () => {
+  const defaultOpts = { parserVersion: 2, output: 'raw' };
+
+  it("failed when run with TZ='Europe/Copenhagen'", () => {
+    let res;
+
+    res = parse('2019/12/01', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-12-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-02T00:00:00.000+00:00');
+
+    res = parse('3 days ago till 15:36', new Date('2019-12-31T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-12-28T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-31T15:36:00.000+00:00');
+
+    res = parse('3 o\'clock - 3 minutes ago', new Date('2019-12-26T04:35:19+08:00'), { ...defaultOpts, timezoneRegion: 'Asia/Seoul' });
+    expect(res.text).toEqual("3 o'clock - 3 minutes ago");
+    expect(res.asTimestampUtc().start).toEqual('2019-12-25T18:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-25T20:33:00.000+00:00');
+  });
+});
+
 describe('dateParser', () => {
   it('works with lastX format', () => {
     let res;
@@ -1398,7 +1419,7 @@ describe('dateParser', () => {
   });
 });
 
-describe('dateParser V2: Timezone region', () => {
+describe('dateParser V2', () => {
   const defaultOpts = { parserVersion: 2, output: 'raw' };
 
   it('works with lastX format', () => {
@@ -1550,10 +1571,6 @@ describe('dateParser V2: Timezone region', () => {
   it('works with absolute, both full and partial, dates', () => {
     let res;
 
-    res = parse('2019/12/01', new Date('2019-12-26T02:14:05Z'), defaultOpts);
-    expect(res.asTimestampUtc().start).toEqual('2019-12-01T00:00:00.000+00:00');
-    expect(res.asTimestampUtc().end).toEqual('2019-12-02T00:00:00.000+00:00');
-
     res = parse('2019-12-01', new Date('2019-12-26T02:14:05Z'), defaultOpts);
     expect(res.asTimestampUtc().start).toEqual('2019-12-01T00:00:00.000+00:00');
     expect(res.asTimestampUtc().end).toEqual('2019-12-02T00:00:00.000+00:00');
@@ -1677,10 +1694,6 @@ describe('dateParser V2: Timezone region', () => {
     res = parse('beginning until 3 days ago', new Date('2019-12-31T02:14:05Z'), defaultOpts);
     expect(res.asTimestampUtc().start).toEqual('1970-01-01T00:00:00.000+00:00');
     expect(res.asTimestampUtc().end).toEqual('2019-12-28T00:00:00.000+00:00');
-
-    res = parse('3 days ago till 15:36', new Date('2019-12-31T02:14:05Z'), defaultOpts);
-    expect(res.asTimestampUtc().start).toEqual('2019-12-28T00:00:00.000+00:00');
-    expect(res.asTimestampUtc().end).toEqual('2019-12-31T15:36:00.000+00:00');
 
     // raises error when start > end
     expect(() => parse('tomorrow till 3 days ago', new Date())).toThrowError(/must be before/i);
@@ -1831,15 +1844,8 @@ describe('dateParser V2: Timezone region', () => {
   });
 
   it('has good behavior with default parsers', () => {
-    let res;
-
-    res = parse('3 o\'clock - 3 minutes ago', new Date('2019-12-26T04:35:19+08:00'), { ...defaultOpts, timezoneRegion: 'Asia/Seoul' });
-    expect(res.text).toEqual("3 o'clock - 3 minutes ago");
-    expect(res.asTimestampUtc().start).toEqual('2019-12-25T18:00:00.000+00:00');
-    expect(res.asTimestampUtc().end).toEqual('2019-12-25T20:33:00.000+00:00');
-
     // ambiguous
-    res = parse('within 3 days', new Date('2019-12-26T04:35:19+08:00'), { ...defaultOpts, timezoneRegion: 'Asia/Seoul' });
+    const res = parse('within 3 days', new Date('2019-12-26T04:35:19+08:00'), { ...defaultOpts, timezoneRegion: 'Asia/Seoul' });
     expect(res).toEqual(null);
   });
 
