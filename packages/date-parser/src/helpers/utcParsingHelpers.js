@@ -39,7 +39,7 @@ const adjustRefdate = (ref, dateUnit, timezone) => {
 const convertResultFromUtc = (dateStruct, timezone) => {
   const luxonInstance = luxonFromStruct(dateStruct, 'Etc/UTC');
   const converted = luxonInstance.setZone(timezone);
-  return dateStructFromLuxon(converted, timezone);
+  return dateStructFromLuxon(converted);
 };
 
 export { shouldUseUTC, adjustRefdate, convertResultFromUtc };
