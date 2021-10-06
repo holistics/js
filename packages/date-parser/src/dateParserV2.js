@@ -113,11 +113,6 @@ export const parse = (str, ref, {
     ),
   );
 
-  // console.log('========================');
-  // console.log('Parsed results: ', parsedResults[0]);
-  // console.log('Parsed results: ', parsedResults[1]);
-  // console.log('========================');
-
   /**
    * Parsed result processing
    */

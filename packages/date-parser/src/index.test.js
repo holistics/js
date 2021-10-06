@@ -1698,7 +1698,8 @@ describe('dateParser V2', () => {
     // raises error when start > end
     expect(() => parse('tomorrow till 3 days ago', new Date())).toThrowError(/must be before/i);
 
-    // works normally even with timezoneOffset
+    // New timezone test
+
     res = parse('2019-12-28T09:00:00.000+00:00 until 2019-12-28T10:00:00.000+00:00', new Date('2021-03-16T02:14:05Z'), { ...defaultOpts, timezoneRegion: 'Africa/Blantyre' });
     expect(res.asTimestampUtc().start).toEqual('2019-12-28T09:00:00.000+00:00');
     expect(res.asTimestampUtc().end).toEqual('2019-12-28T10:00:00.000+00:00');
