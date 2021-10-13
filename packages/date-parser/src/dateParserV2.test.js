@@ -149,6 +149,10 @@ describe('dateParser V2', () => {
     res = parse('1 day ago', new Date('2021-03-29T01:00:00Z'), { ...defaultOpts, timezoneRegion: 'Europe/Copenhagen' });
     expect(res.asTimestamp().start).toEqual('2021-03-28T00:00:00.000+01:00');
     expect(res.asTimestamp().end).toEqual('2021-03-29T00:00:00.000+02:00');
+
+    res = parse('1 day ago', new Date('2021-03-28T01:00:00Z'), { ...defaultOpts, timezoneRegion: 'Europe/Copenhagen' });
+    expect(res.asTimestamp().start).toEqual('2021-03-27T00:00:00.000+01:00');
+    expect(res.asTimestamp().end).toEqual('2021-03-28T00:00:00.000+01:00');
   });
 
   it('works with absolute, both full and partial, dates', () => {
