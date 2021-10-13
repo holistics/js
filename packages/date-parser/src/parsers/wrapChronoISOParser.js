@@ -23,9 +23,8 @@ const wrapChronoISOParser = (parserConfig) => {
   wrappedParser.extract = (text, ref, match, opt) => {
     const result = chronoParser.extract(text, ref, match, opt);
 
-    if (opt.timezone) {
-      if (result.start) { result.start.imply('timezone', 'Etc/UTC'); }
-      if (result.end) { result.end.imply('timezone', 'Etc/UTC'); }
+    if (opt.timezone && result.start) {
+      result.start.imply('timezone', 'Etc/UTC');
     }
 
     return result;

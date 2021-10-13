@@ -1,8 +1,9 @@
 import {
   parse, WEEKDAYS,
 } from './index';
+import { parse as parseV2 } from './dateParserV2';
 
-describe('dateParser V2', () => {
+describe('Parsing logic', () => {
   const defaultOpts = { parserVersion: 2, output: 'raw' };
 
   it('works with lastX format', () => {
@@ -194,6 +195,10 @@ describe('dateParser V2', () => {
     res = parse('2019', new Date('2019-12-26T02:14:05Z'), { ...defaultOpts, timezoneRegion: 'America/Chicago' });
     expect(res.asTimestamp().start).toEqual('2019-01-01T00:00:00.000-06:00');
     expect(res.asTimestamp().end).toEqual('2020-01-01T00:00:00.000-06:00');
+
+    res = parse('2019-12-01T09:15:32Z till 2019-12-02T09:15:40Z', new Date('2019-12-26T02:14:05Z'), { ...defaultOpts, timezoneRegion: 'America/Chicago' });
+    expect(res.asTimestampUtc().start).toEqual('2019-12-01T09:15:32.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-02T09:15:40.000+00:00');
   });
 
   it('works with today format', () => {
@@ -454,5 +459,51 @@ describe('dateParser V2', () => {
 
   it('raises error when weekStartDay is invalid', () => {
     expect(() => parse('this mon', new Date(), { ...defaultOpts, weekStartDay: 'ahihi' })).toThrowError(/invalid weekStartDay/i);
+  });
+
+  it('should throw error when order is invalid', () => {
+    expect(() => {
+      parse('2021-10-01 till 2021-09-10', new Date(), defaultOpts);
+    }).toThrow(/start date must be before end date/i);
+  });
+
+  it('rejects invalid reference date', () => {
+    expect(() => parse('today', 'ahehe', defaultOpts)).toThrowError(/invalid ref/i);
+  });
+
+  it('default inputs should work', () => {
+    const res = parseV2('last 2 days', new Date('2019-12-26T02:14:05Z'));
+    expect(res.start).toEqual('2019-12-24T00:00:00.000+00:00');
+    expect(res.end).toEqual('2019-12-26T00:00:00.000+00:00');
+  });
+
+  it('invalid text', () => {
+    parse('meomeo', new Date(), { ...defaultOpts, timezoneRegion: 'Asia/Singapore' });
+  });
+});
+
+describe('output types', () => {
+  const defaultOpts = { parserVersion: 2 };
+
+  it('support common output types', () => {
+    let res;
+
+    res = parse('last 2 days', new Date('2019-12-26T02:14:05Z'), { ...defaultOpts, output: 'date', timezoneRegion: 'America/Chicago' });
+    expect(res.start).toEqual('2019-12-23');
+    expect(res.end).toEqual('2019-12-25');
+
+    res = parse('last 2 days', new Date('2019-12-26T02:14:05Z'), { ...defaultOpts, output: 'timestamp', timezoneRegion: 'America/Chicago' });
+    expect(res.start).toEqual('2019-12-23T00:00:00.000-06:00');
+    expect(res.end).toEqual('2019-12-25T00:00:00.000-06:00');
+
+    res = parse('last 2 days', new Date('2019-12-26T02:14:05Z'), { ...defaultOpts, output: 'timestamp_utc', timezoneRegion: 'America/Chicago' });
+    expect(res.start).toEqual('2019-12-23T06:00:00.000+00:00');
+    expect(res.end).toEqual('2019-12-25T06:00:00.000+00:00');
+
+    res = parse('last 2 days', new Date('2019-12-26T02:14:05Z'), { ...defaultOpts, output: 'luxon', timezoneRegion: 'America/Chicago' });
+    expect(res.start.toISO()).toEqual('2019-12-23T00:00:00.000-06:00');
+
+    res = parse('last 2 days', new Date('2019-12-26T02:14:05Z'), { ...defaultOpts, timezoneRegion: 'America/Chicago' });
+    expect(res.start).toEqual('2019-12-23T00:00:00.000-06:00');
   });
 });

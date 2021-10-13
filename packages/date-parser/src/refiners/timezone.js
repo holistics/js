@@ -22,10 +22,10 @@ timezoneRefiner.refine = (text, results, { timezoneOffset, timezone }) => {
    */
   return results.map(res => {
     if (timezone) {
-      if (res.start) implyTimezoneRegion(res.start, timezone);
+      implyTimezoneRegion(res.start, timezone);
       if (res.end) implyTimezoneRegion(res.end, timezone);
     } else {
-      if (res.start) implyTimezoneOffset(res.start, timezoneOffset);
+      implyTimezoneOffset(res.start, timezoneOffset);
       if (res.end) implyTimezoneOffset(res.end, timezoneOffset);
     }
 

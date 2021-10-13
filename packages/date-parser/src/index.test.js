@@ -1,6 +1,7 @@
 import {
   parse, WEEKDAYS, OUTPUT_TYPES, Errors,
 } from './index';
+import { parse as parseV1 } from './dateParserV1';
 
 describe('common tests', () => {
   it('exports necessary constants', () => {
@@ -1416,5 +1417,11 @@ describe('dateParser', () => {
 
   it('raises error when weekStartDay is invalid', () => {
     expect(() => parse('this mon', new Date(), { weekStartDay: 'ahihi' })).toThrowError(/invalid weekStartDay/i);
+  });
+
+  it('default inputs should work', () => {
+    const res = parseV1('last week', new Date('2021-10-13T18:00:00Z'));
+    expect(res.start.date().toISOString()).toEqual('2021-10-04T00:00:00.000Z');
+    expect(res.end.date().toISOString()).toEqual('2021-10-11T00:00:00.000Z');
   });
 });
