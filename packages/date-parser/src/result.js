@@ -65,7 +65,7 @@ export default class Result {
     );
   }
 
-  // This reserves the timezone offset, but still losing the timezone region
+  // This reserves the timezone offset
   // E.g. 2017-04-20T11:32:00.000-04:00
   asTimestamp () {
     const luxonResult = this.asLuxon();

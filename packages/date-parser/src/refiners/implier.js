@@ -39,20 +39,17 @@ const implyEnd = (start) => {
  * @param {Chorno.ParsedComponents} start
  * @returns Chrono.ParsedComponent
  */
-const implyWithCorrectness = (start) => {
+const implyWithLuxon = (start) => {
   const end = start.clone();
-  end.impliedValues = {
-    ...end.impliedValues,
-    ...end.knownValues,
-  };
-  end.knownValues = {};
 
   // increment the highest-level known date unit
   const incrementedUnit = getHighestLevelDateUnit(start.knownValues) || 'millisecond';
   const incremental = {};
   incremental[`${incrementedUnit}s`] = 1; // days, months, years...
-  const luxonInstance = luxonFromChronoStruct(end).plus(incremental);
+  const luxonInstance = luxonFromChronoStruct(start).plus(incremental);
+
   end.impliedValues = dateStructFromLuxon(luxonInstance);
+  end.knownValues = {};
 
   return end;
 };
@@ -66,7 +63,7 @@ const implyResult = (res, opt) => {
   if (res.end) {
     implyDefaults(res.end);
   } else {
-    res.end = opt.parserVersion === 2 ? implyWithCorrectness(res.start) : implyEnd(res.start);
+    res.end = opt.parserVersion === 2 ? implyWithLuxon(res.start) : implyEnd(res.start);
   }
   return res;
 };
