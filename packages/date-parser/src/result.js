@@ -47,8 +47,8 @@ export default class Result {
     const luxonResult = this.asLuxon();
     return merge(
       luxonResult, {
-        start: luxonResult.start ? luxonResult.start.toFormat('YYYY-MM-DD') : null,
-        end: luxonResult.end ? luxonResult.end.toFormat('YYYY-MM-DD') : null,
+        start: luxonResult.start ? luxonResult.start.toFormat('yyyy-MM-dd') : null,
+        end: luxonResult.end ? luxonResult.end.toFormat('yyyy-MM-dd') : null,
       },
     );
   }
