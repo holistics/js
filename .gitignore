@@ -93,3 +93,5 @@ Thumbs.db
 # Builds
 dist/
 out/
+
+.vscode
