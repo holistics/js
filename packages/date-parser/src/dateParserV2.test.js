@@ -199,6 +199,10 @@ describe('Parsing logic', () => {
     res = parse('2019-12-01T09:15:32Z till 2019-12-02T09:15:40Z', new Date('2019-12-26T02:14:05Z'), { ...defaultOpts, timezoneRegion: 'America/Chicago' });
     expect(res.asTimestampUtc().start).toEqual('2019-12-01T09:15:32.000+00:00');
     expect(res.asTimestampUtc().end).toEqual('2019-12-02T09:15:40.000+00:00');
+
+    res = parse('2019-12-01T09:15:32+09:00', new Date('2019-12-26T02:14:05Z'), { ...defaultOpts, timezoneRegion: 'America/Chicago' });
+    expect(res.asTimestamp().start).toEqual('2019-12-01T00:15:32.000+00:00');
+    expect(res.asTimestamp().end).toEqual('2019-12-01T00:15:33.000+00:00');
   });
 
   it('works with today format', () => {
