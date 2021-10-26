@@ -70,3 +70,6 @@ export const DATE_RANGE_PATTERNS = {
   rangeEndInclusive: new RegExp(`(.+) (${DATE_RANGE_KEYWORDS.rangeEndInclusive.join('|')}) (.+)`, 'i'),
   rangeEndExclusive: new RegExp(`(.+) (${DATE_RANGE_KEYWORDS.rangeEndExclusive.join('|')}) (.+)`, 'i'),
 };
+
+export const PARSER_VERSION_1 = 1;
+export const PARSER_VERSION_3 = 3;

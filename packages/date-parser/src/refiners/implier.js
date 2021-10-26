@@ -2,6 +2,7 @@ import Chrono from 'chrono-node';
 import getHighestLevelDateUnit from '../helpers/getHighestLevelDateUnit';
 import luxonFromChronoStruct from '../helpers/luxonFromChronoStruct';
 import dateStructFromLuxon from '../helpers/dateStructFromLuxon';
+import { PARSER_VERSION_3 } from '../constants';
 
 /**
  *
@@ -63,7 +64,7 @@ const implyResult = (res, opt) => {
   if (res.end) {
     implyDefaults(res.end);
   } else {
-    res.end = opt.parserVersion === 2 ? implyWithLuxon(res.start) : implyEnd(res.start);
+    res.end = opt.parserVersion === PARSER_VERSION_3 ? implyWithLuxon(res.start) : implyEnd(res.start);
   }
   return res;
 };

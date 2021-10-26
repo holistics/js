@@ -2,9 +2,10 @@ import {
   parse, WEEKDAYS,
 } from './index';
 import { parse as parseV3 } from './dateParserV3';
+import { PARSER_VERSION_3 } from './constants';
 
 describe('Parsing logic', () => {
-  const defaultOpts = { parserVersion: 2, output: 'raw' };
+  const defaultOpts = { parserVersion: PARSER_VERSION_3, output: 'raw' };
 
   it('works with lastX format', () => {
     let res;
@@ -487,7 +488,7 @@ describe('Parsing logic', () => {
 });
 
 describe('output types', () => {
-  const defaultOpts = { parserVersion: 2 };
+  const defaultOpts = { parserVersion: PARSER_VERSION_3 };
 
   it('support common output types', () => {
     let res;
@@ -509,5 +510,26 @@ describe('output types', () => {
 
     res = parse('last 2 days', new Date('2019-12-26T02:14:05Z'), { ...defaultOpts, timezoneRegion: 'America/Chicago' });
     expect(res.start).toEqual('2019-12-23T00:00:00.000-06:00');
+  });
+});
+
+describe('system timezone affected cases', () => {
+  const defaultOpts = { parserVersion: PARSER_VERSION_3, output: 'raw' };
+
+  it("failed when run with TZ='Europe/Copenhagen'", () => {
+    let res;
+
+    res = parse('2019/12/01', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-12-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-02T00:00:00.000+00:00');
+
+    res = parse('3 days ago till 15:36', new Date('2019-12-31T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2019-12-28T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-31T15:36:00.000+00:00');
+
+    res = parse('3 o\'clock - 3 minutes ago', new Date('2019-12-26T04:35:19+08:00'), { ...defaultOpts, timezoneRegion: 'Asia/Seoul' });
+    expect(res.text).toEqual("3 o'clock - 3 minutes ago");
+    expect(res.asTimestampUtc().start).toEqual('2019-12-25T18:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2019-12-25T20:33:00.000+00:00');
   });
 });

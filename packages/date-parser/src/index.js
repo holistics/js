@@ -1,6 +1,8 @@
 import { parse as parseV1 } from './dateParserV1';
 import { parse as parseV3 } from './dateParserV3';
-import { WEEKDAYS, OUTPUT_TYPES } from './constants';
+import {
+  WEEKDAYS, OUTPUT_TYPES, PARSER_VERSION_1, PARSER_VERSION_3,
+} from './constants';
 import Errors from './errors';
 
 /**
@@ -20,9 +22,9 @@ export const parse = (str, ref, {
   timezoneRegion = 'Etc/UTC',
   output = OUTPUT_TYPES.parsed_component,
   weekStartDay = WEEKDAYS.Monday,
-  parserVersion = 1,
+  parserVersion = PARSER_VERSION_1,
 } = {}) => {
-  if (parserVersion === 3) {
+  if (parserVersion === PARSER_VERSION_3) {
     return parseV3(str, ref, { timezoneRegion, output, weekStartDay });
   }
 

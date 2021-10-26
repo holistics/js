@@ -16,6 +16,7 @@ import {
   WEEKDAYS_MAP,
   OUTPUT_TYPES,
   DATE_RANGE_KEYWORDS,
+  PARSER_VERSION_3,
 } from './constants';
 import Result from './result';
 
@@ -109,7 +110,7 @@ export const parse = (str, ref, {
   const chrono = new ChronoNode.Chrono(options);
   const parsedResults = _compact(
     parts.map(
-      part => chrono.parse(part, refDate, { timezone: zone.toString(), weekStartDay: wsday, parserVersion: 2 })[0],
+      part => chrono.parse(part, refDate, { timezone: zone.toString(), weekStartDay: wsday, parserVersion: PARSER_VERSION_3 })[0],
     ),
   );
 
