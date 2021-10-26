@@ -88,7 +88,7 @@ const buildResult = (parsedResults, strInput, refDate, weekStartDay) => {
  * @param {String|Date} ref Reference date
  * @param {OUTPUT_TYPES} output Type of the output dates
  * @param {Number} weekStartDay The weekday chosen to be the start of a week. See WEEKDAYS constant for possible values
- * @param {String} timezoneRegion timezone region, only available in V2 parser
+ * @param {String} timezoneRegion timezone region, only available in V3 parser
  * @return {ChronoNode.ParsedResult|Array}
  */
 export const parse = (str, ref, {

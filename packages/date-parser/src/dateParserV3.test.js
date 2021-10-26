@@ -1,7 +1,7 @@
 import {
   parse, WEEKDAYS,
 } from './index';
-import { parse as parseV2 } from './dateParserV2';
+import { parse as parseV3 } from './dateParserV3';
 
 describe('Parsing logic', () => {
   const defaultOpts = { parserVersion: 2, output: 'raw' };
@@ -476,7 +476,7 @@ describe('Parsing logic', () => {
   });
 
   it('default inputs should work', () => {
-    const res = parseV2('last 2 days', new Date('2019-12-26T02:14:05Z'));
+    const res = parseV3('last 2 days', new Date('2019-12-26T02:14:05Z'));
     expect(res.start).toEqual('2019-12-24T00:00:00.000+00:00');
     expect(res.end).toEqual('2019-12-26T00:00:00.000+00:00');
   });

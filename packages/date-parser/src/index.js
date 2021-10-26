@@ -1,5 +1,5 @@
 import { parse as parseV1 } from './dateParserV1';
-import { parse as parseV2 } from './dateParserV2';
+import { parse as parseV3 } from './dateParserV3';
 import { WEEKDAYS, OUTPUT_TYPES } from './constants';
 import Errors from './errors';
 
@@ -11,8 +11,8 @@ import Errors from './errors';
  * @param {Number} options.timezoneOffset Timezone offset in minutes
  * @param {OUTPUT_TYPES} options.output Type of the output dates
  * @param {Number} weekStartDay The weekday chosen to be the start of a week. See WEEKDAYS constant for possible values
- * @param {Number} parserVersion V1 supports timezone offset while V2 supports timezone region only. Use for backward compatabiblity
- * @param {String} timezoneRegion timezone region, only available in V2 parser
+ * @param {Number} parserVersion V1 supports timezone offset while V3 supports timezone region only. Use for backward compatabiblity
+ * @param {String} timezoneRegion timezone region, only available in V3 parser
  * @return {ChronoNode.ParsedResult|Array}
  */
 export const parse = (str, ref, {
@@ -22,8 +22,8 @@ export const parse = (str, ref, {
   weekStartDay = WEEKDAYS.Monday,
   parserVersion = 1,
 } = {}) => {
-  if (parserVersion === 2) {
-    return parseV2(str, ref, { timezoneRegion, output, weekStartDay });
+  if (parserVersion === 3) {
+    return parseV3(str, ref, { timezoneRegion, output, weekStartDay });
   }
 
   // V1 parser that supports timezone offset

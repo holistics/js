@@ -15,7 +15,7 @@ export default (luxon) => {
     // Because this struct is passed as a Chrono result, some internal Chrono logic depends
     // on timezoneOffset for calculation, so we set it to be 0 to avoid breaking those logic.
     //
-    // This won't affect the final result because our v2 logic will process tz region and skip this offset
+    // This won't affect the final result because our v3 logic will process tz region and skip this offset
     //
     timezoneOffset: 0,
   };
