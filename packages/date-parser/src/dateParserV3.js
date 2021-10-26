@@ -19,6 +19,7 @@ import {
   PARSER_VERSION_3,
 } from './constants';
 import Result from './result';
+import luxonFromJSDate from './helpers/luxonFromJSDate';
 
 /**
  * @param {String} ref
@@ -26,14 +27,14 @@ import Result from './result';
  * @returns { refDate: Date, wsday: Number}
  */
 const parseInputs = (ref, weekStartDay) => {
-  const refDate = new Date(ref);
-  if (!isValidDate(refDate)) throw new InputError(`Invalid reference date: ${ref}`);
+  const jsRefDate = new Date(ref);
+  if (!isValidDate(jsRefDate)) throw new InputError(`Invalid reference date: ${ref}`);
 
   if (!(weekStartDay in WEEKDAYS_MAP)) throw new InputError(`Invalid weekStartDay: ${weekStartDay}. See exported constant WEEKDAYS for valid values`);
   const wsday = WEEKDAYS_MAP[weekStartDay];
 
   return {
-    refDate,
+    jsRefDate,
     wsday,
   };
 };
@@ -100,9 +101,11 @@ export const parse = (str, ref, {
   /**
    * Inputs parsing and validation
    */
-  const { refDate, wsday } = parseInputs(ref, weekStartDay);
+  const { jsRefDate, wsday } = parseInputs(ref, weekStartDay);
   const zone = new TimezoneRegion(timezoneRegion);
   const { parts } = splitInputStr(str);
+  const luxonRefUtc = luxonFromJSDate(jsRefDate);
+  const luxonRefInTargetTz = luxonRefUtc.setZone(zone.toString());
 
   /**
    * Chrono processing
@@ -110,14 +113,20 @@ export const parse = (str, ref, {
   const chrono = new ChronoNode.Chrono(options);
   const parsedResults = _compact(
     parts.map(
-      part => chrono.parse(part, refDate, { timezone: zone.toString(), weekStartDay: wsday, parserVersion: PARSER_VERSION_3 })[0],
+      part => chrono.parse(part, jsRefDate, {
+        timezone: zone.toString(),
+        weekStartDay: wsday,
+        parserVersion: PARSER_VERSION_3,
+        luxonRefUtc,
+        luxonRefInTargetTz,
+      })[0],
     ),
   );
 
   /**
    * Parsed result processing
    */
-  const result = buildResult(parsedResults, str, refDate, weekStartDay);
+  const result = buildResult(parsedResults, str, jsRefDate, weekStartDay);
 
   switch (output) {
     case OUTPUT_TYPES.date:
