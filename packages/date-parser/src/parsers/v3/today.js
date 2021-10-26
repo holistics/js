@@ -1,9 +1,7 @@
 import Chrono from 'chrono-node';
-import dateStructFromDate from '../../helpers/dateStructFromDate';
-import momentFromStruct from '../../helpers/momentFromStruct';
-import chronoDateStructFromMoment from '../../helpers/chronoDateStructFromMoment';
 import truncateDateStruct from '../../helpers/truncateDateStruct';
-import convertTimezone from '../../helpers/convertTimezone';
+import dateStructFromLuxon from '../../helpers/dateStructFromLuxon';
+import luxonFromStruct from '../../helpers/luxonFromStruct';
 
 const parser = new Chrono.Parser();
 
@@ -17,8 +15,7 @@ parser.pattern = () => {
  * @param {Array} match
  */
 parser.extract = (text, ref, match, opt) => {
-  const { timezone } = opt;
-  const adjustedRef = timezone ? convertTimezone(ref, timezone) : ref;
+  const { luxonRefInTargetTz } = opt;
 
   const date = match[1].toLowerCase();
   let value = 0;
@@ -28,22 +25,19 @@ parser.extract = (text, ref, match, opt) => {
     value = 1;
   }
 
-  const refDateStruct = truncateDateStruct(dateStructFromDate(adjustedRef), 'day');
-  let startMoment = momentFromStruct(refDateStruct, { weekStartDay: opt.weekStartDay });
-  startMoment = startMoment.add(value, 'day');
+  const truncatedStruct = truncateDateStruct(dateStructFromLuxon(luxonRefInTargetTz), 'day');
+  const truncatedLuxon = luxonFromStruct(truncatedStruct);
 
-  const endMoment = startMoment.add(1, 'day');
-
-  const startStruct = chronoDateStructFromMoment(startMoment, timezone);
-  const endStruct = chronoDateStructFromMoment(endMoment, timezone);
+  const startLuxon = truncatedLuxon.plus({ days: value });
+  const endLuxon = startLuxon.plus({ days: 1 });
 
   return new Chrono.ParsedResult({
     ref,
     text: match[0],
     index: match.index,
     tags: { todayParser: true },
-    start: startStruct,
-    end: endStruct,
+    start: dateStructFromLuxon(startLuxon),
+    end: dateStructFromLuxon(endLuxon),
   });
 };
 
