@@ -1,6 +1,6 @@
 import Chrono from 'chrono-node';
-import dateStructFromDate from '../../helpers/dateStructFromDate';
-import convertTimezone from '../../helpers/convertTimezone';
+import dateStructFromLuxon from '../../helpers/dateStructFromLuxon';
+import luxonFromJSDate from '../../helpers/luxonFromJSDate';
 
 const parser = new Chrono.Parser();
 
@@ -25,17 +25,13 @@ parser.extract = (text, ref, match, opt) => {
   /* istanbul ignore else */
   if (date === 'beginning') {
     start = {
-      year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0,
+      year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0, timezone: 'Etc/UTC',
     };
-    if (timezone) {
-      start = { ...start, timezone: 'Etc/UTC' };
-    }
   } else if (date === 'now') {
-    const adjustedRef = timezone ? convertTimezone(ref, timezone) : ref;
+    const nowUtc = luxonFromJSDate(ref);
+    const nowInTargetTz = nowUtc.setZone(timezone);
 
-    const refDateStruct = dateStructFromDate(adjustedRef, timezone);
-    const nowDateStruct = { ...refDateStruct, month: refDateStruct.month + 1 };
-    start = nowDateStruct;
+    start = dateStructFromLuxon(nowInTargetTz);
   }
 
   return new Chrono.ParsedResult({
