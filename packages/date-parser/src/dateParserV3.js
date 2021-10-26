@@ -4,7 +4,7 @@ import _compact from 'lodash/compact';
 import ChronoNode from 'chrono-node';
 import './initializers/dayjs';
 import './initializers/chrono-node';
-import options from './options';
+import options from './optionsV3';
 
 import isValidDate from './helpers/isValidDate';
 import TimezoneRegion from './helpers/timezoneRegion';
