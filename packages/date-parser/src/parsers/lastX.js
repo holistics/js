@@ -5,7 +5,6 @@ import momentFromStruct from '../helpers/momentFromStruct';
 import chronoDateStructFromMoment from '../helpers/chronoDateStructFromMoment';
 import isTimeUnit from '../helpers/isTimeUnit';
 import pluralize from '../helpers/pluralize';
-import { shouldUseUTC, convertResultFromUtc, adjustRefdate } from '../helpers/utcParsingHelpers';
 
 const parser = new Chrono.Parser();
 
@@ -26,10 +25,7 @@ parser.extract = (text, ref, match, opt) => {
   const dateUnit = match[3].toLowerCase();
   const pointOfTime = (match[4] || '').trim();
 
-  const { timezone } = opt;
-  const adjustedRef = adjustRefdate(ref, dateUnit, timezone);
-
-  const refDateStruct = truncateDateStruct(dateStructFromDate(adjustedRef), dateUnit);
+  const refDateStruct = truncateDateStruct(dateStructFromDate(ref), dateUnit);
   let startMoment = momentFromStruct(refDateStruct, { weekStartDay });
   let endMoment = startMoment.clone();
 
@@ -53,14 +49,6 @@ parser.extract = (text, ref, match, opt) => {
     startMoment = endMoment.subtract(1, isTimeUnit(dateUnit) ? 'second' : 'day');
   }
 
-  let startStruct = chronoDateStructFromMoment(startMoment, timezone);
-  let endStruct = chronoDateStructFromMoment(endMoment, timezone);
-
-  if (shouldUseUTC(dateUnit) && timezone) {
-    startStruct = convertResultFromUtc(startStruct, timezone);
-    endStruct = convertResultFromUtc(endStruct, timezone);
-  }
-
   return new Chrono.ParsedResult({
     ref,
     text: match[0],
@@ -68,8 +56,8 @@ parser.extract = (text, ref, match, opt) => {
     normalized_text: `${match[1]}${value ? match[2] : ''} ${pluralize(match[3], value || 1)}${match[4] || ''}`,
     index: match.index,
     tags: { lastXParser: true },
-    start: startStruct,
-    end: endStruct,
+    start: chronoDateStructFromMoment(startMoment),
+    end: chronoDateStructFromMoment(endMoment),
   });
 };
 

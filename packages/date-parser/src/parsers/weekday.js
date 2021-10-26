@@ -5,7 +5,6 @@ import momentFromStruct from '../helpers/momentFromStruct';
 import chronoDateStructFromMoment from '../helpers/chronoDateStructFromMoment';
 import pluralize from '../helpers/pluralize';
 import { WEEKDAYS_MAP } from '../constants';
-import convertTimezone from '../helpers/convertTimezone';
 
 const parser = new Chrono.Parser();
 
@@ -33,18 +32,12 @@ parser.extract = (text, ref, match, opt) => {
     value = 0;
   }
 
-  const { timezone } = opt;
-  const adjustedRef = timezone ? convertTimezone(ref, timezone) : ref;
-
-  const refDateStruct = truncateDateStruct(dateStructFromDate(adjustedRef), 'day');
+  const refDateStruct = truncateDateStruct(dateStructFromDate(ref), 'day');
   let startMoment = momentFromStruct(refDateStruct, { weekStartDay });
   startMoment = startMoment.add(value, 'week');
   startMoment = startMoment.weekday((7 + WEEKDAYS_MAP[weekday] - weekStartDay) % 7);
 
   const endMoment = startMoment.add(1, 'day');
-
-  const startStruct = chronoDateStructFromMoment(startMoment, timezone);
-  const endStruct = chronoDateStructFromMoment(endMoment, timezone);
 
   return new Chrono.ParsedResult({
     ref,
@@ -53,8 +46,8 @@ parser.extract = (text, ref, match, opt) => {
     normalized_text: `${match[1]} ${match[2]}${value ? match[3] : ''} ${pluralize('week', value || 1)}`,
     index: match.index,
     tags: { weekdayParser: true },
-    start: startStruct,
-    end: endStruct,
+    start: chronoDateStructFromMoment(startMoment),
+    end: chronoDateStructFromMoment(endMoment),
   });
 };
 

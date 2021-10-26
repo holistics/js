@@ -3,7 +3,6 @@ import dateStructFromDate from '../helpers/dateStructFromDate';
 import truncateDateStruct from '../helpers/truncateDateStruct';
 import momentFromStruct from '../helpers/momentFromStruct';
 import chronoDateStructFromMoment from '../helpers/chronoDateStructFromMoment';
-import { shouldUseUTC, convertResultFromUtc, adjustRefdate } from '../helpers/utcParsingHelpers';
 
 const parser = new Chrono.Parser();
 
@@ -24,10 +23,7 @@ parser.extract = (text, ref, match, opt) => {
   const value = parseInt(match[2]) * (isPast ? -1 : 1);
   const duration = match[5];
 
-  const { timezone } = opt;
-  const adjustedRef = adjustRefdate(ref, dateUnit, timezone);
-
-  let refDateStruct = dateStructFromDate(adjustedRef);
+  let refDateStruct = dateStructFromDate(ref);
   if (!exact) {
     refDateStruct = truncateDateStruct(refDateStruct, dateUnit);
   }
@@ -44,21 +40,13 @@ parser.extract = (text, ref, match, opt) => {
     endMoment = endMoment.add(1, dateUnit);
   }
 
-  let startStruct = chronoDateStructFromMoment(startMoment, timezone);
-  let endStruct = chronoDateStructFromMoment(endMoment, timezone);
-
-  if (shouldUseUTC(dateUnit) && timezone) {
-    startStruct = convertResultFromUtc(startStruct, timezone);
-    endStruct = convertResultFromUtc(endStruct, timezone);
-  }
-
   return new Chrono.ParsedResult({
     ref,
     text: match[0],
     tags: { xAgoParser: true },
     index: match.index,
-    start: startStruct,
-    end: endStruct,
+    start: chronoDateStructFromMoment(startMoment),
+    end: chronoDateStructFromMoment(endMoment),
   });
 };
 

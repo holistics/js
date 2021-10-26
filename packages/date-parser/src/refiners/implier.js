@@ -1,8 +1,5 @@
 import Chrono from 'chrono-node';
 import getHighestLevelDateUnit from '../helpers/getHighestLevelDateUnit';
-import luxonFromChronoStruct from '../helpers/luxonFromChronoStruct';
-import dateStructFromLuxon from '../helpers/dateStructFromLuxon';
-import { PARSER_VERSION_3 } from '../constants';
 
 /**
  *
@@ -34,48 +31,26 @@ const implyEnd = (start) => {
 };
 
 /**
- * The above imply may create invalid dates because it simply increse the highest level 1 unit
- * This new imply for version 2 would build a proper Luxon datetime then increase on that datetime
- *
- * @param {Chorno.ParsedComponents} start
- * @returns Chrono.ParsedComponent
- */
-const implyWithLuxon = (start) => {
-  const end = start.clone();
-
-  // increment the highest-level known date unit
-  const incrementedUnit = getHighestLevelDateUnit(start.knownValues) || 'millisecond';
-  const incremental = {};
-  incremental[`${incrementedUnit}s`] = 1; // days, months, years...
-  const luxonInstance = luxonFromChronoStruct(start).plus(incremental);
-
-  end.impliedValues = dateStructFromLuxon(luxonInstance);
-  end.knownValues = {};
-
-  return end;
-};
-
-/**
  *
  * @param {Chrono.ParsedResult} res
  */
-const implyResult = (res, opt) => {
+const implyResult = (res) => {
   implyDefaults(res.start);
   if (res.end) {
     implyDefaults(res.end);
   } else {
-    res.end = opt.parserVersion === PARSER_VERSION_3 ? implyWithLuxon(res.start) : implyEnd(res.start);
+    res.end = implyEnd(res.start);
   }
   return res;
 };
 
 const implier = new Chrono.Refiner();
-implier.refine = (text, results, opt) => {
+implier.refine = (text, results) => {
   /**
    *
    * @param {Chrono.ParsedResult} res
    */
-  return results.map(res => implyResult(res, opt));
+  return results.map(res => implyResult(res));
 };
 
 export default implier;
