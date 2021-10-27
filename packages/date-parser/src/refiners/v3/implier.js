@@ -2,11 +2,11 @@ import Chrono from 'chrono-node';
 import getHighestLevelDateUnit from '../../helpers/getHighestLevelDateUnit';
 import luxonFromChronoStruct from '../../helpers/luxonFromChronoStruct';
 import dateStructFromLuxon from '../../helpers/dateStructFromLuxon';
-import { PARSER_VERSION_3 } from '../../constants';
 
 /**
  *
  * @param {Chrono.ParsedComponents} parsedComponent
+ * Chrono set the hour at 12:00 by default, the imply here set it back to 00:00
  */
 const implyDefaults = (parsedComponent) => {
   parsedComponent.imply('hour', 0);
@@ -15,28 +15,6 @@ const implyDefaults = (parsedComponent) => {
 };
 
 /**
- *
- * @param {Chrono.ParsedComponents} start
- * @param {Boolean} singleTimePoint
- */
-const implyEnd = (start) => {
-  const end = start.clone();
-  end.impliedValues = {
-    ...end.impliedValues,
-    ...end.knownValues,
-  };
-  end.knownValues = {};
-
-  // increment the highest-level known date unit
-  const incrementedUnit = getHighestLevelDateUnit(start.knownValues);
-  end.imply(incrementedUnit, start.get(incrementedUnit) + 1);
-  return end;
-};
-
-/**
- * The above imply may create invalid dates because it simply increse the highest level 1 unit
- * This new imply for version 2 would build a proper Luxon datetime then increase on that datetime
- *
  * @param {Chorno.ParsedComponents} start
  * @returns Chrono.ParsedComponent
  */
@@ -59,12 +37,12 @@ const implyWithLuxon = (start) => {
  *
  * @param {Chrono.ParsedResult} res
  */
-const implyResult = (res, opt) => {
+const implyResult = (res) => {
   implyDefaults(res.start);
   if (res.end) {
     implyDefaults(res.end);
   } else {
-    res.end = opt.parserVersion === PARSER_VERSION_3 ? implyWithLuxon(res.start) : implyEnd(res.start);
+    res.end = implyWithLuxon(res.start);
   }
   return res;
 };
