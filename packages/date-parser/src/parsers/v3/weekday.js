@@ -1,13 +1,22 @@
 import Chrono from 'chrono-node';
-import dateStructFromDate from '../../helpers/dateStructFromDate';
+import { lowerCase } from 'lodash';
 import truncateDateStruct from '../../helpers/truncateDateStruct';
-import momentFromStruct from '../../helpers/momentFromStruct';
-import chronoDateStructFromMoment from '../../helpers/chronoDateStructFromMoment';
 import pluralize from '../../helpers/pluralize';
 import { WEEKDAYS_MAP } from '../../constants';
-import convertTimezone from '../../helpers/convertTimezone';
+import dateStructFromLuxon from '../../helpers/dateStructFromLuxon';
+import luxonFromStruct from '../../helpers/luxonFromStruct';
+import { startOfCustom } from '../../helpers/startEndOfCustom';
 
 const parser = new Chrono.Parser();
+
+const daysBetweeen = (startOfWeek, weekday) => {
+  const fromWeekdayIdx = WEEKDAYS_MAP[lowerCase(startOfWeek.weekdayLong)];
+  const toWeekdayIdx = WEEKDAYS_MAP[weekday];
+
+  if (fromWeekdayIdx <= toWeekdayIdx) { return toWeekdayIdx - fromWeekdayIdx; }
+
+  return toWeekdayIdx + 7 - fromWeekdayIdx;
+};
 
 parser.pattern = () => {
   /* eslint-disable-next-line max-len */
@@ -21,7 +30,8 @@ parser.pattern = () => {
  * @param {Object} opt
  */
 parser.extract = (text, ref, match, opt) => {
-  const { weekStartDay } = opt;
+  const { luxonRefInTargetTz, weekStartDay } = opt;
+
   const weekday = match[1].toLowerCase();
   const modifier = match[2].toLowerCase();
   let value;
@@ -33,18 +43,16 @@ parser.extract = (text, ref, match, opt) => {
     value = 0;
   }
 
-  const { timezone } = opt;
-  const adjustedRef = timezone ? convertTimezone(ref, timezone) : ref;
+  const truncatedStruct = truncateDateStruct(dateStructFromLuxon(luxonRefInTargetTz), 'day', false);
+  const truncatedLuxon = luxonFromStruct(truncatedStruct);
 
-  const refDateStruct = truncateDateStruct(dateStructFromDate(adjustedRef), 'day');
-  let startMoment = momentFromStruct(refDateStruct, { weekStartDay });
-  startMoment = startMoment.add(value, 'week');
-  startMoment = startMoment.weekday((7 + WEEKDAYS_MAP[weekday] - weekStartDay) % 7);
+  const someWhereInTheWeek = truncatedLuxon.plus({ weeks: value });
+  const startOfWeek = startOfCustom(someWhereInTheWeek, 'week', weekStartDay);
 
-  const endMoment = startMoment.add(1, 'day');
+  const range = daysBetweeen(startOfWeek, weekday);
 
-  const startStruct = chronoDateStructFromMoment(startMoment, timezone);
-  const endStruct = chronoDateStructFromMoment(endMoment, timezone);
+  const startDate = startOfWeek.plus({ days: range });
+  const endDate = startDate.plus({ days: 1 });
 
   return new Chrono.ParsedResult({
     ref,
@@ -53,8 +61,8 @@ parser.extract = (text, ref, match, opt) => {
     normalized_text: `${match[1]} ${match[2]}${value ? match[3] : ''} ${pluralize('week', value || 1)}`,
     index: match.index,
     tags: { weekdayParser: true },
-    start: startStruct,
-    end: endStruct,
+    start: dateStructFromLuxon(startDate),
+    end: dateStructFromLuxon(endDate),
   });
 };
 
