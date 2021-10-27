@@ -11,14 +11,18 @@ const DATE_PARTS_FOR_DATE_UNIT = {
   second: ['year', 'month', 'day', 'hour', 'minute', 'second'],
 };
 
-export default (dateStruct, dateUnit) => {
+// monthStartAtZero:
+// - v1 uses dayjs which starts at 0
+// - v3 uses luxon which starts at 1
+export default (dateStruct, dateUnit, monthStartAtZero = true) => {
   return {
     year: 1,
-    month: 0,
+    month: monthStartAtZero ? 0 : 1,
     day: 1,
     hour: 0,
     minute: 0,
     second: 0,
     ..._pick(dateStruct, DATE_PARTS_FOR_DATE_UNIT[dateUnit]),
+    timezone: dateStruct.timezone,
   };
 };

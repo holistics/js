@@ -25,7 +25,7 @@ parser.extract = (text, ref, match, opt) => {
     value = 1;
   }
 
-  const truncatedStruct = truncateDateStruct(dateStructFromLuxon(luxonRefInTargetTz), 'day');
+  const truncatedStruct = truncateDateStruct(dateStructFromLuxon(luxonRefInTargetTz), 'day', false);
   const truncatedLuxon = luxonFromStruct(truncatedStruct);
 
   const startLuxon = truncatedLuxon.plus({ days: value });
