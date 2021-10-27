@@ -1,8 +1,7 @@
 import Chrono from 'chrono-node';
 import { difference, keys, pick } from 'lodash';
-import dateStructFromLuxon from '../helpers/dateStructFromLuxon';
-import luxonFromChronoStruct from '../helpers/luxonFromChronoStruct';
-import { PARSER_VERSION_3 } from '../constants';
+import dateStructFromLuxon from '../../helpers/dateStructFromLuxon';
+import luxonFromChronoStruct from '../../helpers/luxonFromChronoStruct';
 
 const { parser } = Chrono;
 
@@ -44,7 +43,7 @@ const wrapChronoISOParser = (parserConfig) => {
   wrappedParser.extract = (text, ref, match, opt) => {
     const result = chronoParser.extract(text, ref, match, opt);
 
-    if (opt.parserVersion === PARSER_VERSION_3 && result.start) {
+    if (result.start) {
       const utcDateStruct = convertToUtc(result.start);
       const { knownValues, impliedValues } = buildChronoResultFrom(result.start, utcDateStruct);
       result.start.knownValues = knownValues;
