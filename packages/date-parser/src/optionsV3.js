@@ -1,18 +1,19 @@
 import ChronoNode from 'chrono-node';
 
+// Common parsers & refiners for both V1 and V3
 import ambiguousWeekdayGuard from './parsers/guards/ambiguousWeekday';
+import yearParser from './parsers/year';
+import ambiguityRefiner from './refiners/ambiguity';
 
 import constantsParser from './parsers/v3/constants';
 import todayParser from './parsers/v3/today';
 import weekdayParser from './parsers/v3/weekday';
-import yearParser from './parsers/year';
 import xAgoParser from './parsers/v3/xAgo';
 import lastXParser from './parsers/v3/lastX';
-import wrapChronoISOParser from './parsers/wrapChronoISOParser'; // TODO: move to v3
+import wrapChronoISOParser from './parsers/v3/wrapChronoISOParser';
 
 import implier from './refiners/v3/implier';
 import timezoneRefiner from './refiners/v3/timezone';
-import ambiguityRefiner from './refiners/ambiguity';
 
 const { parser, refiner } = ChronoNode;
 const parserConfig = { strict: true };
