@@ -1,10 +1,15 @@
-import { WEEKDAYS } from '../constants';
+import { lowerCase } from 'lodash';
+import { WEEKDAYS_MAP } from '../constants';
 
-const shiftRange = (currentDate, wsd) => {
-  // luxon Sunday = 7, while our WEEKDAYS.Sunday = 0
-  // other days are the same
-  const currentWeekday = currentDate.weekday === 7 ? 0 : currentDate.weekday;
-  return (currentWeekday - wsd + 7) % 7;
+/**
+ *
+ * @param {Luxon.DateTime} currentDate
+ * @param {WEEKDAYS_MAP} wsdIdx
+ * @returns number
+ */
+const shiftRange = (currentDate, wsdIdx) => {
+  const currentWeekday = WEEKDAYS_MAP[lowerCase(currentDate.weekdayLong)];
+  return (currentWeekday - wsdIdx + 7) % 7;
 };
 
 // The DateTime.startOf, DateTime.endOf function of luxon doesn't support week start day other than Monday
@@ -14,14 +19,14 @@ const shiftRange = (currentDate, wsd) => {
  *
  * @param {Luxon.DateTime} luxon
  * @param {String} dateUnit
- * @param {WEEKDAYS} weekStarDay
+ * @param {WEEKDAYS_MAP} weekStarDayIdx
  * @returns Luxon.DateTime
  */
-const startOfCustom = (luxon, dateUnit, weekStarDay = WEEKDAYS.Monday) => {
-  if (dateUnit !== 'week' || weekStarDay === WEEKDAYS.Monday) { return luxon.startOf(dateUnit); }
+const startOfCustom = (luxon, dateUnit, weekStarDayIdx = WEEKDAYS_MAP.Monday) => {
+  if (dateUnit !== 'week' || weekStarDayIdx === WEEKDAYS_MAP.Monday) { return luxon.startOf(dateUnit); }
 
   return luxon
-    .minus({ days: shiftRange(luxon, weekStarDay) }) // shift to the start of week
+    .minus({ days: shiftRange(luxon, weekStarDayIdx) }) // shift to the start of week
     .startOf('day'); // truncate the day, this follows the behavior of the original DateTime.startOf
 };
 
@@ -29,18 +34,17 @@ const startOfCustom = (luxon, dateUnit, weekStarDay = WEEKDAYS.Monday) => {
  *
  * @param {Luxon.DateTime} luxon
  * @param {String} dateUnit
- * @param {WEEKDAYS} weekStarDay
+ * @param {WEEKDAYS_MAP} weekStarDayIdx
  * @returns Luxon.DateTime
  */
-const endOfCustom = (luxon, dateUnit, weekStarDay = WEEKDAYS.Monday) => {
-  if (dateUnit !== 'week' || weekStarDay === WEEKDAYS.Monday) { return luxon.endOf(dateUnit); }
+const endOfCustom = (luxon, dateUnit, weekStarDayIdx = WEEKDAYS_MAP.Monday) => {
+  if (dateUnit !== 'week' || weekStarDayIdx === WEEKDAYS_MAP.Monday) { return luxon.endOf(dateUnit); }
 
-  const startOfWeek = luxon.minus({ days: shiftRange(luxon, weekStarDay) });
+  const startOfWeek = luxon.minus({ days: shiftRange(luxon, weekStarDayIdx) });
 
   return startOfWeek
     .plus({ days: 6 }) // shift to the end of week
     .endOf('day'); // truncate the day to end of day, this follows the behavior of the original DateTime.endOf
 };
-
 
 export { startOfCustom, endOfCustom };
