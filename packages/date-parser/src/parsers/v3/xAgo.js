@@ -1,9 +1,8 @@
 import Chrono from 'chrono-node';
-import dateStructFromDate from '../../helpers/dateStructFromDate';
 import truncateDateStruct from '../../helpers/truncateDateStruct';
-import momentFromStruct from '../../helpers/momentFromStruct';
-import chronoDateStructFromMoment from '../../helpers/chronoDateStructFromMoment';
-import { shouldUseUTC, convertResultFromUtc, adjustRefdate } from '../../helpers/utcParsingHelpers';
+import dateStructFromLuxon from '../../helpers/dateStructFromLuxon';
+import luxonFromStruct from '../../helpers/luxonFromStruct';
+import toPluralLuxonUnit from '../../helpers/toPluralLuxonUnit';
 
 const parser = new Chrono.Parser();
 
@@ -24,32 +23,28 @@ parser.extract = (text, ref, match, opt) => {
   const value = parseInt(match[2]) * (isPast ? -1 : 1);
   const duration = match[5];
 
-  const { timezone } = opt;
-  const adjustedRef = adjustRefdate(ref, dateUnit, timezone);
+  const { luxonRefInTargetTz } = opt;
 
-  let refDateStruct = dateStructFromDate(adjustedRef);
+  let refDateStruct = dateStructFromLuxon(luxonRefInTargetTz);
+
   if (!exact) {
-    refDateStruct = truncateDateStruct(refDateStruct, dateUnit);
+    refDateStruct = truncateDateStruct(refDateStruct, dateUnit, false);
   }
-  let startMoment = momentFromStruct(refDateStruct, { weekStartDay: opt.weekStartDay });
-  startMoment = startMoment.add(value, dateUnit);
 
-  let endMoment = startMoment.clone();
+  let startLuxon = luxonFromStruct(refDateStruct);
+  const luxonUnits = toPluralLuxonUnit(dateUnit);
+  startLuxon = startLuxon.plus({ [luxonUnits]: value });
+
+  let endLuxon = startLuxon;
+
   if (duration) {
     const [durationValue, durationDateUnit] = duration.replace(' for ', '').split(' ');
-    endMoment = endMoment.add(parseInt(durationValue), durationDateUnit.toLowerCase());
+    const durationUnits = toPluralLuxonUnit(durationDateUnit.toLowerCase());
+    endLuxon = endLuxon.plus({ [durationUnits]: parseInt(durationValue) });
   } else if (exact) {
-    endMoment = endMoment.add(1, 'second');
+    endLuxon = endLuxon.plus({ seconds: 1 });
   } else {
-    endMoment = endMoment.add(1, dateUnit);
-  }
-
-  let startStruct = chronoDateStructFromMoment(startMoment, timezone);
-  let endStruct = chronoDateStructFromMoment(endMoment, timezone);
-
-  if (shouldUseUTC(dateUnit) && timezone) {
-    startStruct = convertResultFromUtc(startStruct, timezone);
-    endStruct = convertResultFromUtc(endStruct, timezone);
+    endLuxon = endLuxon.plus({ [luxonUnits]: 1 });
   }
 
   return new Chrono.ParsedResult({
@@ -57,8 +52,8 @@ parser.extract = (text, ref, match, opt) => {
     text: match[0],
     tags: { xAgoParser: true },
     index: match.index,
-    start: startStruct,
-    end: endStruct,
+    start: dateStructFromLuxon(startLuxon),
+    end: dateStructFromLuxon(endLuxon),
   });
 };
 
