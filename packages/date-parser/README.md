@@ -9,18 +9,18 @@ export const parse = (str, ref, {
   timezoneRegion = 'Etc/UTC',
   output = OUTPUT_TYPES.parsed_component,
   weekStartDay = WEEKDAYS.Monday,
-  parserVersion = 2,
+  parserVersion = 3,
 } = {})
 ```
 
 Note
-- Use `parserVersion = 2` to use the new date parser that supports timezone region 
+- Use `parserVersion = 3` to use the new date parser that supports timezone region 
 - To use the old API of v2.x, please read the below section of v2.x
 - This `parserVersion` flag is to help you gradually migrating to v3.x
 
 ### Output types:
   - date: 2021-12-01 (wallclock time, timezone is implicit)
-  - timestamp: E.g. 2021-12-02 00:00:00+08:00
+  - timestamp: E.g. 2021-12-02 00:00:00+08:00. The offset here is determined by the timezone region input
   - timestamp_utc: same as `timestamp` but the result is converted to UTC, e.g. 2021-12-02 16:00:00+00:00
   - raw: return the `Result` class, mostly for internal debugging
   - luxon: return a Luxon instance
