@@ -5,12 +5,17 @@ import luxonFromChronoStruct from '../../helpers/luxonFromChronoStruct';
 
 const { parser } = Chrono;
 
-const convertToUtc = (parsedResult) => {
+const convertToTimezone = (parsedResult, timezone) => {
   const luxon = luxonFromChronoStruct(parsedResult);
+
+  // build a UTC luxon from Chrono
   const utc = luxon
     .plus({ minutes: -parsedResult.get('timezoneOffset') || 0 })
     .setZone('Etc/UTC', { keepLocalTime: true });
-  return dateStructFromLuxon(utc);
+
+  const timestamptz = utc.setZone(timezone);
+
+  return dateStructFromLuxon(timestamptz);
 };
 
 // Use the value from dateStruct to build a new Chrono Result
@@ -23,12 +28,10 @@ const buildChronoResultFrom = (chronoResult, dateStruct) => {
 };
 
 /**
- * Wrap the Chrono ENISOFormatParser to imply the result to be in UTC, not in target timezone
+ * Wrap the Chrono ENISOFormatParser to convert the result to target timezone
  *
  * ISO is a special case where the text contains the timezone offset by itself,
  *  e.g. 2021-10-12 20:00:00.000Z, 2021-10-12 20:00:00.000+01:00
- *
- * We will assume that ISO is always UTC, and we don't support ISO with custom offset like +01:00
  *
  *  */
 const wrapChronoISOParser = (parserConfig) => {
@@ -42,10 +45,11 @@ const wrapChronoISOParser = (parserConfig) => {
 
   wrappedParser.extract = (text, ref, match, opt) => {
     const result = chronoParser.extract(text, ref, match, opt);
+    const { timezone } = opt;
 
     if (result.start) {
-      const utcDateStruct = convertToUtc(result.start);
-      const { knownValues, impliedValues } = buildChronoResultFrom(result.start, utcDateStruct);
+      const convertedStruct = convertToTimezone(result.start, timezone);
+      const { knownValues, impliedValues } = buildChronoResultFrom(result.start, convertedStruct);
       result.start.knownValues = knownValues;
       result.start.impliedValues = impliedValues;
     }
