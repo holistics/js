@@ -22,7 +22,7 @@ const shiftRange = (currentDate, wsdIdx) => {
  * @param {WEEKDAYS_MAP} weekStarDayIdx
  * @returns Luxon.DateTime
  */
-const startOfCustom = (luxon, dateUnit, weekStarDayIdx = WEEKDAYS_MAP.Monday) => {
+const startOfCustom = (luxon, dateUnit, weekStarDayIdx) => {
   if (dateUnit !== 'week' || weekStarDayIdx === WEEKDAYS_MAP.Monday) { return luxon.startOf(dateUnit); }
 
   return luxon
@@ -37,7 +37,7 @@ const startOfCustom = (luxon, dateUnit, weekStarDayIdx = WEEKDAYS_MAP.Monday) =>
  * @param {WEEKDAYS_MAP} weekStarDayIdx
  * @returns Luxon.DateTime
  */
-const endOfCustom = (luxon, dateUnit, weekStarDayIdx = WEEKDAYS_MAP.Monday) => {
+const endOfCustom = (luxon, dateUnit, weekStarDayIdx) => {
   if (dateUnit !== 'week' || weekStarDayIdx === WEEKDAYS_MAP.Monday) { return luxon.endOf(dateUnit); }
 
   const startOfWeek = luxon.minus({ days: shiftRange(luxon, weekStarDayIdx) });

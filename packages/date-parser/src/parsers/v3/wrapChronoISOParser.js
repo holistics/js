@@ -47,12 +47,10 @@ const wrapChronoISOParser = (parserConfig) => {
     const result = chronoParser.extract(text, ref, match, opt);
     const { timezone } = opt;
 
-    if (result.start) {
-      const convertedStruct = convertToTimezone(result.start, timezone);
-      const { knownValues, impliedValues } = buildChronoResultFrom(result.start, convertedStruct);
-      result.start.knownValues = knownValues;
-      result.start.impliedValues = impliedValues;
-    }
+    const convertedStruct = convertToTimezone(result.start, timezone);
+    const { knownValues, impliedValues } = buildChronoResultFrom(result.start, convertedStruct);
+    result.start.knownValues = knownValues;
+    result.start.impliedValues = impliedValues;
 
     return result;
   };
