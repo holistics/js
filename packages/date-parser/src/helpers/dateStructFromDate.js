@@ -1,7 +1,6 @@
 /**
  *
  * @param {Date} date
- * @param {String | null} timezone timezone region
  */
 export default (date) => {
   return {
