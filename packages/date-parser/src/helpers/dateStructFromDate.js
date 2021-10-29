@@ -3,7 +3,7 @@
  * @param {Date} date
  * @param {String | null} timezone timezone region
  */
-export default (date, timezone = null) => {
+export default (date) => {
   return {
     year: date.getUTCFullYear(),
     month: date.getUTCMonth(),
@@ -11,6 +11,5 @@ export default (date, timezone = null) => {
     hour: date.getUTCHours(),
     minute: date.getUTCMinutes(),
     second: date.getUTCSeconds(),
-    timezone,
   };
 };
