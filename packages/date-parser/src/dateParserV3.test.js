@@ -485,6 +485,10 @@ describe('Parsing logic', () => {
   it('invalid text', () => {
     parse('meomeo', new Date(), { ...defaultOpts, timezoneRegion: 'Asia/Singapore' });
   });
+
+  it('reject when parsing invalid ISO date', () => {
+    expect(() => parse('2019-02-29T09:15:32+09:00', new Date('2019-12-26T02:14:05Z'), { ...defaultOpts, timezoneRegion: 'America/Chicago' })).toThrowError(/unit out of range/i);
+  });
 });
 
 describe('output types', () => {

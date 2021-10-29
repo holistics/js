@@ -1,4 +1,5 @@
 import { DateTime } from 'luxon';
+import { ParseError } from '../errors';
 
 /**
  *
@@ -17,6 +18,10 @@ const luxonFromChronoStruct = (chronoStruct) => {
   }, {
     zone: chronoStruct.get('timezone'),
   });
+
+  if (!datetime.isValid) {
+    throw new ParseError(`${datetime.invalidReason}: ${datetime.invalidExplanation}`);
+  }
 
   return datetime;
 };
