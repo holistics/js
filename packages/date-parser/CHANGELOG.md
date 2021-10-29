@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0](https://github.com/holistics/js/compare/@holistics/date-parser@2.9.0...@holistics/date-parser@3.0.0) (2021-10-29)
+### Features
+* V3 date parser including
+  * Use timezone region instead of offset
+  * Change to luxon to handle date-time math (previously dayjs)
+  * The timezone offset of the output follows the timezone region, included ISO cases. For example: parsing 2021-01-02 00:00:00+00:00 would return 2021-01-01 17:00:00+07:00 with timezone region Singapore
+  * Week Start Day: use our own logic to handle instead of using dayjs
+
 # [2.11.0](https://github.com/holistics/js/compare/@holistics/date-parser@2.9.0...@holistics/date-parser@2.11.0) (2021-08-30)
 
 

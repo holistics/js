@@ -1,6 +1,6 @@
 {
   "name": "@holistics/date-parser",
-  "version": "2.11.0",
+  "version": "3.0.0",
   "description": "Date parser",
   "author": "Dat Bui <scott.bui@holistics.io>",
   "homepage": "https://github.com/holistics/js#readme",
@@ -28,7 +28,8 @@
   "dependencies": {
     "chrono-node": "1.4.8",
     "dayjs": "^1.8.19",
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.15",
+    "luxon": "^2.0.2"
   },
   "devDependencies": {
     "pkg": "^4.4.2",

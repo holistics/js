@@ -39,10 +39,26 @@ export const WEEKDAYS_MAP = {
  * @enum {String}
  */
 export const OUTPUT_TYPES = {
-  parsed_component: 'parsed_component',
+  // v1 only
+  parsed_component: 'parsed_component', // deprecated in v3
+
+  // v1 and v3
+  // Note these behavior changes in v3
+  //
+  // * timestamp: v1 returns UTC, while in v3 it returns the timestamp with correct timezone offset
+  //     E.g. v1: 2021-12-01 16:00:00Z, v3: 2021-12-02 00:00:00+08:00
+  //
+  // * date: same as v3
+  //
+  // * raw: v1 returns Chrono Parsed component, v3 returns the `Result` class itself
+  //
   date: 'date',
   timestamp: 'timestamp',
   raw: 'raw',
+
+  // v3 only
+  timestamp_utc: 'timestamp_utc',
+  luxon: 'luxon',
 };
 
 export const DATE_RANGE_KEYWORDS = {
@@ -54,3 +70,6 @@ export const DATE_RANGE_PATTERNS = {
   rangeEndInclusive: new RegExp(`(.+) (${DATE_RANGE_KEYWORDS.rangeEndInclusive.join('|')}) (.+)`, 'i'),
   rangeEndExclusive: new RegExp(`(.+) (${DATE_RANGE_KEYWORDS.rangeEndExclusive.join('|')}) (.+)`, 'i'),
 };
+
+export const PARSER_VERSION_1 = 1;
+export const PARSER_VERSION_3 = 3;
