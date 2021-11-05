@@ -5,10 +5,12 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [3.0.1](https://github.com/holistics/js/compare/@holistics/date-parser@3.0.0...@holistics/date-parser@3.0.1) (2021-11-05)
 
-**Note:** Version bump only for package @holistics/date-parser
+### Bug Fixes
 
-
-
+https://github.com/holistics/js/pull/15
+* Bug 1: doesn't handle null result
+* Bug 2: Inconsistent behavior of { zone } options in the browser. When calling with fromISO the zone is set to the DateTime instance, but when calling with fromObject the system zone (browser's zone) is used. This could be a bug of Luxon
+* Bug 3: using weekdayLong is affected by locale, switch to use index
 
 
 # [3.0.0](https://github.com/holistics/js/compare/@holistics/date-parser@2.9.0...@holistics/date-parser@3.0.0) (2021-10-29)
