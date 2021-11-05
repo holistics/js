@@ -14,7 +14,7 @@
     "lerna:publish": "yarn test && lerna publish",
     "lerna:version": "yarn test && lerna version --conventional-commits",
     "lint": "eslint --ext .js --ignore-path .gitignore .",
-    "test": "env TZ='Asia/Singapore' jest"
+    "test": "env TZ='Asia/Singapore' LC_ALL='de-De' jest"
   },
   "devDependencies": {
     "@babel/cli": "^7.7.7",

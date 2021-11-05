@@ -128,6 +128,8 @@ export const parse = (str, ref, {
    */
   const result = buildResult(parsedResults, str, jsRefDate, weekStartDay);
 
+  if (!result) { return null; }
+
   switch (output) {
     case OUTPUT_TYPES.date:
       return result.asDate();

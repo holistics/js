@@ -1,5 +1,5 @@
-import { lowerCase } from 'lodash';
 import { WEEKDAYS_MAP } from '../constants';
+import weekdayIdxFromLuxon from './weekdayIdxFromLuxon';
 
 /**
  *
@@ -8,7 +8,7 @@ import { WEEKDAYS_MAP } from '../constants';
  * @returns number
  */
 const shiftRange = (currentDate, wsdIdx) => {
-  const currentWeekday = WEEKDAYS_MAP[lowerCase(currentDate.weekdayLong)];
+  const currentWeekday = weekdayIdxFromLuxon(currentDate);
   return (currentWeekday - wsdIdx + 7) % 7;
 };
 

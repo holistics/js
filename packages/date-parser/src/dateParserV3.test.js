@@ -484,6 +484,7 @@ describe('Parsing logic', () => {
 
   it('invalid text', () => {
     parse('meomeo', new Date(), { ...defaultOpts, timezoneRegion: 'Asia/Singapore' });
+    parse('last', new Date(), { ...defaultOpts, output: 'timestamp', timezoneRegion: 'Asia/Singapore' });
   });
 
   it('reject when parsing invalid ISO date', () => {

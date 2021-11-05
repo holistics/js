@@ -1,16 +1,16 @@
 import Chrono from 'chrono-node';
-import { lowerCase } from 'lodash';
 import truncateDateStruct from '../../helpers/truncateDateStruct';
 import pluralize from '../../helpers/pluralize';
 import { WEEKDAYS_MAP } from '../../constants';
 import dateStructFromLuxon from '../../helpers/dateStructFromLuxon';
 import luxonFromStruct from '../../helpers/luxonFromStruct';
 import { startOfCustom } from '../../helpers/startEndOfCustom';
+import weekdayIdxFromLuxon from '../../helpers/weekdayIdxFromLuxon';
 
 const parser = new Chrono.Parser();
 
 const daysBetweeen = (startOfWeek, weekday) => {
-  const fromWeekdayIdx = WEEKDAYS_MAP[lowerCase(startOfWeek.weekdayLong)];
+  const fromWeekdayIdx = weekdayIdxFromLuxon(startOfWeek);
   const toWeekdayIdx = WEEKDAYS_MAP[weekday];
 
   if (fromWeekdayIdx <= toWeekdayIdx) { return toWeekdayIdx - fromWeekdayIdx; }
