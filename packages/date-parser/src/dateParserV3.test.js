@@ -492,21 +492,6 @@ describe('Parsing logic', () => {
   });
 });
 
-describe('should not be affected by locale', () => {
-  const defaultOpts = { parserVersion: PARSER_VERSION_3, output: 'raw' };
-
-  it('run at de-De environment should work', () => {
-    const res = parse('last week', new Date('2021-11-03T14:00:00Z'), {
-      ...defaultOpts, weekStartDay: WEEKDAYS.Thursday, timezoneRegion: 'Europe/Berlin', output: 'timestamp',
-    });
-
-    expect(res.start).toEqual('2021-10-21T00:00:00.000+02:00');
-    expect(res.end).toEqual('2021-10-28T00:00:00.000+02:00');
-
-    jest.restoreAllMocks();
-  });
-});
-
 describe('output types', () => {
   const defaultOpts = { parserVersion: PARSER_VERSION_3 };
 
