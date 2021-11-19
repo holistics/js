@@ -14,7 +14,7 @@
     "lerna:publish": "yarn test && lerna publish",
     "lerna:version": "yarn test && lerna version --conventional-commits",
     "lint": "eslint --ext .js --ignore-path .gitignore .",
-    "test": "env TZ='Asia/Singapore' LC_ALL='de-De' jest"
+    "test": "env TZ='Europe/Berlin' jest packages/date-parser/src/dateParserV3.test.js --coverage=false && env TZ='Asia/Singapore' LC_ALL='de-De' jest"
   },
   "devDependencies": {
     "@babel/cli": "^7.7.7",

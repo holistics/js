@@ -442,9 +442,15 @@ describe('Parsing logic', () => {
   });
 
   it('has good behavior with default parsers', () => {
+    let res = null;
+
     // ambiguous
-    const res = parse('within 3 days', new Date('2019-12-26T04:35:19+08:00'), { ...defaultOpts, timezoneRegion: 'Asia/Seoul' });
+    res = parse('within 3 days', new Date('2019-12-26T04:35:19+08:00'), { ...defaultOpts, timezoneRegion: 'Asia/Seoul' });
     expect(res).toEqual(null);
+
+    res = parse('1 August 2021', new Date('2021-11-16 00:00:00+00:00'), { ...defaultOpts, timezoneRegion: 'Asia/Seoul', output: 'timestamp' });
+    expect(res.start).toEqual('2021-08-01T00:00:00.000+09:00');
+    expect(res.end).toEqual('2021-08-02T00:00:00.000+09:00');
   });
 
   it('rejects invalid reference date', () => {
@@ -521,7 +527,7 @@ describe('output types', () => {
 describe('system timezone affected cases', () => {
   const defaultOpts = { parserVersion: PARSER_VERSION_3, output: 'raw' };
 
-  it("failed when run with TZ='Europe/Copenhagen'", () => {
+  it("should work even when run with TZ='Europe/Berlin'", () => {
     let res;
 
     res = parse('2019/12/01', new Date('2019-12-26T02:14:05Z'), defaultOpts);
@@ -536,5 +542,8 @@ describe('system timezone affected cases', () => {
     expect(res.text).toEqual("3 o'clock - 3 minutes ago");
     expect(res.asTimestampUtc().start).toEqual('2019-12-25T18:00:00.000+00:00');
     expect(res.asTimestampUtc().end).toEqual('2019-12-25T20:33:00.000+00:00');
+
+    expect(res.asTimestamp().start).toEqual('2019-12-26T03:00:00.000+09:00');
+    expect(res.asTimestamp().end).toEqual('2019-12-26T05:33:00.000+09:00');
   });
 });
