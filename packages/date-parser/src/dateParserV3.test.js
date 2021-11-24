@@ -451,6 +451,10 @@ describe('Parsing logic', () => {
     res = parse('1 August 2021', new Date('2021-11-16 00:00:00+00:00'), { ...defaultOpts, timezoneRegion: 'Asia/Seoul', output: 'timestamp' });
     expect(res.start).toEqual('2021-08-01T00:00:00.000+09:00');
     expect(res.end).toEqual('2021-08-02T00:00:00.000+09:00');
+
+    res = parse('aug2021', new Date('2021-11-16 00:00:00+00:00'), { ...defaultOpts, timezoneRegion: 'Asia/Seoul', output: 'timestamp' });
+    expect(res.start).toEqual('2021-08-01T00:00:00.000+09:00');
+    expect(res.end).toEqual('2021-09-01T00:00:00.000+09:00');
   });
 
   it('rejects invalid reference date', () => {
