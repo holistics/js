@@ -447,14 +447,6 @@ describe('Parsing logic', () => {
     // ambiguous
     res = parse('within 3 days', new Date('2019-12-26T04:35:19+08:00'), { ...defaultOpts, timezoneRegion: 'Asia/Seoul' });
     expect(res).toEqual(null);
-
-    res = parse('1 August 2021', new Date('2021-11-16 00:00:00+00:00'), { ...defaultOpts, timezoneRegion: 'Asia/Seoul', output: 'timestamp' });
-    expect(res.start).toEqual('2021-08-01T00:00:00.000+09:00');
-    expect(res.end).toEqual('2021-08-02T00:00:00.000+09:00');
-
-    res = parse('aug2021', new Date('2021-11-16 00:00:00+00:00'), { ...defaultOpts, timezoneRegion: 'Asia/Seoul', output: 'timestamp' });
-    expect(res.start).toEqual('2021-08-01T00:00:00.000+09:00');
-    expect(res.end).toEqual('2021-09-01T00:00:00.000+09:00');
   });
 
   it('rejects invalid reference date', () => {
@@ -528,21 +520,68 @@ describe('output types', () => {
   });
 });
 
-describe('system timezone affected cases', () => {
-  const defaultOpts = { parserVersion: PARSER_VERSION_3, output: 'raw' };
+describe('default Chrono parsers should work well despite system timezone', () => {
+  const defaultOpts = { parserVersion: PARSER_VERSION_3, output: 'raw', timezoneRegion: 'Asia/Seoul' };
 
-  it("should work even when run with TZ='Europe/Berlin'", () => {
+  it('ENISOFormatParser', () => {
     let res;
 
-    res = parse('2019/12/01', new Date('2019-12-26T02:14:05Z'), defaultOpts);
-    expect(res.asTimestampUtc().start).toEqual('2019-12-01T00:00:00.000+00:00');
-    expect(res.asTimestampUtc().end).toEqual('2019-12-02T00:00:00.000+00:00');
+    res = parse('2019-12-01T09:15:32Z', new Date('2019-12-26T02:14:05Z'), { ...defaultOpts });
+    expect(res.asTimestamp().start).toEqual('2019-12-01T18:15:32.000+09:00');
+    expect(res.asTimestamp().end).toEqual('2019-12-01T18:15:33.000+09:00');
 
-    res = parse('3 days ago till 15:36', new Date('2019-12-31T02:14:05Z'), defaultOpts);
-    expect(res.asTimestampUtc().start).toEqual('2019-12-28T00:00:00.000+00:00');
-    expect(res.asTimestampUtc().end).toEqual('2019-12-31T15:36:00.000+00:00');
+    res = parse('2019-12-01T09:15:32+09:00', new Date('2019-12-26T02:14:05Z'), { ...defaultOpts, timezoneRegion: 'America/Chicago' });
+    expect(res.asTimestamp().start).toEqual('2019-11-30T18:15:32.000-06:00');
+    expect(res.asTimestamp().end).toEqual('2019-11-30T18:15:33.000-06:00');
 
-    res = parse('3 o\'clock - 3 minutes ago', new Date('2019-12-26T04:35:19+08:00'), { ...defaultOpts, timezoneRegion: 'Asia/Seoul' });
+    res = parse('2019-12-01', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestamp().start).toEqual('2019-12-01T00:00:00.000+09:00');
+    expect(res.asTimestamp().end).toEqual('2019-12-02T00:00:00.000+09:00');
+
+    res = parse('2019-12-27T00:14:05', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestamp().start).toEqual('2019-12-27T09:14:05.000+09:00');
+    expect(res.asTimestamp().end).toEqual('2019-12-27T09:14:06.000+09:00');
+  });
+
+  it('ENMonthNameLittleEndianParser', () => {
+    const res = parse('1 August 2021', new Date('2021-11-16 00:00:00+00:00'), { ...defaultOpts, timezoneRegion: 'Asia/Seoul', output: 'timestamp' });
+    expect(res.start).toEqual('2021-08-01T00:00:00.000+09:00');
+    expect(res.end).toEqual('2021-08-02T00:00:00.000+09:00');
+  });
+
+  it('ENMonthNameMiddleEndianParser', () => {
+    const res = parse('August 1, 2021', new Date('2021-11-16 00:00:00+00:00'), { ...defaultOpts, timezoneRegion: 'Asia/Seoul', output: 'timestamp' });
+    expect(res.start).toEqual('2021-08-01T00:00:00.000+09:00');
+    expect(res.end).toEqual('2021-08-02T00:00:00.000+09:00');
+  });
+
+  it('ENMonthNameParser', () => {
+    const res = parse('aug2021', new Date('2021-11-16 00:00:00+00:00'), { ...defaultOpts, timezoneRegion: 'Asia/Seoul', output: 'timestamp' });
+    expect(res.start).toEqual('2021-08-01T00:00:00.000+09:00');
+    expect(res.end).toEqual('2021-09-01T00:00:00.000+09:00');
+  });
+
+  it('ENSlashDateFormatParser', () => {
+    const res = parse('8/1/2021', new Date('2021-11-16 00:00:00+00:00'), { ...defaultOpts, timezoneRegion: 'Asia/Seoul', output: 'timestamp' });
+    expect(res.start).toEqual('2021-08-01T00:00:00.000+09:00');
+    expect(res.end).toEqual('2021-08-02T00:00:00.000+09:00');
+  });
+
+  it('ENSlashDateFormatStartWithYear', () => {
+    const res = parse('2021/08/01', new Date('2021-11-16 00:00:00+00:00'), { ...defaultOpts, timezoneRegion: 'Asia/Seoul', output: 'timestamp' });
+    expect(res.start).toEqual('2021-08-01T00:00:00.000+09:00');
+    expect(res.end).toEqual('2021-08-02T00:00:00.000+09:00');
+  });
+
+  it('ENSlashMonthFormat', () => {
+    const res = parse('8/2021', new Date('2021-11-16 00:00:00+00:00'), { ...defaultOpts, timezoneRegion: 'Asia/Seoul', output: 'timestamp' });
+    expect(res.start).toEqual('2021-08-01T00:00:00.000+09:00');
+    expect(res.end).toEqual('2021-09-01T00:00:00.000+09:00');
+  });
+
+
+  it('ENTimeExpressionParser', () => {
+    const res = parse('3 o\'clock - 3 minutes ago', new Date('2019-12-26T04:35:19+08:00'), { ...defaultOpts, timezoneRegion: 'Asia/Seoul' });
     expect(res.text).toEqual("3 o'clock - 3 minutes ago");
     expect(res.asTimestampUtc().start).toEqual('2019-12-25T18:00:00.000+00:00');
     expect(res.asTimestampUtc().end).toEqual('2019-12-25T20:33:00.000+00:00');
