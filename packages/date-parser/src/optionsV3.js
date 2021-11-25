@@ -31,7 +31,7 @@ export default {
     lastXParser,
 
     wrapAbsoluteChronoParser(parser.ENISOFormatParser, parserConfig),
-    new parser.ENDeadlineFormatParser(parserConfig),
+    wrapRelativeChronoParser(parser.ENDeadlineFormatParser, parserConfig),
     wrapAbsoluteChronoParser(parser.ENMonthNameLittleEndianParser, parserConfig),
     wrapAbsoluteChronoParser(parser.ENMonthNameMiddleEndianParser, parserConfig),
     wrapAbsoluteChronoParser(parser.ENMonthNameParser, parserConfig),
