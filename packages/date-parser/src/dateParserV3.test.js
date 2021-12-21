@@ -590,3 +590,36 @@ describe('default Chrono parsers should work well despite system timezone', () =
     expect(res.asTimestamp().end).toEqual('2019-12-26T05:33:00.000+09:00');
   });
 });
+
+describe('CVE-2021-23371', () => {
+  const defaultOpts = { parserVersion: PARSER_VERSION_3, output: 'raw' };
+
+  const measureMilliSec = (block) => {
+    const startTime = new Date().getMilliseconds();
+    block();
+    const endTime = new Date().getMilliseconds();
+    return endTime - startTime;
+  };
+
+  it('can parse string that contains too many spaces', () => {
+    const time = measureMilliSec(() => {
+      const str = 'BGR3                                                                                         '
+          + '                                                                                        186          '
+          + '                                      days                                                           '
+          + '                                                                                                     '
+          + '                                                                                                     '
+          + '           18                                                hours                                   '
+          + '                                                                                                     '
+          + '                                                                                                     '
+          + '                                   37                                                minutes         '
+          + '                                                                                                     '
+          + '                                                                                                     '
+          + '                                                             01                                      '
+          + '          seconds';
+
+      parse(str, new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    });
+
+    expect(time).toBeLessThan(1000);
+  });
+});
