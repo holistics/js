@@ -11,7 +11,7 @@ export default class Result {
    * @param {String} weekStartDay
    */
   constructor ({
-    ref, index, text, start, end, weekStartDay,
+    ref, index, text, start, end, weekStartDay, metadata,
   }) {
     this.ref = ref;
     this.index = index;
@@ -19,6 +19,7 @@ export default class Result {
     this.start = start;
     this.end = end;
     this.weekStartDay = weekStartDay;
+    this.metadata = metadata;
   }
 
   toObject () {
@@ -29,6 +30,11 @@ export default class Result {
       start: this.start,
       end: this.end,
       weekStartDay: this.weekStartDay,
+      metadata: this.metadata,
+      rawResult: {
+        start: this.start ? luxonFromChronoStruct(this.start).toISO() : null,
+        end: this.end ? luxonFromChronoStruct(this.end) : null,
+      },
     };
   }
 

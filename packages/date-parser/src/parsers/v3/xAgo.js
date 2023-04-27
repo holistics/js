@@ -3,6 +3,7 @@ import truncateDateStruct from '../../helpers/truncateDateStruct';
 import dateStructFromLuxon from '../../helpers/dateStructFromLuxon';
 import luxonFromStruct from '../../helpers/luxonFromStruct';
 import toPluralLuxonUnit from '../../helpers/toPluralLuxonUnit';
+import { ParsedResultExtra } from '../../helpers/ParsedResultExtra';
 
 const parser = new Chrono.Parser();
 
@@ -47,13 +48,14 @@ parser.extract = (text, ref, match, opt) => {
     endLuxon = endLuxon.plus({ [luxonUnits]: 1 });
   }
 
-  return new Chrono.ParsedResult({
+  return new ParsedResultExtra({
     ref,
     text: match[0],
     tags: { xAgoParser: true },
     index: match.index,
     start: dateStructFromLuxon(startLuxon),
     end: dateStructFromLuxon(endLuxon),
+    metadata: { incrementedUnit: dateUnit },
   });
 };
 

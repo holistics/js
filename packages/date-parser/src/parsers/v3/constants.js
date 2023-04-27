@@ -1,5 +1,6 @@
 import Chrono from 'chrono-node';
 import dateStructFromLuxon from '../../helpers/dateStructFromLuxon';
+import { ParsedResultExtra } from '../../helpers/ParsedResultExtra';
 
 const parser = new Chrono.Parser();
 
@@ -29,13 +30,14 @@ parser.extract = (text, ref, match, opt) => {
     start = dateStructFromLuxon(luxonRefInTargetTz);
   }
 
-  return new Chrono.ParsedResult({
+  return new ParsedResultExtra({
     ref,
     text: match[0],
     index: match.index,
     tags: { constantParser: true },
     start,
     end,
+    metadata: { },
   });
 };
 

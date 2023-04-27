@@ -30,7 +30,7 @@ const implyWithLuxon = (start) => {
   end.impliedValues = dateStructFromLuxon(luxonInstance);
   end.knownValues = {};
 
-  return end;
+  return { end, incrementedUnit };
 };
 
 /**
@@ -42,7 +42,9 @@ const implyResult = (res) => {
   if (res.end) {
     implyDefaults(res.end);
   } else {
-    res.end = implyWithLuxon(res.start);
+    const { end, incrementedUnit } = implyWithLuxon(res.start);
+    res.end = end;
+    res.metadata = { incrementedUnit };
   }
   return res;
 };

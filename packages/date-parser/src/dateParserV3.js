@@ -79,6 +79,7 @@ const buildResult = (parsedResults, strInput, refDate, weekStartDay) => {
     start: first.start.clone(),
     end: isRangeEndInclusive ? last.end.clone() : last.start.clone(),
     weekStartDay,
+    metadata: last.metadata ? last.metadata : {},
   });
 
   return result;
@@ -106,13 +107,13 @@ export const parse = (str, ref, {
   const { parts } = splitInputStr(str);
   const luxonRefUtc = luxonFromJSDate(jsRefDate);
   const luxonRefInTargetTz = luxonRefUtc.setZone(zone.toString());
-
   /**
    * Chrono processing
    */
   const chrono = new ChronoNode.Chrono(options);
   const parsedResults = _compact(
     parts.map(
+
       part => chrono.parse(part, jsRefDate, {
         timezone: zone.toString(),
         weekStartDay: wsday,
