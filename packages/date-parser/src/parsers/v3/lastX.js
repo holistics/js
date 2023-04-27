@@ -53,7 +53,6 @@ parser.extract = (text, ref, match, opt) => {
   } else if (pointOfTime === 'end') {
     startLuxon = isTimeUnit(dateUnit) ? endLuxon.minus({ seconds: 1 }) : endLuxon.minus({ days: 1 });
   }
-  console.log('last X parse successfully');
   return new ParsedResultExtra({
     ref,
     text: match[0],
