@@ -6,7 +6,6 @@ import dateStructFromLuxon from '../../helpers/dateStructFromLuxon';
 import luxonFromStruct from '../../helpers/luxonFromStruct';
 import toPluralLuxonUnit from '../../helpers/toPluralLuxonUnit';
 import { startOfCustom, endOfCustom } from '../../helpers/startEndOfCustom';
-import { ParsedResultExtra } from '../../helpers/ParsedResultExtra';
 
 const parser = new Chrono.Parser();
 
@@ -53,7 +52,7 @@ parser.extract = (text, ref, match, opt) => {
   } else if (pointOfTime === 'end') {
     startLuxon = isTimeUnit(dateUnit) ? endLuxon.minus({ seconds: 1 }) : endLuxon.minus({ days: 1 });
   }
-  return new ParsedResultExtra({
+  return new Chrono.ParsedResult({
     ref,
     text: match[0],
     // NOTE: just keeping normalized_text here for possible future UX improvement, it is not actually kept in Chrono.ParsedResult

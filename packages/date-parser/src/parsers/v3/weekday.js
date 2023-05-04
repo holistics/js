@@ -6,7 +6,6 @@ import dateStructFromLuxon from '../../helpers/dateStructFromLuxon';
 import luxonFromStruct from '../../helpers/luxonFromStruct';
 import { startOfCustom } from '../../helpers/startEndOfCustom';
 import weekdayIdxFromLuxon from '../../helpers/weekdayIdxFromLuxon';
-import { ParsedResultExtra } from '../../helpers/ParsedResultExtra';
 
 const parser = new Chrono.Parser();
 
@@ -55,7 +54,7 @@ parser.extract = (text, ref, match, opt) => {
   const startDate = startOfWeek.plus({ days: range });
   const endDate = startDate.plus({ days: 1 });
 
-  return new ParsedResultExtra({
+  return new Chrono.ParsedResult({
     ref,
     text: match[0],
     // NOTE: just keeping normalized_text here for possible future UX improvement, it is not actually kept in Chrono.ParsedResult

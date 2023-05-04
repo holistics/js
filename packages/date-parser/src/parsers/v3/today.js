@@ -2,7 +2,6 @@ import Chrono from 'chrono-node';
 import truncateDateStruct from '../../helpers/truncateDateStruct';
 import dateStructFromLuxon from '../../helpers/dateStructFromLuxon';
 import luxonFromStruct from '../../helpers/luxonFromStruct';
-import { ParsedResultExtra } from '../../helpers/ParsedResultExtra';
 
 const parser = new Chrono.Parser();
 
@@ -32,7 +31,7 @@ parser.extract = (text, ref, match, opt) => {
   const startLuxon = truncatedLuxon.plus({ days: value });
   const endLuxon = startLuxon.plus({ days: 1 });
 
-  return new ParsedResultExtra({
+  return new Chrono.ParsedResult({
     ref,
     text: match[0],
     index: match.index,

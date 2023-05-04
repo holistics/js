@@ -6,7 +6,6 @@ module.exports = {
   collectCoverageFrom: [
     'packages/**/src/**/*.js',
     '!**/dist/**',
-    '!packages/**/helpers/ParsedResultExtra.js',
   ],
   coverageThreshold: {
     global: {
