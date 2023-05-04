@@ -31,7 +31,7 @@ export default class Result {
       weekStartDay: this.weekStartDay,
       rawResult: {
         start: this.start ? luxonFromChronoStruct(this.start).toISO() : null,
-        end: this.end ? luxonFromChronoStruct(this.end) : null,
+        end: this.end ? luxonFromChronoStruct(this.end).toISO() : null,
       },
     };
   }
