@@ -64,7 +64,6 @@ parser.extract = (text, ref, match, opt) => {
     tags: { weekdayParser: true },
     start: dateStructFromLuxon(startDate),
     end: dateStructFromLuxon(endDate),
-    metadata: { incrementedUnit: 'day' },
   });
 };
 

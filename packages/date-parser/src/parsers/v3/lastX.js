@@ -62,7 +62,6 @@ parser.extract = (text, ref, match, opt) => {
     tags: { lastXParser: true },
     start: dateStructFromLuxon(startLuxon),
     end: dateStructFromLuxon(endLuxon),
-    metadata: { incrementedUnit: dateUnit },
   });
 };
 

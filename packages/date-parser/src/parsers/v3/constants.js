@@ -37,7 +37,6 @@ parser.extract = (text, ref, match, opt) => {
     tags: { constantParser: true },
     start,
     end,
-    metadata: { },
   });
 };
 

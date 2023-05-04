@@ -55,7 +55,6 @@ parser.extract = (text, ref, match, opt) => {
     index: match.index,
     start: dateStructFromLuxon(startLuxon),
     end: dateStructFromLuxon(endLuxon),
-    metadata: { incrementedUnit: dateUnit },
   });
 };
 

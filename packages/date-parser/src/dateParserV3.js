@@ -79,7 +79,6 @@ const buildResult = (parsedResults, strInput, refDate, weekStartDay) => {
     start: first.start.clone(),
     end: isRangeEndInclusive ? last.end.clone() : last.start.clone(),
     weekStartDay,
-    metadata: last.metadata ? last.metadata : {},
   });
 
   return result;

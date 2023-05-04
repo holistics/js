@@ -39,7 +39,6 @@ parser.extract = (text, ref, match, opt) => {
     tags: { todayParser: true },
     start: dateStructFromLuxon(startLuxon),
     end: dateStructFromLuxon(endLuxon),
-    metadata: { incrementedUnit: 'day' },
   });
 };
 
