@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.1.0](https://github.com/holistics/js/compare/@holistics/date-parser@3.0.2...@holistics/date-parser@3.1.0) (2023-05-08)
+
+
+### Reverts
+
+* Revert "Publish" ([0082806](https://github.com/holistics/js/commit/00828065617f99853fa1ae674291f5fee0dadf8d))
+
+
+
+
+
 ## [3.0.2](https://github.com/holistics/js/compare/@holistics/date-parser@3.0.1...@holistics/date-parser@3.0.2) (2021-11-29)
 
 ### Bug Fixes
