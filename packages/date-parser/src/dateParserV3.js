@@ -1,6 +1,4 @@
 import _compact from 'lodash/compact';
-import _merge from 'lodash/merge';
-
 // NOTE: order is important to make sure chrono-node uses plugin-enabled dayjs
 import ChronoNode from 'chrono-node';
 import './initializers/dayjs';
@@ -107,7 +105,6 @@ export const parse = (str, ref, {
   const { parts } = splitInputStr(str);
   const luxonRefUtc = luxonFromJSDate(jsRefDate);
   const luxonRefInTargetTz = luxonRefUtc.setZone(zone.toString());
-
   /**
    * Chrono processing
    */
@@ -141,12 +138,7 @@ export const parse = (str, ref, {
     case OUTPUT_TYPES.luxon:
       return result.asLuxon();
     case OUTPUT_TYPES.raw:
-      return _merge(result, {
-        rawResult: {
-          start: result.asTimestamp().start,
-          end: result.asTimestamp().end,
-        },
-      });
+      return result;
     default:
       return result.asTimestamp();
   }
