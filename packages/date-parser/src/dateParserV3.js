@@ -1,5 +1,4 @@
 import _compact from 'lodash/compact';
-
 // NOTE: order is important to make sure chrono-node uses plugin-enabled dayjs
 import ChronoNode from 'chrono-node';
 import './initializers/dayjs';
@@ -106,7 +105,6 @@ export const parse = (str, ref, {
   const { parts } = splitInputStr(str);
   const luxonRefUtc = luxonFromJSDate(jsRefDate);
   const luxonRefInTargetTz = luxonRefUtc.setZone(zone.toString());
-
   /**
    * Chrono processing
    */
