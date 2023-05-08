@@ -6,9 +6,9 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 # [3.1.0](https://github.com/holistics/js/compare/@holistics/date-parser@3.0.2...@holistics/date-parser@3.1.0) (2023-05-08)
 
 
-### Reverts
+### Add raw results
 
-* Revert "Publish" ([0082806](https://github.com/holistics/js/commit/00828065617f99853fa1ae674291f5fee0dadf8d))
+* Add raw results to response
 
 
 
