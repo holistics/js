@@ -29,6 +29,10 @@ export default class Result {
       start: this.start,
       end: this.end,
       weekStartDay: this.weekStartDay,
+      rawResult: {
+        start: this.start ? luxonFromChronoStruct(this.start).toISO() : null,
+        end: this.end ? luxonFromChronoStruct(this.end).toISO() : null,
+      },
     };
   }
 
