@@ -602,6 +602,14 @@ describe('rawResult', () => {
     expect(res.rawResult.end).toEqual('2019-12-03T00:00:00.000+09:00');
   });
 
+  it('output date return rawResult case include time', () => {
+    const res = parse('2019-12-02 12:00:00 - 2019-12-03 23:59:59', new Date('2019-12-26T02:14:05Z'), { ...defaultOpts });
+    expect(res.start).toEqual('2019-12-02');
+    expect(res.end).toEqual('2019-12-04');
+    expect(res.rawResult.start).toEqual('2019-12-02T12:00:00.000+09:00');
+    expect(res.rawResult.end).toEqual('2019-12-04T00:00:00.000+09:00');
+  });
+
   it('raw output return rawResult', () => {
     const res = parse('2019-12-01 - 2019-12-02', new Date('2019-12-26T02:14:05Z'), { parserVersion: PARSER_VERSION_3, output: 'raw', timezoneRegion: 'Asia/Seoul' });
     expect(res.asDate().start).toEqual('2019-12-01');
