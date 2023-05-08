@@ -618,7 +618,7 @@ describe('rawResult', () => {
     expect(res.rawResult.end).toEqual('2019-12-03T00:00:00.000+09:00');
   });
 
-  it('output timestamp return rawResult', () => {
+  it('output timestamp_utc return rawResult', () => {
     const res = parse('2019-12-01 - 2019-12-02', new Date('2019-12-26T02:14:05Z'), { parserVersion: PARSER_VERSION_3, output: 'timestamp_utc', timezoneRegion: 'Asia/Seoul' });
     expect(res.start).toEqual('2019-11-30T15:00:00.000+00:00');
     expect(res.end).toEqual('2019-12-02T15:00:00.000+00:00');
