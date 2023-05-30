@@ -5,10 +5,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [3.1.2](https://github.com/holistics/js/compare/@holistics/date-parser@3.0.2...@holistics/date-parser@3.1.2) (2023-05-30)
 
-
-### Reverts
-
-* Revert "chore: upgrade luxon to 3.3.0 to fix ReDoS issue" ([ff26ec6](https://github.com/holistics/js/commit/ff26ec6d624db23eb0d404e7177832c6265d2fa8))
+* chore(date-parser): upgrade luxon to 3.3.0 to fix ReDoS issue ([95098fd](https://github.com/holistics/js/commit/95098fd50e73efdcf01a31ee1088ae0bdc135570))
 
 
 
