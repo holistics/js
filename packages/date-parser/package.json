@@ -29,7 +29,7 @@
     "chrono-node": "1.4.8",
     "dayjs": "^1.8.19",
     "lodash": "^4.17.15",
-    "luxon": "^3.3.0"
+    "luxon": "^2.5.2"
   },
   "devDependencies": {
     "pkg": "^4.4.2",
