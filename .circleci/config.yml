@@ -1,9 +1,10 @@
+---
 version: 2
 jobs:
   build:
     working_directory: ~/holistics-js
     docker:
-      - image: circleci/node:12
+      - image: circleci/node:18.16.1
     steps:
       - checkout
       - restore_cache:
