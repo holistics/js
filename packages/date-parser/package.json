@@ -32,7 +32,7 @@
     "luxon": "^3.3.0"
   },
   "devDependencies": {
-    "pkg": "^4.4.2",
+    "pkg": "^5.8.1",
     "yargs": "^15.1.0"
   }
 }
