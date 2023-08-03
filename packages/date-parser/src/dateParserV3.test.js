@@ -231,6 +231,11 @@ describe('Parsing logic', () => {
     res = parse('2023/13', new Date('2019-12-26T02:14:05Z'), defaultOpts);
     expect(res.asTimestampUtc().start).toEqual('2023-01-01T00:00:00.000+00:00');
     expect(res.asTimestampUtc().end).toEqual('2024-01-01T00:00:00.000+00:00');
+
+    // Invalid - Look like a code: fallback to year parser
+    res = parse('2023/10ABC`', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2023-01-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2024-01-01T00:00:00.000+00:00');
   });
 
   it('works with today format', () => {

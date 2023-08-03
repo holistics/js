@@ -15,10 +15,14 @@ parser.pattern = () => {
   const delimiter = '[\\/-]';
   const year = '([0-9]{4})';
   const month = '(?:([0-9]{1,2}))';
-  const endOfWord = '(?=\\W|$)';
+
+  // Prevent matching strings that look like a code. E.g:
+  //   - Match    : "2000-10, ..."
+  //   - Not Match: "2000-10ABC..."
+  const endOfADate = '(?=\\W|$)';
 
   const PATTERN = new RegExp(
-    year + delimiter + month + endOfWord,
+    year + delimiter + month + endOfADate,
     'i',
   );
 
