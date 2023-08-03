@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0](https://github.com/holistics/js/compare/@holistics/date-parser@3.1.2...@holistics/date-parser@3.2.0) (2023-08-03)
+
+
+### Features
+
+* **yarn:** bump pkg from 4.4.2 to 5.8.1 ([b62bd8c](https://github.com/holistics/js/commit/b62bd8cfbb1436c6bcaefbae5789cb7594f99e98))
+* year month parser ([337584e](https://github.com/holistics/js/commit/337584e2eadebf83d7096dc44e9e149f54ae9666))
+
+
+
+
+
 ## [3.1.2](https://github.com/holistics/js/compare/@holistics/date-parser@3.0.2...@holistics/date-parser@3.1.2) (2023-05-30)
 
 * chore(date-parser): upgrade luxon to 3.3.0 to fix ReDoS issue ([95098fd](https://github.com/holistics/js/commit/95098fd50e73efdcf01a31ee1088ae0bdc135570))
