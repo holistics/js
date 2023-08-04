@@ -206,6 +206,53 @@ describe('Parsing logic', () => {
     expect(res.asTimestamp().end).toEqual('2019-11-30T18:15:33.000-06:00');
   });
 
+  it('works with dates having just year and month', () => {
+    let res;
+
+    // YYYY-MM
+    res = parse('2023-08', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2023-08-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2023-09-01T00:00:00.000+00:00');
+
+    res = parse('2023-12', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2023-12-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2024-01-01T00:00:00.000+00:00');
+
+    // YYYY/MM
+    res = parse('2023/02', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2023-02-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2023-03-01T00:00:00.000+00:00');
+
+    res = parse('2023/12', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2023-12-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2024-01-01T00:00:00.000+00:00');
+
+    // With timezone
+    res = parse('2025-12', new Date('2019-12-26T02:14:05Z'), { ...defaultOpts, timezoneRegion: 'America/Chicago' });
+    expect(res.asTimestamp().start).toEqual('2025-12-01T00:00:00.000-06:00');
+    expect(res.asTimestamp().end).toEqual('2026-01-01T00:00:00.000-06:00');
+
+    // DST: Start month
+    res = parse('2023-03', new Date('2023-03-11T02:14:05Z'), { ...defaultOpts, timezoneRegion: 'America/Chicago' });
+    expect(res.asTimestamp().start).toEqual('2023-03-01T00:00:00.000-06:00');
+    expect(res.asTimestamp().end).toEqual('2023-04-01T00:00:00.000-05:00');
+
+    // DST: End month
+    res = parse('2023-11', new Date('2023-03-11T02:14:05Z'), { ...defaultOpts, timezoneRegion: 'America/Chicago' });
+    expect(res.asTimestamp().start).toEqual('2023-11-01T00:00:00.000-05:00');
+    expect(res.asTimestamp().end).toEqual('2023-12-01T00:00:00.000-06:00');
+
+    // Invalid month: fallback to year parser
+    res = parse('2023/13', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2023-01-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2024-01-01T00:00:00.000+00:00');
+
+    // Invalid - Look like a code: fallback to year parser
+    res = parse('2023/10ABC`', new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    expect(res.asTimestampUtc().start).toEqual('2023-01-01T00:00:00.000+00:00');
+    expect(res.asTimestampUtc().end).toEqual('2024-01-01T00:00:00.000+00:00');
+  });
+
   it('works with today format', () => {
     let res;
 
@@ -578,7 +625,6 @@ describe('default Chrono parsers should work well despite system timezone', () =
     expect(res.start).toEqual('2021-08-01T00:00:00.000+09:00');
     expect(res.end).toEqual('2021-09-01T00:00:00.000+09:00');
   });
-
 
   it('ENTimeExpressionParser', () => {
     const res = parse('3 o\'clock - 3 minutes ago', new Date('2019-12-26T04:35:19+08:00'), { ...defaultOpts, timezoneRegion: 'Asia/Seoul' });

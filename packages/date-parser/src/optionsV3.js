@@ -3,6 +3,7 @@ import ChronoNode from 'chrono-node';
 // Common parsers & refiners for both V1 and V3
 import ambiguousWeekdayGuard from './parsers/guards/ambiguousWeekday';
 import yearParser from './parsers/year';
+import yearMonthParser from './parsers/yearMonth';
 import ambiguityRefiner from './refiners/ambiguity';
 
 import constantsParser from './parsers/v3/constants';
@@ -29,6 +30,7 @@ export default {
     weekdayParser,
     xAgoParser,
     lastXParser,
+    yearMonthParser,
 
     wrapAbsoluteChronoParser(parser.ENISOFormatParser, parserConfig),
     wrapRelativeChronoParser(parser.ENDeadlineFormatParser, parserConfig),
