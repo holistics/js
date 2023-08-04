@@ -232,6 +232,16 @@ describe('Parsing logic', () => {
     expect(res.asTimestamp().start).toEqual('2025-12-01T00:00:00.000-06:00');
     expect(res.asTimestamp().end).toEqual('2026-01-01T00:00:00.000-06:00');
 
+    // DST: Start month
+    res = parse('2023-03', new Date('2023-03-11T02:14:05Z'), { ...defaultOpts, timezoneRegion: 'America/Chicago' });
+    expect(res.asTimestamp().start).toEqual('2023-03-01T00:00:00.000-06:00');
+    expect(res.asTimestamp().end).toEqual('2023-04-01T00:00:00.000-05:00');
+
+    // DST: End month
+    res = parse('2023-11', new Date('2023-03-11T02:14:05Z'), { ...defaultOpts, timezoneRegion: 'America/Chicago' });
+    expect(res.asTimestamp().start).toEqual('2023-11-01T00:00:00.000-05:00');
+    expect(res.asTimestamp().end).toEqual('2023-12-01T00:00:00.000-06:00');
+
     // Invalid month: fallback to year parser
     res = parse('2023/13', new Date('2019-12-26T02:14:05Z'), defaultOpts);
     expect(res.asTimestampUtc().start).toEqual('2023-01-01T00:00:00.000+00:00');
