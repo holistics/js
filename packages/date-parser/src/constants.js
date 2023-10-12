@@ -73,3 +73,4 @@ export const DATE_RANGE_PATTERNS = {
 
 export const PARSER_VERSION_1 = 1;
 export const PARSER_VERSION_3 = 3;
+export const DATE_STRING_CHARACTER_LIMIT = 200;
