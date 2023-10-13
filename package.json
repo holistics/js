@@ -8,7 +8,7 @@
   ],
   "repository": "https://github.com/holistics/js",
   "author": "Holistics",
-  "license": "MIT",
+  "license": "MIT 1",
   "scripts": {
     "lerna:bootstrap": "lerna bootstrap",
     "lerna:publish": "yarn test && lerna publish",
