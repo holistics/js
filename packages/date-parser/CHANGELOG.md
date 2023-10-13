@@ -3,12 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [3.3.0](https://github.com/holistics/js/compare/@holistics/date-parser@3.1.2...@holistics/date-parser@3.3.0) (2023-10-13)
+# [3.3.0](https://github.com/holistics/js/compare/@holistics/date-parser@3.2.0...@holistics/date-parser@3.3.0) (2023-10-13)
 
 
-### Features
+### Security
 
-* **yarn:** bump pkg from 4.4.2 to 5.8.1 ([b62bd8c](https://github.com/holistics/js/commit/b62bd8cfbb1436c6bcaefbae5789cb7594f99e98))
+* Add limit check for string input ([43a8c52](https://github.com/holistics/js/pull/50/commits/43a8c527e2a517d20b26ad121e4eb65ca8bfea59))
 
 
 
