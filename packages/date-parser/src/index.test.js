@@ -1,6 +1,7 @@
 import {
   parse, WEEKDAYS, OUTPUT_TYPES, Errors,
 } from './index';
+import { InputError } from './errors';
 import { parse as parseV1 } from './dateParserV1';
 
 describe('common tests', () => {
@@ -13,6 +14,12 @@ describe('common tests', () => {
 });
 
 describe('dateParser', () => {
+  it('throw error when exceed character limit', () => {
+    expect(() => {
+      parse(`last week${' '.repeat(1000)}`, new Date('2019-12-26T02:14:05Z'));
+    }).toThrow(new InputError('Date value exceeds limit of 200 characters'));
+  });
+
   it('works with lastX format', () => {
     let res;
 
@@ -1025,7 +1032,6 @@ describe('dateParser', () => {
     res = parse('next month end', '2018-01-01T05:00:00+08:00', { timezoneOffset: 180 });
     expect(res.start.date().toISOString()).toEqual('2018-02-27T21:00:00.000Z');
     expect(res.end.date().toISOString()).toEqual('2018-02-28T21:00:00.000Z');
-
 
     res = parse('yesterday', new Date('2019-04-11T23:00:00+00:00'), { timezoneOffset: 540 });
     expect(res.start.date().toISOString()).toEqual('2019-04-10T15:00:00.000Z');

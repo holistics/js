@@ -19,6 +19,7 @@ import Errors, { InputError } from './errors';
 
 import splitInputStr from './helpers/splitInputString';
 import getParsedResultBoundaries from './helpers/getParsedResultBoundaries';
+import exceedLimit from './helpers/checkDateStringCharacterLimit';
 
 const chrono = new ChronoNode.Chrono(options);
 
@@ -35,6 +36,7 @@ const chrono = new ChronoNode.Chrono(options);
 export const parse = (str, ref, { timezoneOffset = 0, output = OUTPUT_TYPES.parsed_component, weekStartDay = WEEKDAYS.Monday } = {}) => {
   const refDate = new Date(ref);
   if (!isValidDate(refDate)) throw new InputError(`Invalid reference date: ${ref}`);
+  if (exceedLimit(str)) throw new InputError('Date value exceeds limit of 200 characters');
 
   /* eslint-disable-next-line no-param-reassign */
   timezoneOffset = parseInt(timezoneOffset);

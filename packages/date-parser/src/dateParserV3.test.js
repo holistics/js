@@ -1,11 +1,18 @@
 import {
   parse, WEEKDAYS,
 } from './index';
+import { InputError } from './errors';
 import { parse as parseV3 } from './dateParserV3';
 import { PARSER_VERSION_3 } from './constants';
 
 describe('Parsing logic', () => {
   const defaultOpts = { parserVersion: PARSER_VERSION_3, output: 'raw' };
+
+  it('throw error when exceed character limit', () => {
+    expect(() => {
+      parse(`last week${' '.repeat(1000)}`, new Date('2019-12-26T02:14:05Z'), defaultOpts);
+    }).toThrow(new InputError('Date value exceeds limit of 200 characters'));
+  });
 
   it('works with lastX format', () => {
     let res;

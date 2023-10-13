@@ -9,6 +9,7 @@ import isValidDate from './helpers/isValidDate';
 import TimezoneRegion from './helpers/timezoneRegion';
 import splitInputStr from './helpers/splitInputString';
 import getParsedResultBoundaries from './helpers/getParsedResultBoundaries';
+import exceedLimit from './helpers/checkDateStringCharacterLimit';
 import { InputError } from './errors';
 import {
   WEEKDAYS,
@@ -100,6 +101,8 @@ export const parse = (str, ref, {
   /**
    * Inputs parsing and validation
    */
+  if (exceedLimit(str)) throw new InputError('Date value exceeds limit of 200 characters');
+
   const { jsRefDate, wsday } = parseInputs(ref, weekStartDay);
   const zone = new TimezoneRegion(timezoneRegion);
   const { parts } = splitInputStr(str);
