@@ -18,7 +18,7 @@
 
 ```bash
 cd path/to/repo/root
-yarn lerna:bootstrap
+yarn install
 ```
 
 ### Creating a new package

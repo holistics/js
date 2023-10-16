@@ -10,7 +10,6 @@
   "author": "Holistics",
   "license": "MIT",
   "scripts": {
-    "lerna:bootstrap": "lerna bootstrap",
     "lerna:publish": "yarn test && lerna publish",
     "lerna:version": "yarn test && lerna version --conventional-commits",
     "lint": "eslint --ext .js --ignore-path .gitignore .",
@@ -29,7 +28,7 @@
     "eslint-plugin-jest": "^23.2.0",
     "husky": "^4.2.5",
     "jest": "^29.6.0",
-    "lerna": "^4.0.0",
+    "lerna": "^7.3.0",
     "lint-staged": "^9.5.0",
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4"
